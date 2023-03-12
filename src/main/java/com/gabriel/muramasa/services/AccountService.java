@@ -73,11 +73,22 @@ public class AccountService {
     
     public void update(AccountConfigurationDTO config, Long id) {
         Account acc = this.findById(id);
-        if(config.getPassword().length() >= 6) {
+        if(config.isPasswordValid()) {
             acc.setPassword(config.getPassword());
         }
-        if() {
-            
+        if(config.isEmailValid() && repo.findByEmail(config.getEmail()).isEmpty()) {
+            acc.setEmail(config.getEmail());
         }
+        if(config.isUsernameValid() && repo.findByUsername(config.getUsername()).isEmpty()) {
+            acc.setUsername(config.getUsername());
+        }
+        acc.setImgUrl(config.getImgUrl());
+        acc.setBannerImgUrl(config.getBannerImgUrl());
+        acc.setResume(config.getResume());
+        repo.save(acc);
+    }
+    
+    public void delete(Long id) {
+        repo.deleteById(id);
     }
 }

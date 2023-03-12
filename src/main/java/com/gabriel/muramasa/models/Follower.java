@@ -5,6 +5,7 @@
 package com.gabriel.muramasa.models;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,5 +39,50 @@ public class Follower implements Serializable{
         this.from = from;
         this.to = to;
     }
-    
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Account getFrom() {
+        return from;
+    }
+
+    public void setFrom(Account from) {
+        this.from = from;
+    }
+
+    public Account getTo() {
+        return to;
+    }
+
+    public void setTo(Account to) {
+        this.to = to;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Follower other = (Follower) obj;
+        return Objects.equals(this.id, other.id);
+    }
 }
