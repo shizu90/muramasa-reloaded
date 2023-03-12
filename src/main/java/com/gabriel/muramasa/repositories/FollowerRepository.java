@@ -5,13 +5,12 @@
 package com.gabriel.muramasa.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import com.gabriel.muramasa.models.Media;
+
+import com.gabriel.muramasa.models.Follower;
 
 /**
  *
  * @author gabriell9090
  */
-@Repository
-public interface MediaRepository extends JpaRepository<Media, Long>{
+public interface FollowerRepository extends JpaRepository<Follower, Long>{
 }

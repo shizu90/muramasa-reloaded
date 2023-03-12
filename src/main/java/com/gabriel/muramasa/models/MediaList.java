@@ -4,10 +4,12 @@
  */
 package com.gabriel.muramasa.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,28 +30,29 @@ public class MediaList implements Serializable {
     //Common attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String type;
     
     //Relations
-    @OneToMany(mappedBy = "list")
+    @OneToMany(targetEntity=Media.class, mappedBy = "list")
     private List<Media> items;
-    @OneToOne
-    private User user;
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.REMOVE)
+    private Account account;
     
     public MediaList() {}
-    public MediaList(Integer id, ArrayList<Media> items, User user, String type) {
+    public MediaList(Long id, List<Media> items, Account account, String type) {
         this.id = id;
         this.items = items;
-        this.user = user;
+        this.account = account;
         this.type = type;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -61,12 +64,12 @@ public class MediaList implements Serializable {
         this.items = items;
     }
 
-    public User getUser() {
-        return user;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public String getType() {

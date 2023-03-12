@@ -5,7 +5,7 @@
 package com.gabriel.muramasa.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.gabriel.muramasa.models.User;
+import com.gabriel.muramasa.models.Account;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer>{
-    List<User> findByUsername(String username);
-    List<User> findByEmail(String email);
+public interface AccountRepository extends JpaRepository<Account, Long>{
+    List<Account> findByUsername(String username);
+    List<Account> findByEmail(String email);
 }

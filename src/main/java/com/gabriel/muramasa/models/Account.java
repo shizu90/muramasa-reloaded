@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,14 +26,14 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name = "muramasa_user")
-public class User implements Serializable {
+@Table(name = "muramasa_account")
+public class Account implements Serializable {
     private static final long serialVersionUID = 1L;
     
     //Common attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String username;
     private String email;
     private String password;
@@ -41,25 +42,23 @@ public class User implements Serializable {
     private String resume;
     
     //Relations
-    @JsonIgnore
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "animeList_id")
     private MediaList animeList;
-    @JsonIgnore
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "mangaList_id")
     private MediaList mangaList;
-    @OneToMany(mappedBy = "following")
-    private List<User> followers;
-    @OneToMany(mappedBy = "followers")
-    private List<User> following;
+    @OneToMany(targetEntity = Follower.class, mappedBy = "to")
+    private List<Follower> followers;
+    @OneToMany(targetEntity = Follower.class, mappedBy = "from")
+    private List<Follower> following;
     
-    public User() {}
-    public User(
-            Integer id, String username, String email, 
+    public Account() {}
+    public Account(
+            Long id, String username, String email, 
             String password, String imgUrl, String bannerImgUrl, 
-            String resume, MediaList animeList, MediaList mangaList, 
-            ArrayList<User> followers, ArrayList<User> following) 
+            String resume, MediaList animeList, MediaList mangaList,
+            List<Follower> followers, List<Follower> following) 
     
     {
         this.id = id;
@@ -75,11 +74,11 @@ public class User implements Serializable {
         this.following = following;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -146,20 +145,20 @@ public class User implements Serializable {
     public void setMangaList(MediaList mangaList) {
         this.mangaList = mangaList;
     }
-
-    public List<User> getFollowers() {
+    
+    public List<Follower> getFollowers() {
         return followers;
     }
-
-    public void setFollowers(ArrayList<User> followers) {
+    
+    public void setFollowers(List<Follower> followers) {
         this.followers = followers;
     }
-
-    public List<User> getFollowing() {
+    
+    public List<Follower> getFollowing() {
         return following;
     }
-
-    public void setFollowing(ArrayList<User> following) {
+    
+    public void setFollowing(List<Follower> following) {
         this.following = following;
     }
 
@@ -181,7 +180,7 @@ public class User implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final User other = (User) obj;
+        final Account other = (Account) obj;
         return Objects.equals(this.id, other.id);
     }
     
