@@ -4,6 +4,7 @@
  */
 package com.gabriel.muramasa.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -29,27 +30,30 @@ public class Media implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String description;
     private String imgUrl;
     private String type;
+    private Integer favorited;
     private Integer count;
+    private Integer cLength;
     private Integer status; //1 - WATCHING/READING; 2 - COMPLETED; 3 - PLANS TO WATCH/READ; 4 - DROPPED; 5 - ON HOLD;
     
     //Relations
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "list_id")
     private MediaList list;
     
     public Media() {}
-    public Media(Long id, MediaList list, String name, String description, Integer count, Integer status, String imgUrl, String type) {
+    public Media(Long id, MediaList list, String name, Integer count, Integer cLength, Integer status, String imgUrl, String type, Integer favorited) {
         this.id = id;
         this.list = list;
         this.name = name;
-        this.description = description;
         this.count = count;
+        this.cLength = cLength;
         this.status = status > 5 ? 5 : status < 1 ? 1 : status;
         this.imgUrl = imgUrl;
         this.type = type;
+        this.favorited = favorited;
     }
 
     public Long getId() {
@@ -75,14 +79,6 @@ public class Media implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
     
     public String getImgUrl() {
         return imgUrl;
@@ -99,6 +95,14 @@ public class Media implements Serializable {
     public void setCount(Integer count) {
         this.count = count;
     }
+    
+    public Integer getCountLength() {
+        return cLength;
+    }
+    
+    public void setCountLength(Integer cLength) {
+        this.cLength = cLength;
+    }
 
     public Integer getStatus() {
         return status;
@@ -114,6 +118,14 @@ public class Media implements Serializable {
     
     public void setType(String type) {
         this.type = type;
+    }
+    
+    public Integer getFavorited() {
+        return favorited;
+    }
+    
+    public void setFavorited(Integer favorited) {
+        this.favorited = favorited;
     }
 
     @Override
