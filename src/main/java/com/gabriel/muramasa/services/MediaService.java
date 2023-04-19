@@ -4,6 +4,8 @@
  */
 package com.gabriel.muramasa.services;
 
+import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
+import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
 import com.gabriel.muramasa.repositories.MediaRepository;
 import com.gabriel.muramasa.models.Media;
 import com.gabriel.muramasa.models.MediaList;
@@ -26,16 +28,16 @@ public class MediaService {
     public MediaService() {}
     
     public Media findById(Long id) {
-        return repo.findById(id).orElseThrow(() -> new RuntimeException("Not found."));
+        return repo.findById(id).orElseThrow(() -> new NotFoundException("Media not found."));
     }
     
     public Media insert(Long listId, Media media) {
-        MediaList list = mediaListRepo.findById(listId).orElseThrow(() -> new RuntimeException("Not found."));
+        MediaList list = mediaListRepo.findById(listId).orElseThrow(() -> new NotFoundException("List not found."));
         try {
             media.setList(list);
             return repo.save(media);
         }catch(ConstraintViolationException e) {
-            throw new RuntimeException("Some error.");
+            throw new DatabaseException(e.getMessage());
         }
     }
     
@@ -55,7 +57,15 @@ public class MediaService {
         try {
             return repo.save(md);
         }catch(ConstraintViolationException e) {
-            throw new RuntimeException("Some error.");
+            throw new DatabaseException(e.getMessage());
+        }
+    }
+    
+    public void delete(Long mediaId) {
+        try {
+            repo.deleteById(mediaId);
+        }catch(ConstraintViolationException e) {
+            throw new DatabaseException(e.getMessage());
         }
     }
 }

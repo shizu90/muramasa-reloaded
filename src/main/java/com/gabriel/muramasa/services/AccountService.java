@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 import com.gabriel.muramasa.repositories.AccountRepository;
 import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.dto.AccountRegistrationDTO;
+import com.gabriel.muramasa.handlers.exceptions.AlreadyExistsException;
+import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
+import com.gabriel.muramasa.handlers.exceptions.InvalidFormatException;
+import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
 import com.gabriel.muramasa.models.Follower;
 import com.gabriel.muramasa.models.Media;
 import com.gabriel.muramasa.models.MediaList;
@@ -37,23 +41,23 @@ public class AccountService {
     
     public Account findById(Long id) {
         Optional<Account> account = repo.findById(id);
-        return account.orElseThrow(() -> new RuntimeException("Account not found."));
+        return account.orElseThrow(() -> new NotFoundException("Account not found."));
     }
     
     public Account findByUsername(String username) {
         List<Account> response = repo.findByUsername(username);
         if(response != null) {
             return response.get(0);
-        }else throw new RuntimeException("Account not found.");
+        }else throw new NotFoundException("Account not found.");
     }
     
     public Account insert(AccountRegistrationDTO credentials) {
-        if(!credentials.isEmailValid()) {throw new RuntimeException("Invalid e-mail.");}
-        if(!credentials.isUsernameValid()) {throw new RuntimeException("Invalid username.");}
-        if(!credentials.isPasswordValid()) {throw new RuntimeException("Invalid password.");}
-        if(!credentials.isPasswordsMatches()) {throw new RuntimeException("Password don't match.");}
-        if(!repo.findByEmail(credentials.getEmail()).isEmpty()) {throw new RuntimeException("E-mail already exists.");}
-        if(!repo.findByUsername(credentials.getUsername()).isEmpty()) {throw new RuntimeException("Username already taken.");}
+        if(!credentials.isEmailValid()) {throw new InvalidFormatException("Invalid e-mail.");}
+        if(!credentials.isUsernameValid()) {throw new InvalidFormatException("Invalid username.");}
+        if(!credentials.isPasswordValid()) {throw new InvalidFormatException("Invalid password.");}
+        if(!credentials.isPasswordsMatches()) {throw new InvalidFormatException("Password don't match.");}
+        if(!repo.findByEmail(credentials.getEmail()).isEmpty()) {throw new AlreadyExistsException("E-mail already exists.");}
+        if(!repo.findByUsername(credentials.getUsername()).isEmpty()) {throw new AlreadyExistsException("Username already taken.");}
         try {
             Account acc = new Account(
                     null, credentials.getUsername(), credentials.getEmail(), credentials.getPassword(), 
@@ -67,7 +71,7 @@ public class AccountService {
             return repo.save(acc);
             
         }catch(ConstraintViolationException e) {
-            throw new RuntimeException("Some error occured.");
+            throw new DatabaseException(e.getMessage());
         }
     }
     

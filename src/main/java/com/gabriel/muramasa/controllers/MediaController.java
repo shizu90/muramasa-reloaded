@@ -9,6 +9,7 @@ import com.gabriel.muramasa.services.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +40,11 @@ public class MediaController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<Media> putMedia(@RequestBody Media media, @PathVariable Long mediaId) {
         return ResponseEntity.ok().body(service.update(mediaId, media));
+    }
+    
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<String> deleteMedia(@PathVariable Long id) {
+        return ResponseEntity.ok().body("Media deleted.");
     }
     
 }

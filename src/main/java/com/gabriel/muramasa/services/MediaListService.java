@@ -1,6 +1,7 @@
 package com.gabriel.muramasa.services;
 
 
+import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
 import com.gabriel.muramasa.repositories.AccountRepository;
 import com.gabriel.muramasa.repositories.MediaListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class MediaListService {
     public MediaListService() {}
     
     public MediaList getListByType(Long accId, String type) {
-        Account acc = accRepo.findById(accId).orElseThrow(() -> new RuntimeException("Account not found."));
+        Account acc = accRepo.findById(accId).orElseThrow(() -> new NotFoundException("Account not found."));
         if(type.toLowerCase().equals("anime")) {
             return acc.getAnimeList();
         }
@@ -40,7 +41,7 @@ public class MediaListService {
     }
     
     public List<Media> getMediasByStatus(Long listId, Integer status) {
-        MediaList list = repo.findById(listId).orElseThrow(() -> new RuntimeException("List not found."));
+        MediaList list = repo.findById(listId).orElseThrow(() -> new NotFoundException("List not found."));
         return list.getItems().stream().filter(m -> m.getStatus().equals(status)).collect(Collectors.toList());
     }
 }

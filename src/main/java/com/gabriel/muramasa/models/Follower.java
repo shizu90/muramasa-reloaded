@@ -4,8 +4,11 @@
  */
 package com.gabriel.muramasa.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,18 +29,22 @@ public class Follower implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne
-    @JoinColumn(name = "from_account")
-    private Account from;
+    @Column(name="searchParameter", unique=true)
+    private String searchParameter;
+    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList"})
     @ManyToOne
     @JoinColumn(name = "to_account")
+    private Account from;
+    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList"})
+    @ManyToOne
+    @JoinColumn(name = "from_account")
     private Account to;
     
     public Follower() {}
     public Follower(Account from, Account to) {
         this.from = from;
         this.to = to;
+        this.searchParameter = "" + from.hashCode() + to.hashCode();
     }
 
     public Long getId() {
@@ -46,6 +53,10 @@ public class Follower implements Serializable{
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public String getSearchParameter() {
+        return this.searchParameter;
     }
 
     public Account getFrom() {
