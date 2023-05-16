@@ -27,23 +27,24 @@ public class MediaController {
     @Autowired
     private MediaService service;
     
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<Media> getMedia(@PathVariable Long id) {
-        return ResponseEntity.ok().body(service.findById(id));
+    @GetMapping(value = "/{mediaId}")
+    public ResponseEntity<Media> getMedia(@PathVariable Long mediaId) {
+        return ResponseEntity.ok().body(service.findById(mediaId));
     }
     
-    @PostMapping(value = "/list/{listId}")
-    public ResponseEntity<Media> postMedia(@RequestBody Media media, @PathVariable Long listId) {
-        return ResponseEntity.ok().body(service.insert(listId, media));
+    @PostMapping(value = "/{userId}")
+    public ResponseEntity<Media> postMedia(@RequestBody Media media, @PathVariable Long userId) {
+        return ResponseEntity.ok().body(service.insert(userId, media));
     }
     
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/{mediaId}")
     public ResponseEntity<Media> putMedia(@RequestBody Media media, @PathVariable Long mediaId) {
         return ResponseEntity.ok().body(service.update(mediaId, media));
     }
     
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> deleteMedia(@PathVariable Long id) {
+    @DeleteMapping(value = "/{mediaId}")
+    public ResponseEntity<String> deleteMedia(@PathVariable Long mediaId) {
+        service.delete(mediaId);
         return ResponseEntity.ok().body("Media deleted.");
     }
     

@@ -16,11 +16,13 @@ import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.InvalidFormatException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
 import com.gabriel.muramasa.models.Follower;
+import com.gabriel.muramasa.models.Log;
 import com.gabriel.muramasa.models.Media;
 import com.gabriel.muramasa.models.MediaList;
 import com.gabriel.muramasa.repositories.MediaListRepository;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Stack;
 import org.hibernate.exception.ConstraintViolationException;
 /**
  *
@@ -61,7 +63,8 @@ public class AccountService {
         try {
             Account acc = new Account(
                     null, credentials.getUsername(), credentials.getEmail(), credentials.getPassword(), 
-                    "", "", "", null, null, new ArrayList<Follower>(), new ArrayList<Follower>()
+                    "", "", "", null, null, new ArrayList<Follower>(), new ArrayList<Follower>(), 
+                    new Stack<Log>()
             );
             acc = repo.save(acc);
             MediaList animeList = new MediaList(null, new ArrayList<Media>(), acc, "anime");

@@ -7,7 +7,6 @@ package com.gabriel.muramasa.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.gabriel.muramasa.models.MediaList;
-import com.gabriel.muramasa.models.Account;
 
 /**
  *

@@ -7,8 +7,8 @@ package com.gabriel.muramasa.controllers;
 import com.gabriel.muramasa.models.MediaList;
 import com.gabriel.muramasa.services.MediaListService;
 import com.gabriel.muramasa.models.Media;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +30,13 @@ public class MediaListController {
         return ResponseEntity.ok().body(service.getListByType(userId, type));
     }
     
-    @GetMapping(value = "/items/{id}/{status}")
-    public ResponseEntity<List<Media>> getMediasByStatus(@PathVariable Integer status, @PathVariable Long id) {
-        return ResponseEntity.ok().body(service.getMediasByStatus(id, status));
+    @GetMapping(value = "/items/{listId}/{status}/{offset}")
+    public ResponseEntity<Page<Media>> getMediasByStatus(@PathVariable Integer status, @PathVariable Long listId, @PathVariable Integer offset) {
+        return ResponseEntity.ok().body(service.getMediasByStatus(listId, status, offset));
+    }
+    
+    @GetMapping(value = "/items/{listId}/{status}/{offset}/{size}")
+    public ResponseEntity<Page<Media>> getMediasByStatus(@PathVariable Integer status, @PathVariable Long listId, @PathVariable Integer offset, @PathVariable Integer size) {
+        return ResponseEntity.ok().body(service.getMediasByStatus(listId, status, offset, size));
     }
 }

@@ -4,47 +4,50 @@
  */
 package com.gabriel.muramasa.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
  *
- * @author gabriell9090
+ * @author shizu90
  */
+
 @Entity
-@Table(name = "muramasa_medialist")
-public class MediaList implements Serializable {
+@Table(name="muramasa_log")
+public class Log implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    //Common attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String type;
+    private String date;
+    private String message;
     
-    //Relations
-    @OneToMany(targetEntity=Media.class, mappedBy = "list")
-    private List<Media> items;
+    //Relatios
+    @ManyToOne
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "recent_updates")
     private Account account;
     
-    public MediaList() {}
-    public MediaList(Long id, List<Media> items, Account account, String type) {
+    public Log() {}
+    public Log(String date, String message, Account acc) {
+        this.date = date;
+        this.message = message;
+        this.account = acc;
+    }
+    public Log(Long id, String date, String message, Account acc) {
         this.id = id;
-        this.items = items;
-        this.account = account;
-        this.type = type;
+        this.date = date;
+        this.message = message;
+        this.account = acc;
     }
 
     public Long getId() {
@@ -55,12 +58,20 @@ public class MediaList implements Serializable {
         this.id = id;
     }
 
-    public List<Media> getItems() {
-        return items;
+    public String getDate() {
+        return date;
     }
 
-    public void setItems(List<Media> items) {
-        this.items = items;
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Account getAccount() {
@@ -71,18 +82,10 @@ public class MediaList implements Serializable {
         this.account = account;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 83 * hash + Objects.hashCode(this.id);
+        hash = 59 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -97,7 +100,10 @@ public class MediaList implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final MediaList other = (MediaList) obj;
+        final Log other = (Log) obj;
         return Objects.equals(this.id, other.id);
     }
+    
+    
+    
 }

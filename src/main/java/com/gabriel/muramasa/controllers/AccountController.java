@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,7 +35,7 @@ public class AccountController {
         Account acc = service.findById(id);
         return ResponseEntity.ok().body(
             new UserDTO(acc.getUsername(), acc.getResume(), acc.getImgUrl(), acc.getBannerImgUrl(), 
-                acc.getAnimeList(), acc.getMangaList(), acc.getFollowers(), acc.getFollowing()));
+                acc.getAnimeList(), acc.getMangaList(), acc.getFollowers(), acc.getFollowing(), acc.getRecentUpdates()));
     }
     @PostMapping
     public ResponseEntity<Account> postAccount(@RequestBody AccountRegistrationDTO credentials) {

@@ -6,6 +6,7 @@ package com.gabriel.muramasa.controllers;
 
 import com.gabriel.muramasa.services.FollowService;
 import com.gabriel.muramasa.models.Follower;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class FollowerController {
     @Autowired
     private FollowService service;
+    
+    @GetMapping(value = "/following/{userId}")
+    public ResponseEntity<List<Follower>> getFollowing(@PathVariable Long userId) {
+        return ResponseEntity.ok().body(service.getFollowing(userId));
+    }
+    
+    @GetMapping(value = "/followers/{userId}")
+    public ResponseEntity<List<Follower>> getFollowers(@PathVariable Long userId) {
+        return ResponseEntity.ok().body(service.getFollowers(userId));
+    }
     
     @PostMapping(value = "/follow/{fromId}/{toId}")
     public ResponseEntity<String> follow(@PathVariable Long fromId, @PathVariable Long toId) {

@@ -5,6 +5,7 @@
 package com.gabriel.muramasa.dto;
 
 import com.gabriel.muramasa.models.Follower;
+import com.gabriel.muramasa.models.Log;
 import com.gabriel.muramasa.models.MediaList;
 import java.util.List;
 
@@ -17,21 +18,26 @@ public class UserDTO {
     private String resume;
     private String imgUrl;
     private String bannerImgUrl;
-    private MediaList animeList;
-    private MediaList mangaList;
-    private List<Follower> followers;
-    private List<Follower> following;
+    private Integer animeListCount;
+    private Integer mangaListCount;
+    private Integer followersCount;
+    private Integer followingCount;
+    private List<Log> recentUpdates;
     
     public UserDTO() {}
-    public UserDTO(String username, String resume, String imgUrl, String bannerImgUrl, MediaList animeList, MediaList mangaList, List<Follower> followers, List<Follower> following) {
+    public UserDTO(
+            String username, String resume, String imgUrl, String bannerImgUrl, 
+            MediaList animeList, MediaList mangaList, List<Follower> followers, 
+            List<Follower> following, List<Log> recentUpdates) {
         this.username = username;
         this.resume = resume;
         this.imgUrl = imgUrl;
         this.bannerImgUrl = bannerImgUrl;
-        this.animeList = animeList;
-        this.mangaList = mangaList;
-        this.followers = followers;
-        this.following = following;
+        this.animeListCount = animeList.getItems().size();
+        this.mangaListCount = mangaList.getItems().size();
+        this.followersCount = followers.size();
+        this.followingCount = following.size();
+        this.recentUpdates = recentUpdates;
     }
 
     public String getUsername() {
@@ -66,38 +72,45 @@ public class UserDTO {
         this.bannerImgUrl = bannerImgUrl;
     }
 
-    public MediaList getAnimeList() {
-        return animeList;
+    public Integer getAnimeListCount() {
+        return animeListCount;
     }
 
-    public void setAnimeList(MediaList animeList) {
-        this.animeList = animeList;
+    public void setAnimeListCount(Integer animeListCount) {
+        this.animeListCount = animeListCount;
     }
 
-    public MediaList getMangaList() {
-        return mangaList;
+    public Integer getMangaListCount() {
+        return mangaListCount;
     }
 
-    public void setMangaList(MediaList mangaList) {
-        this.mangaList = mangaList;
+    public void setMangaListCount(Integer mangaListCount) {
+        this.mangaListCount = mangaListCount;
     }
 
-    public List<Follower> getFollowers() {
-        return followers;
+    public Integer getFollowersCount() {
+        return followersCount;
     }
 
-    public void setFollowers(List<Follower> followers) {
-        this.followers = followers;
+    public void setFollowersCount(Integer followersCount) {
+        this.followersCount = followersCount;
     }
 
-    public List<Follower> getFollowing() {
-        return following;
+    public Integer getFollowingCount() {
+        return followingCount;
     }
 
-    public void setFollowing(List<Follower> following) {
-        this.following = following;
+    public void setFollowingCount(Integer followingCount) {
+        this.followingCount = followingCount;
     }
     
+    public List<Log> getRecentUpdates() {
+        return recentUpdates;
+    }
+
+    public void setRecentUpdates(List<Log> recentUpdates) {
+        this.recentUpdates = recentUpdates;
+    }
     
     
 }

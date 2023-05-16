@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 import com.gabriel.muramasa.models.MediaList;
 import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.models.Media;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.gabriel.muramasa.repositories.MediaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -26,11 +27,15 @@ public class MediaListService {
     @Autowired
     private MediaListRepository repo;
     @Autowired
+    private MediaRepository mediaRepo;
+    @Autowired
     private AccountRepository accRepo;
+    
     public MediaListService() {}
     
-    public MediaList getListByType(Long accId, String type) {
-        Account acc = accRepo.findById(accId).orElseThrow(() -> new NotFoundException("Account not found."));
+    public MediaList getListByType(Long userId, String type) {
+        Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("Account not found."));
+        
         if(type.toLowerCase().equals("anime")) {
             return acc.getAnimeList();
         }
@@ -40,8 +45,13 @@ public class MediaListService {
         return acc.getAnimeList();
     }
     
-    public List<Media> getMediasByStatus(Long listId, Integer status) {
+    public Page<Media> getMediasByStatus(Long listId, Integer status, Integer offset) {
         MediaList list = repo.findById(listId).orElseThrow(() -> new NotFoundException("List not found."));
-        return list.getItems().stream().filter(m -> m.getStatus().equals(status)).collect(Collectors.toList());
+        return mediaRepo.findByListAndStatus(list, status, PageRequest.of(offset, 16));
+    }
+    
+    public Page<Media> getMediasByStatus(Long listId, Integer status, Integer offset, Integer size) {
+        MediaList list = repo.findById(listId).orElseThrow(() -> new NotFoundException("List not found."));
+        return mediaRepo.findByListAndStatus(list, status, PageRequest.of(offset, size));
     }
 }

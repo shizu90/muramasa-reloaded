@@ -4,9 +4,7 @@
  */
 package com.gabriel.muramasa.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -52,13 +50,15 @@ public class Account implements Serializable {
     private List<Follower> followers;
     @OneToMany(targetEntity = Follower.class, mappedBy = "from")
     private List<Follower> following;
+    @OneToMany(targetEntity = Log.class, mappedBy = "account")
+    private List<Log> recentUpdates;
     
     public Account() {}
     public Account(
             Long id, String username, String email, 
             String password, String imgUrl, String bannerImgUrl, 
             String resume, MediaList animeList, MediaList mangaList,
-            List<Follower> followers, List<Follower> following) 
+            List<Follower> followers, List<Follower> following, List<Log> recentUpdates) 
     
     {
         this.id = id;
@@ -72,6 +72,7 @@ public class Account implements Serializable {
         this.mangaList = mangaList;
         this.followers = followers;
         this.following = following;
+        this.recentUpdates = recentUpdates;
     }
 
     public Long getId() {
@@ -161,7 +162,15 @@ public class Account implements Serializable {
     public void setFollowing(List<Follower> following) {
         this.following = following;
     }
-
+    
+    public List<Log> getRecentUpdates() {
+        return recentUpdates;
+    }
+    
+    public void setRecentUpdates(List<Log> recentUpdates) {
+        this.recentUpdates = recentUpdates;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;
