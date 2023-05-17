@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Stack;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 /**
  *
  * @author gabriell9090
@@ -47,10 +48,8 @@ public class AccountService {
     }
     
     public Account findByUsername(String username) {
-        List<Account> response = repo.findByUsername(username);
-        if(response != null) {
-            return response.get(0);
-        }else throw new NotFoundException("Account not found.");
+        Account acc = repo.findByUsername(username).orElseThrow(() -> new NotFoundException("User not found."));
+        return acc;
     }
     
     public Account insert(AccountRegistrationDTO credentials) {
@@ -60,9 +59,12 @@ public class AccountService {
         if(!credentials.isPasswordsMatches()) {throw new InvalidFormatException("Password don't match.");}
         if(!repo.findByEmail(credentials.getEmail()).isEmpty()) {throw new AlreadyExistsException("E-mail already exists.");}
         if(!repo.findByUsername(credentials.getUsername()).isEmpty()) {throw new AlreadyExistsException("Username already taken.");}
+        
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        
         try {
             Account acc = new Account(
-                    null, credentials.getUsername(), credentials.getEmail(), credentials.getPassword(), 
+                    null, credentials.getUsername(), credentials.getEmail(), encoder.encode(credentials.getPassword()), 
                     "", "", "", null, null, new ArrayList<Follower>(), new ArrayList<Follower>(), 
                     new Stack<Log>()
             );
