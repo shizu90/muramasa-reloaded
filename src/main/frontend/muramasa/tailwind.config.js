@@ -5,6 +5,9 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'wallpaper': "linear-gradient(180deg, rgba(9,9,121,0.2) 10%, #0B1622), url('/template.png')"
+      },
       keyframes: {
         fadeIn: {
           '0%': {opacity: 0},

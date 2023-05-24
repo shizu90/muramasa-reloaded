@@ -35,10 +35,11 @@ function Home() {
     }, [items, text]);
 
     return (
+        <>
         <main className="w-8/12 max-sm:w-full max-md:w-10/12 items-center justify-center flex flex-col gap-8 text-slate-50" onClick={() => setSearchResult([])}>
              
             <section className="w-full h-[32rem] flex flex-col justify-center items-center gap-8 px-12">
-                <h1 className="text-3xl font-bold">Search for <span className="text-rose-500">an anime...</span></h1>
+                <h1 className="text-3xl font-bold z-10">Search for an anime...</h1>
                 <div className="w-full flex bg-[#151F2E] items-center rounded shadow-lg drop-shadow-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-8 mx-2 text-slate-300">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -118,6 +119,7 @@ function Home() {
                 </section>
             </div>
         </main>
+        </>
     )
 }
 
