@@ -17,12 +17,12 @@ function Navbar() {
     return (
         <header className={"w-full h-20 fixed top-0 flex justify-around items-center px-12 transition bg-[#152232] z-50"} id="header">
             <h1 className="text-white text-2xl font-bold tracking-wider items-center">MURAMASA</h1>
-            <nav className={"z-10 flex gap-4 max-sm:flex-col text-slate-300 font-bold items-center max-sm:absolute relative max-sm:w-full max-sm:bg-slate-900 py-4 max-sm:top-20 max-sm:px-2 transition-all" + (navVisible ? " transition-y-0" : " max-sm:translate-y-[-20rem]")}>
-                <a href="#" className="hover:text-white transition-colors">Home</a>
+            <nav className={"z-10 flex gap-4 max-sm:flex-col text-slate-300 font-bold items-center max-sm:absolute relative max-sm:w-full max-sm:bg-[#152232] py-4 max-sm:top-20 max-sm:px-2 transition-all" + (navVisible ? " transition-y-0" : " max-sm:translate-y-[-20rem]")}>
+                <a href="/" className="hover:text-white transition-colors">Home</a>
                 <a href="#" className="hover:text-white transition-colors">Social</a>
                 <a href="#" className="hover:text-white transition-colors">Search</a>
                 <div className="mx-6 flex gap-4 max-sm:flex-col max-sm:mx-0 items-center">
-                    <a href="#" className="hover:text-white transition-colors">Login</a>
+                    <a href="/login" className="hover:text-white transition-colors">Login</a>
                     <a href="#" className="hover:text-white transition-colors bg-rose-500 px-4 py-1 rounded">Sign Up</a>
                 </div>
             </nav>

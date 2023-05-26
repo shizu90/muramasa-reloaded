@@ -36,6 +36,7 @@ function Home() {
 
     return (
         <>
+        <div className="absolute w-full h-[32rem] top-20 bg-wallpaper z-0"></div>
         <main className="w-8/12 max-sm:w-full max-md:w-10/12 items-center justify-center flex flex-col gap-8 text-slate-50" onClick={() => setSearchResult([])}>
              
             <section className="w-full h-[32rem] flex flex-col justify-center items-center gap-8 px-12">
@@ -68,7 +69,7 @@ function Home() {
                                 <div className="h-[16rem] w-[11rem] max-sm:h-[9rem] max-sm:w-[6rem] relative" tabIndex={0}>
                                     <img className="h-full w-full rounded cursor-pointer" src={anime.images.jpg.image_url} draggable={false}/>
                                     <div className="h-full w-full text-slate-50 bg-slate-900 rounded absolute left-0 top-0 bg-opacity-50 flex flex-col justify-center items-center text-center opacity-0 hover:opacity-100 cursor-pointer transition-opacity">
-                                        <span className="font-bold text-ellipsis whitespace-nowrap overflow-hidden w-10/12">{anime.title}</span>
+                                        <span className="font-bold text-ellipsis whitespace-nowrap overflow-hidden w-10/12 max-sm:text-sm">{anime.title}</span>
                                         <span className="text-sm">{anime.status}</span>
                                     </div>
                                 </div>
@@ -88,7 +89,7 @@ function Home() {
                                 <div className="h-[16rem] w-[11rem] max-sm:h-[9rem] max-sm:w-[6rem] relative" tabIndex={0}>
                                     <img className="h-full w-full rounded cursor-pointer" src={anime.images.jpg.image_url} draggable={false}/>
                                     <div className="h-full w-full text-slate-50 bg-slate-900 rounded absolute left-0 top-0 bg-opacity-50 flex flex-col justify-center items-center text-center opacity-0 hover:opacity-100 cursor-pointer transition-opacity">
-                                        <span className="font-bold text-ellipsis whitespace-nowrap overflow-hidden w-10/12">{anime.title}</span>
+                                        <span className="font-bold text-ellipsis whitespace-nowrap overflow-hidden w-10/12 max-sm:text-sm">{anime.title}</span>
                                         <span className="text-sm">{anime.status}</span>
                                     </div>
                                 </div>
@@ -109,8 +110,8 @@ function Home() {
                                 <div className="h-[16rem] w-[11rem] max-sm:h-[9rem] max-sm:w-[6rem] relative" tabIndex={0}>
                                     <img className="h-full w-full rounded cursor-pointer" src={anime.images.jpg.image_url} draggable={false}/>
                                     <div className="h-full w-full text-slate-50 bg-slate-900 rounded absolute left-0 top-0 bg-opacity-50 flex flex-col justify-center items-center text-center opacity-0 hover:opacity-100 cursor-pointer transition-opacity">
-                                        <span className="font-bold text-ellipsis whitespace-nowrap overflow-hidden w-10/12">{anime.title}</span>
-                                        <span className={anime.rank === 1 ? "text-yellow-400 font-bold text-lg" : anime.rank === 2 ? "text-slate-400 font-bold text-lg" : "text-orange-400 font-bold text-lg"}>{anime.rank}º</span>
+                                        <span className="font-bold text-ellipsis whitespace-nowrap overflow-hidden w-10/12 max-sm:text-sm">{anime.title}</span>
+                                        <span >{anime.rank}º</span>
                                     </div>
                                 </div>
                             )) : Array(6).fill(0).map(() => (<div className="h-[16rem] w-[11rem] max-sm:h-[9rem] max-sm:w-[6rem] animate-pulse bg-slate-800 rounded"></div>))
