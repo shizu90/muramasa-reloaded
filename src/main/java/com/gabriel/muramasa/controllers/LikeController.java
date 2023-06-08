@@ -4,15 +4,14 @@
  */
 package com.gabriel.muramasa.controllers;
 
-import com.gabriel.muramasa.services.ReplyService;
-import com.gabriel.muramasa.models.Reply;
+import com.gabriel.muramasa.services.LikeService;
+import com.gabriel.muramasa.models.Like;
 import com.gabriel.muramasa.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,25 +22,25 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping(value = "/replies")
-public class ReplyController {
+@RequestMapping(value = "/likes")
+public class LikeController {
     @Autowired
-    private ReplyService service;
+    private LikeService service;
     @Autowired
     private TokenService tokenService;
     
-    @PostMapping(value = "/{userId}/{postId}")
-    public ResponseEntity<Reply> replyPost(@PathVariable Long userId, @PathVariable Long postId, @RequestBody Reply reply, @RequestHeader(value = "Authorization") String bearer) {
+    @PostMapping(value = "/like/{userId}/{postId}")
+    public ResponseEntity<Like> likePost(@PathVariable Long userId, @PathVariable Long postId, @RequestHeader(value = "Authorization") String bearer) {
         String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
         service.setCurrentUser(username);
-        return ResponseEntity.ok().body(service.replyPost(postId, userId, reply));
+        return ResponseEntity.ok().body(service.likePost(userId, postId));
     }
     
-    @DeleteMapping(value = "/{userId}/{postId}")
-    public ResponseEntity<String> unreply(@PathVariable Long userId, @PathVariable Long postId, @RequestHeader(value = "Authorization") String bearer) {
+    @DeleteMapping(value = "/unline/{userId}/{postId}")
+    public ResponseEntity<String> unlikePost(@PathVariable Long userId, @PathVariable Long postId, @RequestHeader(value = "Authorization") String bearer) {
         String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
         service.setCurrentUser(username);
-        service.delete(userId, postId);
-        return ResponseEntity.ok().body("Deleted reply.");
+        service.unlikePost(userId, postId);
+        return ResponseEntity.ok().body("Disliked the post.");
     }
 }

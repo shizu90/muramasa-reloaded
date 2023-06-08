@@ -6,6 +6,7 @@ package com.gabriel.muramasa.controllers;
 
 import com.gabriel.muramasa.services.PostService;
 import com.gabriel.muramasa.models.Post;
+import com.gabriel.muramasa.services.TokenService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     @Autowired
     private PostService service;
+    @Autowired
+    private TokenService tokenService;
     
     @GetMapping(value = "/following/{userId}")
     public ResponseEntity<List<Post>> getFollowingPosts(@PathVariable Long userId) {
@@ -39,17 +43,23 @@ public class PostController {
     }
     
     @PostMapping(value = "/{userId}")
-    public ResponseEntity<Post> createPost(@PathVariable Long userId, @RequestBody Post post) {
+    public ResponseEntity<Post> createPost(@PathVariable Long userId, @RequestBody Post post, @RequestHeader(value = "Authorization") String bearer) {
+        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
+        service.setCurrentUser(username);
         return ResponseEntity.ok().body(service.insert(userId, post));
     }
     
     @PutMapping
-    public ResponseEntity<Post> updatePost(@RequestBody Post post) {
+    public ResponseEntity<Post> updatePost(@RequestBody Post post, @RequestHeader(value = "Authorization") String bearer) {
+        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
+        service.setCurrentUser(username);
         return ResponseEntity.ok().body(service.update(post));
     }
     
     @DeleteMapping(value = "/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable Long postId) {
+    public ResponseEntity<String> deletePost(@PathVariable Long postId, @RequestHeader(value = "Authorization") String bearer) {
+        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
+        service.setCurrentUser(username);
         service.delete(postId);
         return ResponseEntity.ok().body("Successfully deleted post.");
     }

@@ -4,6 +4,7 @@
  */
 package com.gabriel.muramasa.services;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.gabriel.muramasa.dto.AccountConfigurationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import com.gabriel.muramasa.handlers.exceptions.AlreadyExistsException;
 import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.InvalidFormatException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
+import com.gabriel.muramasa.handlers.exceptions.UnauthorizedException;
 import com.gabriel.muramasa.models.Follower;
 import com.gabriel.muramasa.models.Like;
 import com.gabriel.muramasa.models.Log;
@@ -39,7 +41,14 @@ public class AccountService {
     private AccountRepository repo;
     @Autowired
     private MediaListRepository mediaListRepo;
+    
+    private String currentUser;
+    
     public AccountService() {}
+    
+    public void setCurrentUser(String currentUser) {
+        this.currentUser = currentUser;
+    }
     
     public Page<Account> search(String username, Integer offset) {
         return repo.findByUsername(username, PageRequest.of(offset, 8));
@@ -56,16 +65,17 @@ public class AccountService {
     }
     
     public Account insert(AccountRegistrationDTO credentials) {
-        if(!credentials.isEmailValid()) {throw new InvalidFormatException("Invalid e-mail.");}
-        if(!credentials.isUsernameValid()) {throw new InvalidFormatException("Invalid username.");}
-        if(!credentials.isPasswordValid()) {throw new InvalidFormatException("Invalid password.");}
-        if(!credentials.isPasswordsMatches()) {throw new InvalidFormatException("Password don't match.");}
-        if(!repo.findByEmail(credentials.getEmail()).isEmpty()) {throw new AlreadyExistsException("E-mail already exists.");}
-        if(!repo.findByUsername(credentials.getUsername()).isEmpty()) {throw new AlreadyExistsException("Username already taken.");}
+        try {    
+            if(!credentials.isEmailValid()) {throw new InvalidFormatException("Invalid e-mail.");}
+            if(!credentials.isUsernameValid()) {throw new InvalidFormatException("Invalid username.");}
+            if(!credentials.isPasswordValid()) {throw new InvalidFormatException("Invalid password.");}
+            if(!credentials.isPasswordsMatches()) {throw new InvalidFormatException("Password don't match.");}
+            if(!repo.findByEmail(credentials.getEmail()).isEmpty()) {throw new AlreadyExistsException("E-mail already exists.");}
+            if(!repo.findByUsername(credentials.getUsername()).isEmpty()) {throw new AlreadyExistsException("Username already taken.");}
+
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         
-        try {
             Account acc = new Account(
                     null, credentials.getUsername(), credentials.getEmail(), encoder.encode(credentials.getPassword()), 
                     "", "", "", null, null, new ArrayList<Follower>(), new ArrayList<Follower>(), 
@@ -85,22 +95,27 @@ public class AccountService {
     
     public void update(AccountConfigurationDTO config, Long id) {
         Account acc = this.findById(id);
-        if(config.isPasswordValid()) {
-            acc.setPassword(config.getPassword());
-        }
-        if(config.isEmailValid() && repo.findByEmail(config.getEmail()).isEmpty()) {
-            acc.setEmail(config.getEmail());
-        }
-        if(config.isUsernameValid() && repo.findByUsername(config.getUsername()).isEmpty()) {
-            acc.setUsername(config.getUsername());
-        }
-        acc.setImgUrl(config.getImgUrl());
-        acc.setBannerImgUrl(config.getBannerImgUrl());
-        acc.setResume(config.getResume());
-        repo.save(acc);
+        if(acc.getUsername().equals(this.currentUser)) {
+            if(config.isPasswordValid()) {
+                acc.setPassword(config.getPassword());
+            }
+            if(config.isEmailValid() && repo.findByEmail(config.getEmail()).isEmpty()) {
+                acc.setEmail(config.getEmail());
+            }
+            if(config.isUsernameValid() && repo.findByUsername(config.getUsername()).isEmpty()) {
+                acc.setUsername(config.getUsername());
+            }
+            acc.setImgUrl(config.getImgUrl());
+            acc.setBannerImgUrl(config.getBannerImgUrl());
+            acc.setResume(config.getResume());
+            repo.save(acc);
+        }else throw new UnauthorizedException("Unauthorized exception.");
     }
     
     public void delete(Long id) {
-        repo.deleteById(id);
+        Account acc = this.findById(id);
+        if(acc.getUsername().equals(this.currentUser)) {
+            repo.deleteById(id);
+        }else throw new UnauthorizedException("Unauthorized operation.");
     }
 }

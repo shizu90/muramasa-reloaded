@@ -6,6 +6,7 @@ package com.gabriel.muramasa.services;
 
 import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
+import com.gabriel.muramasa.handlers.exceptions.UnauthorizedException;
 import com.gabriel.muramasa.repositories.LikeRepository;
 import com.gabriel.muramasa.models.Like;
 import com.gabriel.muramasa.models.Account;
@@ -37,28 +38,44 @@ public class LikeService {
     
     private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     
+    private String currentUser;
+    
     public LikeService() {}
+    
+    public void setCurrentUser(String currentUser) {
+        this.currentUser = currentUser;
+    }
     
     public Like likePost(Long userId, Long postId) {
         Account acc = accService.findById(userId);
-        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post not found."));
-        Like like = new Like(null, acc, post);
-        try {
-            Like savedLike = repo.save(like);
-            Log log = new Log(formatter.format(new Date()), "" + acc.getUsername() + "liked " + post.getCreator().getUsername() + "'s post.", acc);
-            logService.addRecentUpdate(log, acc.getRecentUpdates());
-            return savedLike;
-        } catch(ConstraintViolationException e) {
-            throw new DatabaseException(e.getMessage());
-        } catch(ParseException e) {
-            throw new DatabaseException(e.getMessage());
-        }
+        if(acc.getUsername().equals(this.currentUser)) {
+            Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post not found."));
+            boolean alreadyExistsLike = repo.findByLikedByAndPost(acc, post).isEmpty();
+            if(alreadyExistsLike) {
+                Like like = new Like(null, acc, post);
+                try {
+                    Like savedLike = repo.save(like);
+                    Log log = new Log(formatter.format(new Date()), "" + acc.getUsername() + "liked " + post.getCreator().getUsername() + "'s post.", acc);
+                    logService.addRecentUpdate(log, acc.getRecentUpdates());
+                    return savedLike;
+                } catch(ConstraintViolationException e) {
+                    throw new DatabaseException(e.getMessage());
+                } catch(ParseException e) {
+                    throw new DatabaseException(e.getMessage());
+                }
+            }else {
+                this.unlikePost(userId, postId);
+                return null;
+            }
+        }else throw new UnauthorizedException("Unauthorized operation.");
     }
     
     public void unlikePost(Long userId, Long postId) {
         Account acc = accService.findById(userId);
-        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post not found."));
-        Like like = repo.findByLikedByAndPost(acc, post).orElseThrow(() -> new NotFoundException("Like not found."));
-        repo.delete(like);
+        if(acc.getUsername().equals(this.currentUser)) {
+            Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post not found."));
+            Like like = repo.findByLikedByAndPost(acc, post).orElseThrow(() -> new NotFoundException("Like not found."));
+            repo.delete(like);
+        }else throw new UnauthorizedException("Unauthorized operation.");
     }
 }

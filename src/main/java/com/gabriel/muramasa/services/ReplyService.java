@@ -7,6 +7,7 @@ package com.gabriel.muramasa.services;
 import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.InvalidFormatException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
+import com.gabriel.muramasa.handlers.exceptions.UnauthorizedException;
 import com.gabriel.muramasa.repositories.ReplyRepository;
 import com.gabriel.muramasa.models.Reply;
 import com.gabriel.muramasa.models.Post;
@@ -38,7 +39,13 @@ public class ReplyService {
     
     private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     
+    private String currentUser;
+    
     public ReplyService() {}
+    
+    public void setCurrentUser(String currentUser) {
+        this.currentUser = currentUser;
+    }
     
     public Reply replyPost(Long postId, Long userId, Reply reply) {
         String[] words = reply.getText().split(" ");
@@ -49,24 +56,28 @@ public class ReplyService {
         
         Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post not found."));
         Account acc = accService.findById(userId);
-        reply.setCreator(acc);
-        reply.setPost(post);
-        try {
-            Reply savedReply = repo.save(reply);
-            Log log = new Log(formatter.format(new Date()), "" + acc.getUsername() + " replied to " + post.getCreator().getUsername() + "'s post.", acc);
-            logService.addRecentUpdate(log, acc.getRecentUpdates());
-            return savedReply;
-        } catch(ConstraintViolationException e) {
-            throw new DatabaseException(e.getMessage());
-        } catch(ParseException e) {
-            throw new DatabaseException(e.getMessage());
-        }
+        if(acc.getUsername().equals(this.currentUser)) {
+            reply.setCreator(acc);
+            reply.setPost(post);
+            try {
+                Reply savedReply = repo.save(reply);
+                Log log = new Log(formatter.format(new Date()), "" + acc.getUsername() + " replied to " + post.getCreator().getUsername() + "'s post.", acc);
+                logService.addRecentUpdate(log, acc.getRecentUpdates());
+                return savedReply;
+            } catch(ConstraintViolationException e) {
+                throw new DatabaseException(e.getMessage());
+            } catch(ParseException e) {
+                throw new DatabaseException(e.getMessage());
+            }
+        }else throw new UnauthorizedException("Unauthorized operation.");
     }
     
     public void delete(Long userId, Long postId) {
         Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post not found."));
         Account acc = accService.findById(userId);
-        Reply reply = repo.findByCreatorAndPost(acc, post).orElseThrow(() -> new NotFoundException("Reply not found."));
-        repo.delete(reply);
+        if(acc.getUsername().equals(this.currentUser)) {
+            Reply reply = repo.findByCreatorAndPost(acc, post).orElseThrow(() -> new NotFoundException("Reply not found."));
+            repo.delete(reply);
+        }else throw new UnauthorizedException("Unauthorized operation.");
     }
 }

@@ -6,6 +6,7 @@ package com.gabriel.muramasa.controllers;
 
 import com.gabriel.muramasa.services.FollowService;
 import com.gabriel.muramasa.models.Follower;
+import com.gabriel.muramasa.services.TokenService;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -27,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class FollowerController {
     @Autowired
     private FollowService service;
+    @Autowired
+    private TokenService tokenService;
     
     @GetMapping(value = "/following/{userId}")
     public ResponseEntity<List<Follower>> getFollowing(@PathVariable Long userId) {
@@ -39,16 +43,18 @@ public class FollowerController {
     }
     
     @PostMapping(value = "/follow/{fromId}/{toId}")
-    public ResponseEntity<String> follow(@PathVariable Long fromId, @PathVariable Long toId) {
+    public ResponseEntity<String> follow(@PathVariable Long fromId, @PathVariable Long toId, @RequestHeader(value = "Authorization") String bearer) {
+        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
+        service.setCurrentUser(username);
         Follower follower = service.follow(fromId, toId);
-        
         return ResponseEntity.ok().body("You followed " + follower.getTo().getUsername() + ".");
     }
     
     @DeleteMapping(value = "/unfollow/{fromId}/{toId}")
-    public ResponseEntity<String> unfollow(@PathVariable Long fromId, @PathVariable Long toId) {
+    public ResponseEntity<String> unfollow(@PathVariable Long fromId, @PathVariable Long toId, @RequestHeader(value = "Authorization") String bearer) {
+        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
+        service.setCurrentUser(username);
         Follower follower = service.unfollow(fromId, toId);
-        
         return ResponseEntity.ok().body("Your unfollowed " + follower.getTo().getUsername());
     }
 }
