@@ -9,7 +9,9 @@ import com.gabriel.muramasa.dto.AccountRegistrationDTO;
 import com.gabriel.muramasa.dto.UserDTO;
 import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.services.AccountService;
+import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,12 +32,29 @@ public class AccountController {
     @Autowired
     private AccountService service;
     
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> getAccount(@PathVariable Long id) {
+    @GetMapping(value = "/info/{id}")
+    public ResponseEntity<Account> getAccountInfo(@PathVariable Long id) {
         Account acc = service.findById(id);
+        return ResponseEntity.ok().body(acc);
+    }
+    
+    @GetMapping(value = "/user/{username}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable String username) {
+        Account acc = service.findByUsername(username);
         return ResponseEntity.ok().body(
-            new UserDTO(acc.getUsername(), acc.getResume(), acc.getImgUrl(), acc.getBannerImgUrl(), 
-                acc.getAnimeList(), acc.getMangaList(), acc.getFollowers(), acc.getFollowing(), acc.getRecentUpdates()));
+                new UserDTO(acc));
+    }
+    
+    @GetMapping(value = "/{username}/{offset}")
+    public ResponseEntity<Page<UserDTO>> getUsers(@PathVariable String username, @PathVariable Integer offset) {
+        Page<Account> accountPage = service.search(username, offset);
+        Page<UserDTO> userPage = accountPage.map(new Function<Account, UserDTO>() {
+            @Override
+            public UserDTO apply(Account acc) {
+                return new UserDTO(acc);
+            }
+        });
+        return ResponseEntity.ok().body(userPage);
     }
     @PostMapping
     public ResponseEntity<Account> postAccount(@RequestBody AccountRegistrationDTO credentials) {

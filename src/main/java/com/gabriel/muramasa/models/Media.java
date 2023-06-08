@@ -29,6 +29,7 @@ public class Media implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long code;
     private String name;
     private String imgUrl;
     private String type;
@@ -44,8 +45,9 @@ public class Media implements Serializable {
     private MediaList list;
     
     public Media() {}
-    public Media(Long id, MediaList list, String name, Integer count, Integer cLength, Integer status, String imgUrl, String type, Integer favorited) {
+    public Media(Long id, Long code, MediaList list, String name, Integer count, Integer cLength, Integer status, String imgUrl, String type, Integer favorited) {
         this.id = id;
+        this.code = code;
         this.list = list;
         this.name = name;
         this.count = count;
@@ -62,6 +64,14 @@ public class Media implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public Long getCode() {
+        return code;
+    }
+
+    public void setCode(Long code) {
+        this.code = code;
     }
 
     public MediaList getList() {

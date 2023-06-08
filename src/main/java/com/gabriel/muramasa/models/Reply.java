@@ -4,9 +4,7 @@
  */
 package com.gabriel.muramasa.models;
 
-import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Objects;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,43 +12,44 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  *
- * @author shizu90
+ * @author giraf
  */
 
 @Entity
-@Table(name="muramasa_log")
-public class Log implements Serializable {
+@Table(name = "muramasa_reply")
+public class Reply implements Serializable {
     private static final long serialVersionUID = 1L;
     
+    //Common attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String date;
-    private String message;
-    private String userImg;
+    private String text;
+    private String attachedImgs;
     
     //Relations
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "account")
-    private Account account;
+    @JoinColumn(name = "account_id")
+    private Account creator;
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "post_id")
+    private Post post;
     
-    public Log() {}
-    public Log(String date, String message, Account acc) {
-        this.date = date;
-        this.message = message;
-        this.account = acc;
-        this.userImg = acc.getImgUrl();
-    }
-    public Log(Long id, String date, String message, Account acc) {
+    public Reply() {}
+
+    public Reply(Long id, String text, String attachedImgs, Account creator, Post post) {
         this.id = id;
-        this.date = date;
-        this.message = message;
-        this.userImg = acc.getImgUrl();
-        this.account = acc;
+        this.text = text;
+        this.attachedImgs = attachedImgs;
+        this.creator = creator;
+        this.post = post;
     }
 
     public Long getId() {
@@ -61,42 +60,42 @@ public class Log implements Serializable {
         this.id = id;
     }
 
-    public String getDate() {
-        return date;
+    public String getText() {
+        return text;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public String getMessage() {
-        return message;
+    public String getAttachedImgs() {
+        return attachedImgs;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setAttachedImgs(String attachedImgs) {
+        this.attachedImgs = attachedImgs;
     }
 
-    public String getUserImg() {
-        return userImg;
+    public Account getCreator() {
+        return creator;
     }
 
-    public void setUserImg(String userImg) {
-        this.userImg = userImg;
+    public void setCreator(Account creator) {
+        this.creator = creator;
     }
 
-    public Account getAccount() {
-        return account;
+    public Post getPost() {
+        return post;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 59 * hash + Objects.hashCode(this.id);
+        hash = 37 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -111,10 +110,7 @@ public class Log implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Log other = (Log) obj;
+        final Reply other = (Reply) obj;
         return Objects.equals(this.id, other.id);
     }
-    
-    
-    
 }

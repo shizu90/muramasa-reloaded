@@ -5,7 +5,6 @@
 package com.gabriel.muramasa.services;
 
 import com.gabriel.muramasa.dto.AccountConfigurationDTO;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.gabriel.muramasa.repositories.AccountRepository;
@@ -16,14 +15,18 @@ import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.InvalidFormatException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
 import com.gabriel.muramasa.models.Follower;
+import com.gabriel.muramasa.models.Like;
 import com.gabriel.muramasa.models.Log;
 import com.gabriel.muramasa.models.Media;
 import com.gabriel.muramasa.models.MediaList;
+import com.gabriel.muramasa.models.Post;
+import com.gabriel.muramasa.models.Reply;
 import com.gabriel.muramasa.repositories.MediaListRepository;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Stack;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 /**
  *
@@ -38,8 +41,8 @@ public class AccountService {
     private MediaListRepository mediaListRepo;
     public AccountService() {}
     
-    public List<Account> findAll() {
-        return repo.findAll();
+    public Page<Account> search(String username, Integer offset) {
+        return repo.findByUsername(username, PageRequest.of(offset, 8));
     }
     
     public Account findById(Long id) {
@@ -66,7 +69,7 @@ public class AccountService {
             Account acc = new Account(
                     null, credentials.getUsername(), credentials.getEmail(), encoder.encode(credentials.getPassword()), 
                     "", "", "", null, null, new ArrayList<Follower>(), new ArrayList<Follower>(), 
-                    new Stack<Log>()
+                    new ArrayList<Log>(), new ArrayList<Post>(), new ArrayList<Reply>(), new ArrayList<Like>()
             );
             acc = repo.save(acc);
             MediaList animeList = new MediaList(null, new ArrayList<Media>(), acc, "anime");

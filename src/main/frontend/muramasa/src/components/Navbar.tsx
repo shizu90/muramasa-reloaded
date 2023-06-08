@@ -15,9 +15,9 @@ function Navbar() {
     });
 
     return (
-        <header className={"w-full h-20 fixed top-0 flex justify-around items-center px-12 transition bg-[#152232] z-50"} id="header">
+        <header className={"w-full h-20 fixed top-0 flex justify-around items-center px-12 transition bg-darkocean z-50"} id="header">
             <a className="text-white text-2xl font-bold tracking-wider items-center cursor-pointer" href="/">MURAMASA</a>
-            <nav className={"z-10 flex gap-4 max-sm:flex-col text-slate-300 font-bold items-center max-sm:absolute relative max-sm:w-full max-sm:bg-[#152232] py-4 max-sm:top-20 max-sm:px-2 transition-all" + (navVisible ? " transition-y-0" : " max-sm:translate-y-[-20rem]")}>
+            <nav className={"z-10 flex gap-4 max-sm:flex-col text-slate-300 font-medium items-center max-sm:absolute relative max-sm:w-full max-sm:bg-darkocean py-4 max-sm:top-20 max-sm:px-2 transition-all" + (navVisible ? " transition-y-0" : " max-sm:translate-y-[-22rem]")}>
                 <a href="/home" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Home</a>
                 <a href="#" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Social</a>
                 <a href="#" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Search</a>

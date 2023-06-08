@@ -4,6 +4,7 @@
  */
 package com.gabriel.muramasa.configurations;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 /**
  *
  * @author manou
@@ -24,6 +26,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class Configurations {
     
+    @Autowired
+    private FilterToken filter;
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf().disable()
@@ -31,7 +36,7 @@ public class Configurations {
                 .and().authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/login")
                 .permitAll()
-                .requestMatchers(HttpMethod.GET, "/users/**")
+                .requestMatchers(HttpMethod.GET, "/users/user/**")
                 .permitAll()
                 .requestMatchers(HttpMethod.POST, "/users")
                 .permitAll()
@@ -39,7 +44,11 @@ public class Configurations {
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/follower/**")
                 .permitAll()
-                .anyRequest().authenticated().and().build();
+                .requestMatchers(HttpMethod.GET, "/posts/*")
+                .permitAll()
+                .anyRequest().authenticated()
+                .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
     
     @Bean

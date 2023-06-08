@@ -7,6 +7,7 @@ package com.gabriel.muramasa.dto;
 import com.gabriel.muramasa.models.Follower;
 import com.gabriel.muramasa.models.Log;
 import com.gabriel.muramasa.models.MediaList;
+import com.gabriel.muramasa.models.Account;
 import java.util.List;
 
 /**
@@ -14,21 +15,25 @@ import java.util.List;
  * @author gabriell9090
  */
 public class UserDTO {
+    private Long id;
     private String username;
     private String resume;
     private String imgUrl;
     private String bannerImgUrl;
     private Integer animeListCount;
     private Integer mangaListCount;
+    private Long animeListId;
+    private Long mangaListId;
     private Integer followersCount;
     private Integer followingCount;
     private List<Log> recentUpdates;
     
     public UserDTO() {}
     public UserDTO(
-            String username, String resume, String imgUrl, String bannerImgUrl, 
+            Long id, String username, String resume, String imgUrl, String bannerImgUrl, 
             MediaList animeList, MediaList mangaList, List<Follower> followers, 
             List<Follower> following, List<Log> recentUpdates) {
+        this.id = id;
         this.username = username;
         this.resume = resume;
         this.imgUrl = imgUrl;
@@ -38,8 +43,28 @@ public class UserDTO {
         this.followersCount = followers.size();
         this.followingCount = following.size();
         this.recentUpdates = recentUpdates;
+        this.animeListId = animeList.getId();
+        this.mangaListId = mangaList.getId();
+    }
+    public UserDTO(Account acc) {
+        this.id = acc.getId();
+        this.username = acc.getUsername();
+        this.resume = acc.getResume();
+        this.imgUrl = acc.getImgUrl();
+        this.bannerImgUrl = acc.getBannerImgUrl();
+        this.animeListCount = acc.getAnimeList().getItems().size();
+        this.mangaListCount = acc.getMangaList().getItems().size();
+        this.followersCount = acc.getFollowers().size();
+        this.followingCount = acc.getFollowing().size();
+        this.recentUpdates = acc.getRecentUpdates();
+        this.animeListId = acc.getAnimeList().getId();
+        this.mangaListId = acc.getMangaList().getId();
     }
 
+    public Long getId() {
+        return id;
+    }
+    
     public String getUsername() {
         return username;
     }
@@ -112,5 +137,11 @@ public class UserDTO {
         this.recentUpdates = recentUpdates;
     }
     
-    
+    public Long getAnimeListId() {
+        return animeListId;
+    }
+
+    public Long getMangaListId() {
+        return mangaListId;
+    }
 }

@@ -27,9 +27,9 @@ public class MediaController {
     @Autowired
     private MediaService service;
     
-    @GetMapping(value = "/{mediaId}")
-    public ResponseEntity<Media> getMedia(@PathVariable Long mediaId) {
-        return ResponseEntity.ok().body(service.findById(mediaId));
+    @GetMapping(value = "/{code}/{listId}")
+    public ResponseEntity<Media> getMedia(@PathVariable Long code, @PathVariable Long listId) {
+        return ResponseEntity.ok().body(service.findByCodeAndList(code, listId));
     }
     
     @PostMapping(value = "/{userId}")

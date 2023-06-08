@@ -4,6 +4,7 @@
  */
 package com.gabriel.muramasa.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -51,18 +52,31 @@ public class Account implements Serializable, UserDetails {
     @JoinColumn(name = "mangaList_id")
     private MediaList mangaList;
     @OneToMany(targetEntity = Follower.class, mappedBy = "to")
+    @JsonIgnore
     private List<Follower> followers;
     @OneToMany(targetEntity = Follower.class, mappedBy = "from")
+    @JsonIgnore
     private List<Follower> following;
     @OneToMany(targetEntity = Log.class, mappedBy = "account")
+    @JsonIgnore
     private List<Log> recentUpdates;
+    @OneToMany(targetEntity = Post.class, mappedBy = "creator")
+    @JsonIgnore
+    private List<Post> posts;
+    @OneToMany(targetEntity = Reply.class, mappedBy = "creator")
+    @JsonIgnore
+    private List<Reply> replies;
+    @OneToMany(targetEntity = Like.class, mappedBy = "likedBy")
+    @JsonIgnore
+    private List<Like> likes;
     
     public Account() {}
     public Account(
             Long id, String username, String email, 
             String password, String imgUrl, String bannerImgUrl, 
             String resume, MediaList animeList, MediaList mangaList,
-            List<Follower> followers, List<Follower> following, List<Log> recentUpdates) 
+            List<Follower> followers, List<Follower> following, List<Log> recentUpdates, 
+            List<Post> posts, List<Reply> replies, List<Like> likes) 
     
     {
         this.id = id;
@@ -77,6 +91,9 @@ public class Account implements Serializable, UserDetails {
         this.followers = followers;
         this.following = following;
         this.recentUpdates = recentUpdates;
+        this.posts = posts;
+        this.replies = replies;
+        this.likes = likes;
     }
 
     public Long getId() {
@@ -175,6 +192,30 @@ public class Account implements Serializable, UserDetails {
     
     public void setRecentUpdates(List<Log> recentUpdates) {
         this.recentUpdates = recentUpdates;
+    }
+    
+    public List<Post> getPosts() {
+        return posts;
+    }
+    
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    public List<Reply> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<Reply> replies) {
+        this.replies = replies;
+    }
+
+    public List<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
     }
     
     @Override

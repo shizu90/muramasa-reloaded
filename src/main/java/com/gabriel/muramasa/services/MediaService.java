@@ -11,6 +11,7 @@ import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
 import com.gabriel.muramasa.repositories.MediaRepository;
 import com.gabriel.muramasa.models.Media;
+import com.gabriel.muramasa.models.MediaList;
 import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.models.Log;
 import com.gabriel.muramasa.repositories.AccountRepository;
@@ -55,8 +56,9 @@ public class MediaService {
         }
     }
     
-    public Media findById(Long id) {
-        return repo.findById(id).orElseThrow(() -> new NotFoundException("Media not found."));
+    public Media findByCodeAndList(Long code, Long listId) {
+        MediaList media = mediaListRepo.findById(listId).orElseThrow(() -> new NotFoundException("List not found."));
+        return repo.findByCodeAndList(code, media).orElseThrow(() -> new NotFoundException("Media not found."));
     }
     
     public Media insert(Long userId, Media media) {
@@ -78,7 +80,7 @@ public class MediaService {
     }
     
     public Media update(Long mediaId, Media media) {
-        Media md = this.findById(mediaId);
+        Media md = repo.findById(mediaId).orElseThrow(() -> new NotFoundException("Media not found."));
         Account acc = md.getList().getAccount();
         Log log = new Log(formatter.format(new Date()), "", acc);
         String type = md.getType();

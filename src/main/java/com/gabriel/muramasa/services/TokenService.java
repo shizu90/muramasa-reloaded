@@ -30,4 +30,10 @@ public class TokenService {
                         .toInstant(ZoneOffset.of("-03:00")))
                 .sign(Algorithm.HMAC256("SECRETO"));
     }
+    
+    public String getSubject(String token) {
+        return JWT.require(Algorithm.HMAC256("SECRETO"))
+                .withIssuer("Muramasa")
+                .build().verify(token).getSubject();
+    }
 }

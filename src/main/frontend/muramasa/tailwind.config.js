@@ -16,8 +16,15 @@ export default {
       },
       animation: {
         fade: 'fadeIn 0.3s ease-in linear'
+      },
+      colors: {
+        'midnight': '#0B1622',
+        'darkocean': '#152232'
+      },
+      screens: {
+        '2xl': '1536px'
       }
-    },
+    }
   },
   plugins: [],
 }
