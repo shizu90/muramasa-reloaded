@@ -1,6 +1,6 @@
 function SignUp() {
     return (
-        <main className="w-full flex justify-center items-center">
+        <main className="w-full flex justify-center">
             <form className="mt-[6rem] flex flex-col gap-4 bg-darkocean p-8 justify-center items-center text-slate-50">
                 <h1 className="text-xl font-medium">Register</h1>
                 <div className="flex flex-col gap-2">

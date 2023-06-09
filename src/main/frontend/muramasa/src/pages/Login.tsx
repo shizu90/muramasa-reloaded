@@ -1,11 +1,11 @@
 function Login() {
     return (
-        <main className="w-full flex justify-center items-center">
+        <main className="w-full flex justify-center">
             <form className="mt-[6rem] flex flex-col gap-4 bg-darkocean p-8 justify-center items-center text-slate-50">
                 <h1 className="text-xl font-medium">Login</h1>
                 <div className="flex flex-col gap-2">
-                    <label>Email: </label>
-                    <input className="lg:w-96 max-sm:w-72 h-10 bg-midnight rounded outline-none placeholder-slate-500 p-2 caret-slate-500" placeholder="Email"/>
+                    <label>Username: </label>
+                    <input className="lg:w-96 max-sm:w-72 h-10 bg-midnight rounded outline-none placeholder-slate-500 p-2 caret-slate-500" placeholder="Username"/>
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Password: </label>
