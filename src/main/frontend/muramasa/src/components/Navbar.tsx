@@ -19,7 +19,7 @@ function Navbar() {
             <a className="text-white text-2xl font-bold tracking-wider items-center cursor-pointer" href="/">MURAMASA</a>
             <nav className={"z-10 flex gap-4 max-sm:flex-col text-slate-300 font-medium items-center max-sm:absolute relative max-sm:w-full max-sm:bg-darkocean py-4 max-sm:top-20 max-sm:px-2 transition-all" + (navVisible ? " transition-y-0" : " max-sm:translate-y-[-22rem]")}>
                 <a href="/home" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Home</a>
-                <a href="#" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Social</a>
+                <a href="/social" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Social</a>
                 <a href="#" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Search</a>
                 <div className="mx-6 flex gap-4 max-sm:flex-col max-sm:mx-0 items-center">
                     <a href="/login" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Login</a>

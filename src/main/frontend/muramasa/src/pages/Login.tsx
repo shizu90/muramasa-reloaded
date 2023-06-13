@@ -1,3 +1,5 @@
+import Input from "../components/Input"
+
 function Login() {
     return (
         <main className="w-full flex justify-center">
@@ -5,11 +7,11 @@ function Login() {
                 <h1 className="text-xl font-medium">Login</h1>
                 <div className="flex flex-col gap-2">
                     <label>Username: </label>
-                    <input className="lg:w-96 max-sm:w-72 h-10 bg-midnight rounded outline-none placeholder-slate-500 p-2 caret-slate-500" placeholder="Username"/>
+                    <Input name="username" bgColor={"bg-midnight"} placeholder={"Username"}/>
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Password: </label>
-                    <input className="lg:w-96 max-sm:w-72 h-10 bg-midnight rounded outline-none placeholder-slate-500 p-2 caret-slate-500" placeholder="Password"/>
+                    <Input name="password" bgColor={"bg-midnight"} placeholder={"Password"}/>
                 </div>
                 <div className="flex items-center">
                     <input id="remember_me" type="checkbox" value="" className="w-4 h-4 accent-rose-500 bg-midnight border-midnight rounded"/>

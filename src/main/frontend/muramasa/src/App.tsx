@@ -6,6 +6,7 @@ import Footer from "./components/Footer"
 import SignUp from "./pages/SignUp"
 import ForgotPassword from "./pages/ForgotPassword"
 import Home from "./pages/Home"
+import Social from "./pages/Social"
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/signup" element={<SignUp/>}></Route>
           <Route path="/resetpassword" element={<ForgotPassword/>}></Route>
           <Route path="/home" element={<Home/>}></Route>
+          <Route path="/social" element={<Social/>}></Route>
         </Routes>
       </section>
     <Footer/>

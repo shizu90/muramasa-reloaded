@@ -1,10 +1,6 @@
-import { useState } from "react";
+import Log from "../components/Log";
 
 function Home() {
-    const [data, setData] = useState<Array<any>>(Array(16).fill(0));
-
-
-
     return (
         <main className="w-8/12 max-sm:w-full max-md:w-10/12 max-lg:w-11/12 justify-between flex flex-row max-sm:flex-col max-md:flex-col gap-12 text-slate-50">
             <section>
@@ -63,11 +59,11 @@ function Home() {
            <section className="w-6/12 max-sm:w-full max-md:w-full max-lg:w-7/12">
                 <h2 className="text-slate-50 font-bold text-lg mb-14">Updates from following</h2>
                 <ul className="flex flex-col gap-8">
-                    {
-                        data.map(zero => (
-                            <li className="w-full h-[3rem] bg-slate-800 animate-pulse rounded" id="item"></li>
-                        ))
-                    }
+                    <li><Log/></li>
+                    <li><Log/></li>
+                    <li><Log/></li>
+                    <li><Log/></li>
+                    <li><Log/></li>
                 </ul>
                 <button className="text-slate-50 bg-rose-500 px-2 py-1 rounded mt-12">View more</button>
            </section>
