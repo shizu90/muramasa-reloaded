@@ -5,6 +5,7 @@
 package com.gabriel.muramasa.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,8 +41,8 @@ public class Post implements Serializable, Comparable<Post> {
     
     //Relations
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "account_id")
+    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList"})
     private Account creator;
     @OneToMany(targetEntity = Like.class, mappedBy = "post")
     @JsonIgnore

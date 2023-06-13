@@ -5,6 +5,7 @@
 package com.gabriel.muramasa.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,7 +35,7 @@ public class Reply implements Serializable {
     
     //Relations
     @ManyToOne
-    @JsonIgnore
+    @JsonIgnoreProperties({"followers", "following", "animeList", "mangaList", "password", "email"})
     @JoinColumn(name = "account_id")
     private Account creator;
     @ManyToOne
