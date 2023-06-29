@@ -34,7 +34,7 @@ function Media() {
                             <img src={media.images.webp.large_image_url} className="rounded object-cover w-64"/>
                             <div className="bg-darkocean w-full p-4 rounded text-sm">
                                 <span className="font-medium">Season</span><br/>
-                                <span className="text-slate-400">{(media.season as string).slice(0, 1).toUpperCase() + (media.season as string).slice(1)} - {media.year}</span>
+                                <span className="text-slate-400">{media.season ? (media.season as string).slice(0, 1).toUpperCase() + (media.season as string).slice(1) : NaN} - {media.year}</span>
                                 <br/><br/>
                                 <span className="font-medium">Type</span><br/>
                                 <span className="text-slate-400">{media.type}</span>
@@ -46,13 +46,13 @@ function Media() {
                                 <span className="text-slate-400">{media.favorites}</span>
                                 <br/><br/>
                                 <span className="font-medium">Rank</span><br/>
-                                <span className="text-slate-400">{media.rank}</span>
+                                <span className="text-slate-400">{media.rank || NaN}</span>
                                 <br/><br/>
                                 <span className="font-medium">Status</span><br/>
                                 <span className="text-slate-400">{media.status}</span>
                                 <br/><br/>
                                 <span className="font-medium">{type == 'anime' ? 'Episodes' : 'Chapters'}</span><br/>
-                                <span className="text-slate-400">{media.episodes}</span>
+                                <span className="text-slate-400">{media.episodes || NaN}</span>
                                 <br/><br/>
                                 {type == 'anime' ? (
                                     <>
@@ -62,7 +62,7 @@ function Media() {
                                     </>
                                 ): null}
                                 <span className="font-medium">Date</span><br/>
-                                <span className="text-slate-400">{media.aired.from.split('T')[0]} - {media.aired.to.split('T')[0]}</span>
+                                <span className="text-slate-400">{media.aired.from ? media.aired.from.split('T')[0] : NaN} - {media.aired.to ? media.aired.to.split('T')[0] : NaN}</span>
                                 <br/><br/>
                                 <span className="font-medium">Genres</span><br/>
                                 <span className="text-slate-400">
@@ -90,7 +90,7 @@ function Media() {
                                         <div className="flex flex-row cursor-pointer w-60 gap-2 bg-darkocean rounded">
                                             <img src={character.character.images.webp.image_url} className="w-16 rounded"/>
                                             <div>
-                                                <h2 className="w-full text-ellipsis truncate font-medium pt-2">{character.character.name}</h2>
+                                                <h2 className="w-40 text-ellipsis truncate font-medium pt-2">{character.character.name}</h2>
                                                 <span className="text-sm text-slate-400">{character.role}</span>
                                             </div>
                                         </div>
