@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import jikan_api from "../api/jikan/routes";
 import Loading from "../components/Loading";
+import Heart from "../components/Heart";
 
 function Media() {
     const [media, setMedia] = useState<any>(null);
@@ -18,7 +19,7 @@ function Media() {
             setTimeout(() => {
                 jikan_api.getById(id)
                 .then(res => setMedia(res.data.data))
-                .catch(err => setMedia(-1));
+                .catch(() => setMedia(-1));
                 jikan_api.getCharacters(id, type)
                 .then(res => {res.data.data.sort((curr: any, next: any) => next.favorites-curr.favorites);setCharacters(res.data.data)});
                 jikan_api.getNews(id).then(res => {setNews(res.data.data)})
@@ -29,10 +30,10 @@ function Media() {
         <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
             {
                 media != -1 && media ? (
-                    <div className="flex justify-around w-full">
+                    <div className="flex justify-around w-full max-sm:flex-col max-sm:w-10/12 max-sm:text-center max-xl:gap-4">
                         <div className="flex flex-col gap-4">
-                            <img src={media.images.webp.large_image_url} className="rounded object-cover w-64"/>
-                            <div className="bg-darkocean w-full p-4 rounded text-sm">
+                            <img src={media.images.webp.large_image_url} className="rounded object-cover w-64 max-xl:w-full max-sm:w-full"/>
+                            <div className="bg-darkocean w-full p-4 rounded text-sm max-sm:h-60 max-sm:overflow-y-auto">
                                 <span className="font-medium">Season</span><br/>
                                 <span className="text-slate-400">{media.season ? (media.season as string).slice(0, 1).toUpperCase() + (media.season as string).slice(1) : NaN} - {media.year}</span>
                                 <br/><br/>
@@ -70,37 +71,49 @@ function Media() {
                                 </span>
                             </div>
                         </div>
-                        <div className="w-8/12">
-                            <h2 className="font-medium text-xl">{media.title}</h2>
-                            <span className="text-sm text-slate-400">Japanese title: {media.title_japanese}</span><br/>
-                            <span className="text-sm text-slate-400">English title: {media.title_english}</span>
+                        <div className="w-8/12 max-sm:w-full max-md:w-full">
+                            <div className="flex justify-between max-sm:flex-col">
+                                <div className="flex flex-col gap-1">
+                                <h2 className="font-medium text-xl max-sm:mt-4">{media.title}</h2>
+                                <span className="text-sm text-slate-400">Japanese title: {media.title_japanese}</span>
+                                <span className="text-sm text-slate-400">English title: {media.title_english}</span>
+                                </div>
+                                <div className="flex gap-2 h-9 justify-center">
+                                    <button className="bg-rose-500 px-4 rounded hover:bg-rose-600 transition-all font-medium">Add to list</button>
+                                    <button className="bg-yellow-400 px-2 rounded hover:bg-yellow-500">
+                                        <Heart outline={false}/>
+                                    </button>
+                                </div>
+                            </div>
                             <br/>
                             <br/>
                             <p className="w-full text-sm text-slate-400">{media.synopsis}</p>
                             <br/>
                             <br/>
                             <div className="flex gap-2">
-                                <span className={page == 'characters' ? "font-medium cursor-pointer" : "cursor-pointer text-slate-400"} onClick={() => setPage('characters')}>Characters</span>
-                                <span className={page == 'news' ? "font-medium cursor-pointer" : "cursor-pointer text-slate-400"} onClick={() => setPage('news')}>News</span>
+                                <span className={page == 'characters' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('characters')}>Characters</span>
+                                <span className={page == 'news' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('news')}>News</span>
                             </div>
                             <br/><br/>
-                            <div className="flex flex-wrap gap-4">
+                            <div className="flex flex-wrap gap-4 max-sm:h-96 max-sm:overflow-y-auto">
                                 {page == 'characters' ?
                                     characters ? characters.map((character: any) => (
-                                        <div className="flex flex-row cursor-pointer w-60 gap-2 bg-darkocean rounded">
+                                        <a href={`/character?id=${character.character.mal_id}`}>
+                                        <div className="flex flex-row cursor-pointer w-60 max-sm:w-full gap-2 max-xl:w-48 bg-darkocean rounded">
                                             <img src={character.character.images.webp.image_url} className="w-16 rounded"/>
                                             <div>
-                                                <h2 className="w-40 text-ellipsis truncate font-medium pt-2">{character.character.name}</h2>
+                                                <h2 className="w-40 max-xl:w-28 text-ellipsis truncate font-medium pt-2 max-sm:text-sm">{character.character.name}</h2>
                                                 <span className="text-sm text-slate-400">{character.role}</span>
                                             </div>
                                         </div>
+                                        </a>
                                     )) : null
                                 : news.map((newsItem: any) => (
                                     <a href={newsItem.url} target="_blank">
-                                    <div className="flex flex-col bg-darkocean rounded">
-                                        <img src={newsItem.images.jpg.image_url} className="w-60 h-40 object-cover rounded"/>
-                                        <span className="w-60 text-center text-sm font-medium mt-2">{newsItem.title}</span><br/>
-                                        <p className="w-60 text-center text-sm text-slate-400 p-2">{newsItem.excerpt}</p>
+                                    <div className="flex flex-col bg-darkocean rounded w-60 max-sm:w-full max-xl:w-44 h-96">
+                                        <img src={newsItem.images.jpg.image_url} className="w-full h-40 object-cover rounded"/>
+                                        <span className="w-full text-center text-sm font-medium mt-2">{newsItem.title}</span><br/>
+                                        <p className="w-full text-center text-sm text-slate-400 p-2 text-ellipsis">{newsItem.excerpt}</p>
                                     </div>
                                     </a>
                                 ))}

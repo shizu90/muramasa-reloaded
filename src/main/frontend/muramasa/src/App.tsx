@@ -8,6 +8,7 @@ import ForgotPassword from "./pages/ForgotPassword"
 import Home from "./pages/Home"
 import Social from "./pages/Social"
 import Media from "./pages/Media"
+import Character from "./pages/Character"
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/social" element={<Social/>}></Route>
           <Route path="/anime" element={<Media/>}></Route>
           <Route path="/manga" element={<Media/>}></Route>
+          <Route path="/character" element={<Character/>}></Route>
         </Routes>
       </section>
     <Footer/>
