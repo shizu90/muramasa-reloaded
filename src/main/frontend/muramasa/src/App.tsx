@@ -7,7 +7,8 @@ import SignUp from "./pages/SignUp"
 import ForgotPassword from "./pages/ForgotPassword"
 import Home from "./pages/Home"
 import Social from "./pages/Social"
-import Media from "./pages/Media"
+import Anime from "./pages/Anime"
+import Manga from "./pages/Manga"
 import Character from "./pages/Character"
 
 function App() {
@@ -22,8 +23,8 @@ function App() {
           <Route path="/resetpassword" element={<ForgotPassword/>}></Route>
           <Route path="/home" element={<Home/>}></Route>
           <Route path="/social" element={<Social/>}></Route>
-          <Route path="/anime" element={<Media/>}></Route>
-          <Route path="/manga" element={<Media/>}></Route>
+          <Route path="/anime" element={<Anime/>}></Route>
+          <Route path="/manga" element={<Manga/>}></Route>
           <Route path="/character" element={<Character/>}></Route>
         </Routes>
       </section>

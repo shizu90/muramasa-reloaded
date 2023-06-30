@@ -9,18 +9,16 @@ function Media() {
     const [page, setPage] = useState<string>('characters');
     const [news, setNews] = useState<any>(null);
     
-    const type = window.location.href.indexOf("anime") > -1 ? "anime" : "manga";
-    
     useEffect(() => {
         if(media === null) {
             
             const url = new URLSearchParams(window.location.search);
             const id = url.get("id") as unknown as number;
             setTimeout(() => {
-                jikan_api.getById(id, type)
+                jikan_api.getById(id, "anime")
                 .then(res => setMedia(res.data.data))
                 .catch(() => setMedia(-1));
-                jikan_api.getCharacters(id, type)
+                jikan_api.getCharacters(id, "anime")
                 .then(res => {res.data.data.sort((curr: any, next: any) => next.favorites-curr.favorites);setCharacters(res.data.data)});
                 jikan_api.getNews(id).then(res => {setNews(res.data.data)})
             }, 500);
@@ -52,16 +50,12 @@ function Media() {
                                 <span className="font-medium">Status</span><br/>
                                 <span className="text-slate-400">{media.status}</span>
                                 <br/><br/>
-                                <span className="font-medium">{type == 'anime' ? 'Episodes' : 'Chapters'}</span><br/>
+                                <span className="font-medium">Episodes</span><br/>
                                 <span className="text-slate-400">{media.episodes || NaN}</span>
                                 <br/><br/>
-                                {type == 'anime' ? (
-                                    <>
-                                    <span className="font-medium">Duration</span><br/>
-                                    <span className="text-slate-400">{media.duration}</span>
-                                    <br/><br/>
-                                    </>
-                                ): null}
+                                <span className="font-medium">Duration</span><br/>
+                                <span className="text-slate-400">{media.duration}</span>
+                                <br/><br/>
                                 <span className="font-medium">Date</span><br/>
                                 <span className="text-slate-400">{media.aired.from ? media.aired.from.split('T')[0] : NaN} - {media.aired.to ? media.aired.to.split('T')[0] : NaN}</span>
                                 <br/><br/>
@@ -122,7 +116,7 @@ function Media() {
                     </div>
                 ) : media === -1 ? (
                     <>
-                        <h2>We cannot find that {type} {':('}</h2>
+                        <h2>We cannot find that anime {':('}</h2>
                     </>
                 ) : <Loading/>}
         </main>
