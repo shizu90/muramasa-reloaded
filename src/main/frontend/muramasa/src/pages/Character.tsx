@@ -4,6 +4,7 @@ import Loading from '../components/Loading';
 import Heart from '../components/Heart';
 
 function getAge(about: string) {
+    if(!(typeof about == 'string')) return null;
     const index_age = about.indexOf('Age');
     const index_birthday = about.indexOf('Birthday') == -1 ? about.indexOf('Birthdate') : about.indexOf('Birthday');
     if(index_age > -1 && index_birthday > -1) {
@@ -13,6 +14,7 @@ function getAge(about: string) {
 }
 
 function getBirthday(about: string) {
+    if(!(typeof about == 'string')) return null;
     const index_birthday = about.indexOf('Birthday') == -1 ? about.indexOf('Birthdate') : about.indexOf('Birthday');
     const index_height = about.indexOf('Height');
     if(index_birthday > -1 && index_height > -1) {
@@ -22,6 +24,7 @@ function getBirthday(about: string) {
 }
 
 function getHeight(about: string) {
+    if(!(typeof about == 'string')) return null;
     const index_height = about.indexOf('Height');
     const index_weight = about.indexOf('Weight');
     if(index_height > -1 && index_weight > -1) {    
@@ -32,6 +35,7 @@ function getHeight(about: string) {
 }
 
 function getWeight(about: string) {
+    if(!(typeof about == 'string')) return null;
     const index_weight = about.indexOf('Weight');
     const index_likes = about.indexOf('Likes');
     if(index_weight > -1 && index_likes > -1) {    
@@ -42,6 +46,7 @@ function getWeight(about: string) {
 }
 
 function getLikes(about: string) {
+    if(!(typeof about == 'string')) return null;
     const index_likes = about.indexOf('Likes');
     const index_dislikes = about.indexOf('Dislikes');
     if(index_likes > -1 && index_dislikes > -1) {
@@ -51,6 +56,7 @@ function getLikes(about: string) {
 }
 
 function getDislikes(about: string) {
+    if(!(typeof about == 'string')) return null;
     const index_quote = about.indexOf('Favorite quote');
     const index_dislikes = about.indexOf('Dislikes');
     if(index_dislikes > -1 && index_quote > -1) {
@@ -61,15 +67,14 @@ function getDislikes(about: string) {
 
 function Character() {
     const [character, setCharacter] = useState<any>(null);
-    const [voices, setVoices] = useState<any>(null);
+    const [page, setPage] = useState<string>("voices");
 
     useEffect(() => {
         if(character == null) {
             const url = new URLSearchParams(window.location.search);
             const id = url.get("id") as unknown as number;
             setTimeout(() => {
-                jikan_api.getCharacterById(id).then(res => setCharacter(res.data.data)).catch(() => setCharacter(-1));
-                jikan_api.getCharacterVAs(id).then(res => {console.log(res.data.data);setVoices(res.data.data)});
+                jikan_api.getCharacterById(id).then(res => {console.log(res.data.data);setCharacter(res.data.data)}).catch(() => setCharacter(-1));
             }, 500);
         }
     }, [character]);
@@ -119,24 +124,41 @@ function Character() {
                                 </div>
                                 <br/>
                                 <br/>
-                                <span className="font-medium">Voice actors</span>
+                                <div className="flex gap-2">
+                                    <span className={page == 'voices' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('voices')}>Voice actors</span>
+                                    <span className={page == 'anime' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('anime')}>Animes</span>
+                                    <span className={page == 'manga' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('manga')}>Mangas</span>
+                                </div>
+                                <div className="flex flex-wrap gap-4 max-sm:h-96 max-sm:overflow-y-auto mt-4">
                                 {
-                                    voices ? voices.length > 0 ? (
-                                        <div className="flex flex-wrap gap-4 max-sm:h-96 max-sm:overflow-y-auto mt-4">
-                                            {
-                                                voices.map((voice: any) => (
-                                                    <div className="flex flex-row cursor-pointer w-60 max-sm:w-full gap-2 max-xl:w-48 bg-darkocean rounded">
-                                                        <img src={voice.person.images.jpg.image_url} className="w-16 rounded"/>
-                                                        <div>
-                                                            <h2 className="w-40 max-xl:w-28 text-ellipsis truncate font-medium pt-2 max-sm:text-sm">{voice.person.name}</h2>
-                                                            <span className="text-sm text-slate-400">{voice.language}</span>
-                                                        </div>
-                                                    </div>
-                                                ))
-                                            }
+                                    page == 'voices' ? character.voices.length > 0 ? character.voices.map((voice: any) => (
+                                        <div className="flex flex-row cursor-pointer w-60 max-sm:w-full gap-2 max-xl:w-48 bg-darkocean rounded">
+                                            <img src={voice.person.images.jpg.image_url} className="w-16 rounded"/>
+                                            <div>
+                                                <h2 className="w-40 max-xl:w-28 text-ellipsis truncate font-medium pt-2 max-sm:text-sm">{voice.person.name}</h2>
+                                                <span className="text-sm text-slate-400">{voice.language}</span>
+                                            </div>
                                         </div>
-                                    ) : <h2>This character haven't be dubbed yet {':('}</h2> : <Loading/>
+                                    )) : <h2>This character haven't been dubbed yet {':('}</h2> :
+                                    page == 'anime' ? character.anime.length > 0 ? character.anime.map((anime: any) => (
+                                        <a href={`/anime?id=${anime.anime.mal_id}`}>
+                                        <div className="flex flex-col gap-2 w-40 text-center">
+                                            <img src={anime.anime.images.webp.image_url} className="rounded"/>
+                                            <h2 className="font-medium text-sm">{anime.anime.title}</h2>
+                                        </div>
+                                        </a>
+                                    )) : (
+                                        <h2>This character haven't been in an anime yet {':('}</h2>
+                                    ) : character.manga.length > 0 ? character.manga.map((manga: any) => (
+                                        <a href={`/manga?id=${manga.manga.mal_id}`}>
+                                        <div className="flex flex-col gap-2 w-40 text-center">
+                                            <img src={manga.manga.images.webp.image_url} className="rounded h-60 object-cover"/>
+                                            <h2 className="font-medium text-sm">{manga.manga.title}</h2>
+                                        </div>
+                                        </a>
+                                    )) : <h2>This character haven't been in a manga yet {':('}</h2>
                                 }
+                                </div>
                             </div>
                         </div>
                 ) : <h2>Cannot found that character {':('}</h2> : <Loading/>

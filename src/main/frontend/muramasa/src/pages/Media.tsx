@@ -17,7 +17,7 @@ function Media() {
             const url = new URLSearchParams(window.location.search);
             const id = url.get("id") as unknown as number;
             setTimeout(() => {
-                jikan_api.getById(id)
+                jikan_api.getById(id, type)
                 .then(res => setMedia(res.data.data))
                 .catch(() => setMedia(-1));
                 jikan_api.getCharacters(id, type)
