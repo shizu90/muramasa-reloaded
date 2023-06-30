@@ -12,6 +12,9 @@ export default {
     getCharacterById: (id: number | string) => {
         return axios.get(jikan_url + `characters/${id}/full`);
     },
+    getStaff: (id: number | string, type = "anime") => {
+        return axios.get(jikan_url + `${type}/${id}/staff`);
+    },
     getNews: (animeId: string | number, type = "anime") => {
         return axios.get(jikan_url + `${type}/${animeId}/news`);
     },

@@ -142,18 +142,18 @@ function Character() {
                                     )) : <h2>This character haven't been dubbed yet {':('}</h2> :
                                     page == 'anime' ? character.anime.length > 0 ? character.anime.map((anime: any) => (
                                         <a href={`/anime?id=${anime.anime.mal_id}`}>
-                                        <div className="flex flex-col gap-2 w-40 text-center">
+                                        <div className="flex flex-col gap-2 w-40 text-center max-sm:w-20">
                                             <img src={anime.anime.images.webp.image_url} className="rounded"/>
-                                            <h2 className="font-medium text-sm">{anime.anime.title}</h2>
+                                            <h2 className="font-medium text-sm break-words">{anime.anime.title}</h2>
                                         </div>
                                         </a>
                                     )) : (
                                         <h2>This character haven't been in an anime yet {':('}</h2>
                                     ) : character.manga.length > 0 ? character.manga.map((manga: any) => (
                                         <a href={`/manga?id=${manga.manga.mal_id}`}>
-                                        <div className="flex flex-col gap-2 w-40 text-center">
-                                            <img src={manga.manga.images.webp.image_url} className="rounded h-60 object-cover"/>
-                                            <h2 className="font-medium text-sm">{manga.manga.title}</h2>
+                                        <div className="flex flex-col gap-2 w-40 text-center max-sm:w-20">
+                                            <img src={manga.manga.images.webp.image_url} className="rounded object-cover"/>
+                                            <h2 className="font-medium text-sm break-words">{manga.manga.title}</h2>
                                         </div>
                                         </a>
                                     )) : <h2>This character haven't been in a manga yet {':('}</h2>

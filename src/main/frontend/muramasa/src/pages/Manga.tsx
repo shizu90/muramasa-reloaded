@@ -29,8 +29,8 @@ function Manga() {
         <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
             {
                 media != -1 && media ? (
-                    <div className="flex justify-around w-full max-sm:flex-col max-sm:w-10/12 max-sm:text-center max-xl:gap-4">
-                        <div className="flex flex-col gap-4">
+                    <div className="flex justify-around w-full max-sm:flex-col max-sm:w-10/12 max-xl:gap-4">
+                        <div className="flex flex-col gap-4 max-sm:text-center">
                             <img src={media.images.webp.large_image_url} className="rounded object-cover w-64 max-xl:w-full max-sm:w-full"/>
                             <div className="bg-darkocean w-full p-4 rounded text-sm max-sm:h-60 max-sm:overflow-y-auto">
                                 <span className="font-medium">Season</span><br/>
@@ -73,7 +73,7 @@ function Manga() {
                                 <span className="text-sm text-slate-400">Japanese title: {media.title_japanese}</span>
                                 <span className="text-sm text-slate-400">English title: {media.title_english}</span>
                                 </div>
-                                <div className="flex gap-2 h-9 justify-center">
+                                <div className="flex gap-2 h-9 justify-center max-sm:mt-4">
                                     <button className="bg-rose-500 px-4 rounded hover:bg-rose-600 transition-all font-medium">Add to list</button>
                                     <button className="bg-yellow-400 px-2 rounded hover:bg-yellow-500">
                                         <Heart outline={false}/>
@@ -93,7 +93,7 @@ function Manga() {
                             <div className="flex flex-wrap gap-4 max-sm:h-96 max-sm:overflow-y-auto">
                                 {page == 'characters' ?
                                     characters ? characters.map((character: any) => (
-                                        <a href={`/character?id=${character.character.mal_id}`}>
+                                        <a href={`/character?id=${character.character.mal_id}`} className="max-sm:w-full">
                                         <div className="flex flex-row cursor-pointer w-60 max-sm:w-full gap-2 max-xl:w-48 bg-darkocean rounded">
                                             <img src={character.character.images.webp.image_url} className="w-16 rounded"/>
                                             <div>
