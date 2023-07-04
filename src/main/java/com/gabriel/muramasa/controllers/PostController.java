@@ -4,19 +4,20 @@
  */
 package com.gabriel.muramasa.controllers;
 
+import com.gabriel.muramasa.handlers.exceptions.UnauthorizedException;
+import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.services.PostService;
 import com.gabriel.muramasa.models.Post;
-import com.gabriel.muramasa.services.TokenService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,8 +30,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     @Autowired
     private PostService service;
-    @Autowired
-    private TokenService tokenService;
+    
+    @GetMapping(value = "/full/{id}")
+    public ResponseEntity<Post> getPost(@PathVariable Long postId) {
+        return ResponseEntity.ok().body(service.getPostById(postId));
+    }
     
     @GetMapping(value = "/following/{userId}")
     public ResponseEntity<List<Post>> getFollowingPosts(@PathVariable Long userId) {
@@ -42,25 +46,25 @@ public class PostController {
         return ResponseEntity.ok().body(service.getUserPosts(userId));
     }
     
-    @PostMapping(value = "/{userId}")
-    public ResponseEntity<Post> createPost(@PathVariable Long userId, @RequestBody Post post, @RequestHeader(value = "Authorization") String bearer) {
-        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
-        service.setCurrentUser(username);
-        return ResponseEntity.ok().body(service.insert(userId, post));
+    @PostMapping
+    public ResponseEntity<Post> createPost(@RequestBody Post post, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        return ResponseEntity.ok().body(service.insert(acc.getId(), post));
     }
     
-    @PutMapping
-    public ResponseEntity<Post> updatePost(@RequestBody Post post, @RequestHeader(value = "Authorization") String bearer) {
-        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
-        service.setCurrentUser(username);
-        return ResponseEntity.ok().body(service.update(post));
+    @PutMapping(value = "/{postId}")
+    public ResponseEntity<Post> updatePost(@PathVariable Long postId, @RequestBody Post post, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        Post p = service.getPostById(postId);
+        if(acc.getId().equals(p.getCreator().getId())) {
+            return ResponseEntity.ok().body(service.update(postId, post));
+        }else throw new UnauthorizedException("Unauthorized post update.");
     }
     
     @DeleteMapping(value = "/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable Long postId, @RequestHeader(value = "Authorization") String bearer) {
-        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
-        service.setCurrentUser(username);
-        service.delete(postId);
+    public ResponseEntity<String> deletePost(@PathVariable Long postId, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        service.delete(acc.getId(), postId);
         return ResponseEntity.ok().body("Successfully deleted post.");
     }
 }

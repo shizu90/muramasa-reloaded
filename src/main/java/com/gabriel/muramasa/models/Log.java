@@ -35,7 +35,7 @@ public class Log implements Serializable {
     //Relations
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "account")
+    @JoinColumn(name = "user_id")
     private Account account;
     
     public Log() {}

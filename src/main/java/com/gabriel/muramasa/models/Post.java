@@ -35,31 +35,35 @@ public class Post implements Serializable, Comparable<Post> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String text;
-    private String attachedImgs;
+    private String attach;
     private Integer likeCount;
     private String date;
     
     //Relations
     @ManyToOne
-    @JoinColumn(name = "account_id")
-    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList"})
+    @JoinColumn(name = "user_Id")
+    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList", "posts", "authorities", "accountNonExpired", "credentialsNonExpired", "accountNonLocked"})
     private Account creator;
     @OneToMany(targetEntity = Like.class, mappedBy = "post")
     @JsonIgnore
     private List<Like> likes;
-    @OneToMany(targetEntity = Reply.class, mappedBy = "post")
-    private List<Reply> replies;
+    @ManyToOne(targetEntity = Post.class)
+    private Post parent;
+    @OneToMany(targetEntity = Post.class, mappedBy = "parent")
+    @JsonIgnoreProperties({"parent"})
+    private List<Post> replies;
 
     public Post() {}
     
-    public Post(Long id, String text, String attachedImgs, String date, Account creator, List<Like> likes, List<Reply> replies) {
+    public Post(Long id, String text, String attach, String date, Account creator, List<Like> likes, Post parent, List<Post> replies) {
         this.id = id;
         this.text = text;
-        this.attachedImgs = attachedImgs;
+        this.attach = attach;
         this.likes = likes;
         this.likeCount = this.likes.size();
         this.date = date;
         this.creator = creator;
+        this.parent = parent;
         this.replies = replies;
     }
 
@@ -79,12 +83,12 @@ public class Post implements Serializable, Comparable<Post> {
         this.text = text;
     }
 
-    public String getAttachedImgs() {
-        return attachedImgs;
+    public String getAttach() {
+        return attach;
     }
 
-    public void setAttachedImgs(String attachedImgs) {
-        this.attachedImgs = attachedImgs;
+    public void setAttach(String attach) {
+        this.attach = attach;
     }
 
     public String getDate() {
@@ -119,11 +123,19 @@ public class Post implements Serializable, Comparable<Post> {
         this.likes = likes;
     }
 
-    public List<Reply> getReplies() {
+    public Post getParent() {
+        return parent;
+    }
+
+    public void setParent(Post parent) {
+        this.parent = parent;
+    }
+
+    public List<Post> getReplies() {
         return replies;
     }
 
-    public void setReplies(List<Reply> replies) {
+    public void setReplies(List<Post> replies) {
         this.replies = replies;
     }
 

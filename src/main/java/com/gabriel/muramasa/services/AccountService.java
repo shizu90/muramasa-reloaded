@@ -4,7 +4,6 @@
  */
 package com.gabriel.muramasa.services;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.gabriel.muramasa.dto.AccountConfigurationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ import com.gabriel.muramasa.models.Log;
 import com.gabriel.muramasa.models.Media;
 import com.gabriel.muramasa.models.MediaList;
 import com.gabriel.muramasa.models.Post;
-import com.gabriel.muramasa.models.Reply;
+import com.gabriel.muramasa.models.Character;
 import com.gabriel.muramasa.repositories.MediaListRepository;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -42,13 +41,7 @@ public class AccountService {
     @Autowired
     private MediaListRepository mediaListRepo;
     
-    private String currentUser;
-    
     public AccountService() {}
-    
-    public void setCurrentUser(String currentUser) {
-        this.currentUser = currentUser;
-    }
     
     public Page<Account> search(String username, Integer offset) {
         return repo.findByUsername(username, PageRequest.of(offset, 8));
@@ -79,7 +72,7 @@ public class AccountService {
             Account acc = new Account(
                     null, credentials.getUsername(), credentials.getEmail(), encoder.encode(credentials.getPassword()), 
                     "", "", "", null, null, new ArrayList<Follower>(), new ArrayList<Follower>(), 
-                    new ArrayList<Log>(), new ArrayList<Post>(), new ArrayList<Reply>(), new ArrayList<Like>()
+                    new ArrayList<Log>(), new ArrayList<Post>(), new ArrayList<Like>(), new ArrayList<Character>()
             );
             acc = repo.save(acc);
             MediaList animeList = new MediaList(null, new ArrayList<Media>(), acc, "anime");
@@ -95,27 +88,24 @@ public class AccountService {
     
     public void update(AccountConfigurationDTO config, Long id) {
         Account acc = this.findById(id);
-        if(acc.getUsername().equals(this.currentUser)) {
-            if(config.isPasswordValid()) {
-                acc.setPassword(config.getPassword());
-            }
-            if(config.isEmailValid() && repo.findByEmail(config.getEmail()).isEmpty()) {
-                acc.setEmail(config.getEmail());
-            }
-            if(config.isUsernameValid() && repo.findByUsername(config.getUsername()).isEmpty()) {
-                acc.setUsername(config.getUsername());
-            }
-            acc.setImgUrl(config.getImgUrl());
-            acc.setBannerImgUrl(config.getBannerImgUrl());
-            acc.setResume(config.getResume());
-            repo.save(acc);
-        }else throw new UnauthorizedException("Unauthorized exception.");
+        if(config.isPasswordValid()) {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            acc.setPassword(encoder.encode(config.getPassword()));
+        }
+        if(config.isEmailValid() && repo.findByEmail(config.getEmail()).isEmpty()) {
+            acc.setEmail(config.getEmail());
+        }
+        if(config.isUsernameValid() && repo.findByUsername(config.getUsername()).isEmpty()) {
+            acc.setUsername(config.getUsername());
+        }
+        acc.setImgUrl(config.getImgUrl());
+        acc.setBannerImgUrl(config.getBannerImgUrl());
+        acc.setResume(config.getResume());
+        repo.save(acc);
     }
     
     public void delete(Long id) {
         Account acc = this.findById(id);
-        if(acc.getUsername().equals(this.currentUser)) {
-            repo.deleteById(id);
-        }else throw new UnauthorizedException("Unauthorized operation.");
+        repo.deleteById(id);
     }
 }

@@ -34,7 +34,7 @@ public class LogService {
     
     public void addRecentUpdate(Log log, List<Log> logs) throws ParseException {
         Collections.reverse(logs);
-        if(logs.size() >= 5) {
+        if(logs.size() >= 10) {
             Log oldestLog = logs.get(logs.size()-1);
         
             for(Log currentLog : logs) {

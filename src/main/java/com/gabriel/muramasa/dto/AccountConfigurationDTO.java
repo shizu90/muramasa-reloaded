@@ -4,6 +4,8 @@
  */
 package com.gabriel.muramasa.dto;
 
+import com.gabriel.muramasa.models.Account;
+
 /**
  *
  * @author gabriell9090
@@ -20,6 +22,13 @@ public class AccountConfigurationDTO extends AccountDTO {
         this.resume = resume;
         this.imgUrl = imgUrl;
         this.bannerImgUrl = bannerImgUrl;
+    }
+    
+    public AccountConfigurationDTO(Account acc) {
+        super(acc.getEmail(), acc.getUsername(), acc.getPassword());
+        this.resume = acc.getResume();
+        this.imgUrl = acc.getImgUrl();
+        this.bannerImgUrl = acc.getBannerImgUrl();
     }
 
     public String getResume() {

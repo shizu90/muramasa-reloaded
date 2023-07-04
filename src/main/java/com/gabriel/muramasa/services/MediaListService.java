@@ -10,6 +10,8 @@ import com.gabriel.muramasa.models.MediaList;
 import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.models.Media;
 import com.gabriel.muramasa.repositories.MediaRepository;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -34,7 +36,7 @@ public class MediaListService {
     public MediaListService() {}
     
     public MediaList getListByType(Long userId, String type) {
-        Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("Account not found."));
+        Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
         
         if(type.toLowerCase().equals("anime")) {
             return acc.getAnimeList();
@@ -43,6 +45,18 @@ public class MediaListService {
             return acc.getMangaList();
         }
         return acc.getAnimeList();
+    }
+    
+    public List<Media> getFavorites(Long userId, String type) {
+        List<Media> favorites = new ArrayList<Media>();
+        Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
+        MediaList list = type.equals("anime") ? acc.getAnimeList() : acc.getMangaList();
+        list.getItems().forEach((Media media) -> {
+            if(media.getFavorited() == 1) {
+                favorites.add(media);
+            }
+        });
+        return favorites;
     }
     
     public Page<Media> getMediasByStatus(Long listId, Integer status, Integer offset) {

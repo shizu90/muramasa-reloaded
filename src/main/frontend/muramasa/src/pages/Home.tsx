@@ -1,22 +1,33 @@
 import Log from "../components/Log";
 import {useEffect, useState} from 'react';
-import jikan from "../api/jikan/routes";
+import jikan_api from "../api/jikan/routes";
 import Loading from "../components/Loading";
 
 function Home() {
-    const [currentSeason, setCurrentSeason] = useState<Array<any>>();
+    const [recentDatas, setRecentDatas] = useState<Array<any>>([]);
 
     useEffect(() => {
-        jikan.getSeasonNow().then((data) => {
-            let arr = Array.from(data.data.data).sort((curr: any, next: any) => curr.popularity-next.popularity);
-            setCurrentSeason(arr);
-        });
-    }, [currentSeason])
+        switch(recentDatas.length) {
+            case 0:
+                jikan_api.getSeasonNow()
+                .then(res => res.data.data.sort((curr: any, next: any) => curr.popularity-next.popularity))
+                .then(res => setRecentDatas(res.slice(0, 6)));
+                break;
+            case 6:
+                jikan_api.getTop("anime", 6).then(res => setRecentDatas([...recentDatas, ...res.data.data]));
+                break;
+            case 12:
+                jikan_api.getTop("manga", 6).then(res => setRecentDatas([...recentDatas, ...res.data.data]));
+                break;
+            default:
+                break;
+        }
+    }, [recentDatas])
 
     return (
         <main className="w-8/12 max-sm:w-full max-md:w-10/12 max-lg:w-11/12 justify-between flex flex-row max-sm:flex-col max-md:flex-col gap-12 text-slate-50">
             <section>
-                <h2 className="text-slate-50 font-bold text-lg mb-2">Your progress</h2>
+                <h2 className="text-slate-50 font-medium text-lg mb-2">Your progress</h2>
                 <div className="flex flex-col gap-8">
                     <div className="flex flex-col gap-8">
                         <div className="flex justify-between">
@@ -63,16 +74,37 @@ function Home() {
                 </ul>
            </section>
            <section className="w-6/12 max-sm:w-full max-md:w-full max-lg:w-7/12">
-                <h2 className="text-slate-50 font-bold text-lg mb-4">Current season</h2>
-                <div className="grid grid-cols-4 gap-2 max-sm:grid-cols-3">
+                <h2 className="text-slate-50 font-medium text-lg mb-4">Current season</h2>
+                <div className="grid grid-cols-6 gap-2 max-sm:grid-cols-3">
                     {
-                        currentSeason ? currentSeason.map((anime) => (
-                            <>
-                            <div className="flex flex-col gap-1 w-32 h-42 text-slate-300 hover:text-rose-500 transition-all max-sm:w-20">
+                        recentDatas ? recentDatas.slice(0, 6).map((anime) => (
+                            <a href={`/anime?id=${anime.mal_id}`} className="w-26">
+                            <div className="flex flex-col gap-1 w-full h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-20">
                                 <img src={anime.images.jpg.image_url} className="w-full h-full cursor-pointer rounded"/>
-                                <span className="w-full truncate text-ellipsis text-sm font-medium max-sm:text-[12px]">{anime.title}</span>
                             </div>
-                            </>
+                            </a>
+                        )) : <Loading/>}
+                </div>
+                <h2 className="text-slate-50 font-medium text-lg my-4">Top anime</h2>
+                <div className="grid grid-cols-6 gap-2 max-sm:grid-cols-3">
+                    {
+                        recentDatas ? recentDatas.slice(6, 12).map((anime) => (
+                            <a href={`/anime?id=${anime.mal_id}`} className="w-26">
+                            <div className="flex flex-col gap-1 w-full h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-20">
+                                <img src={anime.images.jpg.image_url} className="w-full h-full cursor-pointer rounded"/>
+                            </div>
+                            </a>
+                        )) : <Loading/>}
+                </div>
+                <h2 className="text-slate-50 font-medium text-lg my-4">Top manga</h2>
+                <div className="grid grid-cols-6 gap-2 max-sm:grid-cols-3">
+                    {
+                        recentDatas ? recentDatas.slice(12).map((manga) => (
+                            <a href={`/manga?id=${manga.mal_id}`} className="w-26">
+                            <div className="flex flex-col gap-1 w-full h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-20">
+                                <img src={manga.images.jpg.image_url} className="w-full h-full cursor-pointer rounded"/>
+                            </div>
+                            </a>
                         )) : <Loading/>}
                 </div>
            </section>

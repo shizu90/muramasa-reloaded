@@ -30,11 +30,11 @@ public class Follower implements Serializable{
     private Long id;
     @Column(name="searchParameter", unique=true)
     private String searchParameter;
-    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList"})
+    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList", "authorities", "accountNonExpired", "credentialsNonExpired", "accountNonLocked"})
     @ManyToOne
     @JoinColumn(name = "to_account")
     private Account from;
-    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList"})
+    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList", "authorities", "accountNonExpired", "credentialsNonExpired", "accountNonLocked"})
     @ManyToOne
     @JoinColumn(name = "from_account")
     private Account to;

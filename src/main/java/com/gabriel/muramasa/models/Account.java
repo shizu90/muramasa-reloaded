@@ -5,6 +5,7 @@
 package com.gabriel.muramasa.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -61,14 +62,14 @@ public class Account implements Serializable, UserDetails {
     @JsonIgnore
     private List<Log> recentUpdates;
     @OneToMany(targetEntity = Post.class, mappedBy = "creator")
-    @JsonIgnore
+    @JsonIgnoreProperties({"replies", "creator"})
     private List<Post> posts;
-    @OneToMany(targetEntity = Reply.class, mappedBy = "creator")
-    @JsonIgnore
-    private List<Reply> replies;
     @OneToMany(targetEntity = Like.class, mappedBy = "likedBy")
     @JsonIgnore
     private List<Like> likes;
+    @OneToMany(targetEntity = Character.class, mappedBy = "favoritedBy")
+    @JsonIgnore
+    private List<Character> favoritedCharacters;
     
     public Account() {}
     public Account(
@@ -76,7 +77,7 @@ public class Account implements Serializable, UserDetails {
             String password, String imgUrl, String bannerImgUrl, 
             String resume, MediaList animeList, MediaList mangaList,
             List<Follower> followers, List<Follower> following, List<Log> recentUpdates, 
-            List<Post> posts, List<Reply> replies, List<Like> likes) 
+            List<Post> posts, List<Like> likes, List<Character> favoritedCharacters) 
     
     {
         this.id = id;
@@ -92,8 +93,8 @@ public class Account implements Serializable, UserDetails {
         this.following = following;
         this.recentUpdates = recentUpdates;
         this.posts = posts;
-        this.replies = replies;
         this.likes = likes;
+        this.favoritedCharacters = favoritedCharacters;
     }
 
     public Long getId() {
@@ -202,20 +203,20 @@ public class Account implements Serializable, UserDetails {
         this.posts = posts;
     }
 
-    public List<Reply> getReplies() {
-        return replies;
-    }
-
-    public void setReplies(List<Reply> replies) {
-        this.replies = replies;
-    }
-
     public List<Like> getLikes() {
         return likes;
     }
 
     public void setLikes(List<Like> likes) {
         this.likes = likes;
+    }
+    
+    public List<Character> getFavoritedCharacters() {
+        return favoritedCharacters;
+    }
+
+    public void setFavoritedCharacters(List<Character> favoritedCharacters) {
+        this.favoritedCharacters = favoritedCharacters;
     }
     
     @Override

@@ -2,68 +2,7 @@ import {useState, useEffect} from 'react';
 import jikan_api from "../api/jikan/routes";
 import Loading from '../components/Loading';
 import Heart from '../components/Heart';
-
-function getAge(about: string) {
-    if(!(typeof about == 'string')) return null;
-    const index_age = about.indexOf('Age');
-    const index_birthday = about.indexOf('Birthday') == -1 ? about.indexOf('Birthdate') : about.indexOf('Birthday');
-    if(index_age > -1 && index_birthday > -1) {
-        return about.substring(index_age + 5, index_birthday - 1);
-    }
-    return null;
-}
-
-function getBirthday(about: string) {
-    if(!(typeof about == 'string')) return null;
-    const index_birthday = about.indexOf('Birthday') == -1 ? about.indexOf('Birthdate') : about.indexOf('Birthday');
-    const index_height = about.indexOf('Height');
-    if(index_birthday > -1 && index_height > -1) {
-        return about.substring(index_birthday + 10, index_height - 1);
-    }
-    return null;
-}
-
-function getHeight(about: string) {
-    if(!(typeof about == 'string')) return null;
-    const index_height = about.indexOf('Height');
-    const index_weight = about.indexOf('Weight');
-    if(index_height > -1 && index_weight > -1) {    
-        return about.substring(index_height + 8, index_weight - 1);
-    }
-    if(index_height > -1) {return about.substring(index_height + 8, about.indexOf('cm') + 2)}
-    return null;
-}
-
-function getWeight(about: string) {
-    if(!(typeof about == 'string')) return null;
-    const index_weight = about.indexOf('Weight');
-    const index_likes = about.indexOf('Likes');
-    if(index_weight > -1 && index_likes > -1) {    
-        return about.substring(index_weight + 8, index_likes - 1);
-    }
-    if(index_weight > -1) {return about.substring(index_weight + 8, about.indexOf('kg') + 2)}
-    return null;
-}
-
-function getLikes(about: string) {
-    if(!(typeof about == 'string')) return null;
-    const index_likes = about.indexOf('Likes');
-    const index_dislikes = about.indexOf('Dislikes');
-    if(index_likes > -1 && index_dislikes > -1) {
-        return about.substring(index_likes + 6, index_dislikes - 1);
-    }
-    return null;
-}
-
-function getDislikes(about: string) {
-    if(!(typeof about == 'string')) return null;
-    const index_quote = about.indexOf('Favorite quote');
-    const index_dislikes = about.indexOf('Dislikes');
-    if(index_dislikes > -1 && index_quote > -1) {
-        return about.substring(index_dislikes + 9, index_quote - 1);
-    }
-    return null;
-}
+import { filterKeysAbout } from '../modules/filterAbout';
 
 function Character() {
     const [character, setCharacter] = useState<any>(null);
@@ -78,6 +17,8 @@ function Character() {
             }, 500);
         }
     }, [character]);
+
+    if(character) filterKeysAbout(character.about)
     return (
         <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
             {
@@ -86,27 +27,7 @@ function Character() {
                             <div className="flex flex-col gap-4 w-64">
                                 <img src={character.images.webp.image_url} className="rounded object-cover max-xl:w-full max-sm:w-full"/>
                                 <div className="bg-darkocean w-full p-4 rounded text-sm max-sm:h-60 max-sm:overflow-y-auto">
-                                    <span className="font-medium">Age</span><br/>
-                                    <span className="text-slate-400 break-words">{getAge(character.about) || NaN}</span>
-                                    <br/><br/>
-                                    <span className="font-medium">Birthday</span><br/>
-                                    <span className="text-slate-400 break-words">{getBirthday(character.about) || NaN}</span>
-                                    <br/><br/>
-                                    <span className="font-medium">Height</span><br/>
-                                    <span className="text-slate-400 break-words">{getHeight(character.about) || NaN}</span>
-                                    <br/><br/>
-                                    <span className="font-medium">Weight</span><br/>
-                                    <span className="text-slate-400 break-words">{getWeight(character.about) || NaN}</span>
-                                    <br/><br/>
-                                    <span className="font-medium">Likes</span><br/>
-                                    <span className="text-slate-400 break-words">{getLikes(character.about) || NaN}</span>
-                                    <br/><br/>
-                                    <span className="font-medium">Dislikes</span><br/>
-                                    <span className="text-slate-400 break-words">{getDislikes(character.about) || NaN}</span>
-                                    <br/><br/>
-                                    <span className="font-medium">Favorites</span><br/>
-                                    <span className="text-slate-400 break-words">{character.favorites}</span>
-                                    <br/><br/>
+
                                 </div>
                             </div>
                             <div className="w-8/12 max-sm:w-full max-md:w-full">
@@ -125,6 +46,7 @@ function Character() {
                                 <br/>
                                 <br/>
                                 <div className="flex gap-2">
+                                    <span className={page == 'about' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('about')}>About</span>
                                     <span className={page == 'voices' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('voices')}>Voice actors</span>
                                     <span className={page == 'anime' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('anime')}>Animes</span>
                                     <span className={page == 'manga' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('manga')}>Mangas</span>
@@ -149,7 +71,7 @@ function Character() {
                                         </a>
                                     )) : (
                                         <h2>This character haven't been in an anime yet {':('}</h2>
-                                    ) : character.manga.length > 0 ? character.manga.map((manga: any) => (
+                                    ) : page == 'manga' ? character.manga.length > 0 ? character.manga.map((manga: any) => (
                                         <a href={`/manga?id=${manga.manga.mal_id}`}>
                                         <div className="flex flex-col gap-2 w-40 text-center max-sm:w-20">
                                             <img src={manga.manga.images.webp.image_url} className="rounded object-cover"/>
@@ -157,6 +79,9 @@ function Character() {
                                         </div>
                                         </a>
                                     )) : <h2>This character haven't been in a manga yet {':('}</h2>
+                                    : (
+                                        <p className="text-sm text-slate-400 font-medium">{character.about}</p>
+                                    )
                                 }
                                 </div>
                             </div>

@@ -4,6 +4,7 @@
  */
 package com.gabriel.muramasa.controllers;
 
+import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.services.FollowService;
 import com.gabriel.muramasa.models.Follower;
 import com.gabriel.muramasa.services.TokenService;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,19 +44,17 @@ public class FollowerController {
         return ResponseEntity.ok().body(service.getFollowers(userId));
     }
     
-    @PostMapping(value = "/follow/{fromId}/{toId}")
-    public ResponseEntity<String> follow(@PathVariable Long fromId, @PathVariable Long toId, @RequestHeader(value = "Authorization") String bearer) {
-        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
-        service.setCurrentUser(username);
-        Follower follower = service.follow(fromId, toId);
+    @PostMapping(value = "/follow/{toId}")
+    public ResponseEntity<String> follow(@PathVariable Long toId, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        Follower follower = service.follow(acc.getId(), toId);
         return ResponseEntity.ok().body("You followed " + follower.getTo().getUsername() + ".");
     }
     
-    @DeleteMapping(value = "/unfollow/{fromId}/{toId}")
-    public ResponseEntity<String> unfollow(@PathVariable Long fromId, @PathVariable Long toId, @RequestHeader(value = "Authorization") String bearer) {
-        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
-        service.setCurrentUser(username);
-        Follower follower = service.unfollow(fromId, toId);
-        return ResponseEntity.ok().body("Your unfollowed " + follower.getTo().getUsername());
+    @DeleteMapping(value = "/unfollow/{toId}")
+    public ResponseEntity<String> unfollow(@PathVariable Long toId, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        Follower follower = service.unfollow(acc.getId(), toId);
+        return ResponseEntity.ok().body("You unfollowed " + follower.getTo().getUsername() + ".");
     }
 }

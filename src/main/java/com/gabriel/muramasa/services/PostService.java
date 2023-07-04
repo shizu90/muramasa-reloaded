@@ -16,7 +16,6 @@ import com.gabriel.muramasa.models.Log;
 import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.models.Follower;
 import com.gabriel.muramasa.models.Like;
-import com.gabriel.muramasa.models.Reply;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,12 +40,11 @@ public class PostService {
     
     private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     
-    private String currentUser;
-    
     public PostService() {}
     
-    public void setCurrentUser(String currentUser) {
-        this.currentUser = currentUser;
+    public Post getPostById(Long postId) {
+        Post post = repo.findById(postId).orElseThrow(() -> new NotFoundException("Post with specified id not found."));
+        return post;
     }
     
     public List<Post> getFollowingPosts(Long userId) {
@@ -69,47 +67,41 @@ public class PostService {
     }
     
     public Post insert(Long userId, Post post) {
-        String[] words = post.getText().split(" ");
-        String[] imgs = post.getAttachedImgs().split(";");
         Account acc = accService.findById(userId);
-        if(acc.getUsername().equals(this.currentUser)) {
-            if(words.length > 500) {throw new InvalidFormatException("Post text surpass limit of 500 words.");}
-            if(imgs.length > 4) {throw new InvalidFormatException("Post attached images surpass limit of 4 images.");}
-            post.setCreator(acc);
-            post.setLikes(new ArrayList<Like>());
-            post.setReplies(new ArrayList<Reply>());
-            post.setDate(formatter.format(new Date()));
-            try {
-                Post savedPost = repo.save(post);
-                Log log = new Log(formatter.format(new Date()), "" + acc.getUsername() + " created a post.", acc);
-                logService.addRecentUpdate(log, acc.getRecentUpdates());
-                return savedPost;
-            } catch(ConstraintViolationException e) {
-                throw new DatabaseException(e.getMessage());
-            } catch(ParseException e) {
-                throw new DatabaseException(e.getMessage());
-            }
-        }else throw new UnauthorizedException("Unauthorized operation.");
+        String[] words = post.getText().split(" ");
+        String[] imgs = post.getAttach().split(";");
+        if(words.length > 500) {throw new InvalidFormatException("Post text surpass limit of 500 words.");}
+        if(imgs.length > 4) {throw new InvalidFormatException("Post attached images surpass limit of 4 images.");}
+        post.setCreator(acc);
+        post.setLikes(new ArrayList<Like>());
+        post.setDate(formatter.format(new Date()));
+        try {
+            Post savedPost = repo.save(post);
+            Log log = new Log(formatter.format(new Date()), "" + acc.getUsername() + " created a post.", acc);
+            logService.addRecentUpdate(log, acc.getRecentUpdates());
+            return savedPost;
+        } catch(ConstraintViolationException e) {
+            throw new DatabaseException(e.getMessage());
+        } catch(ParseException e) {
+            throw new DatabaseException(e.getMessage());
+        }
     }
     
-    public Post update(Post newPost) {
-        Post oldPost = repo.findById(newPost.getId()).orElseThrow(() -> new NotFoundException("Post not found."));
-        if(oldPost.getCreator().getUsername().equals(this.currentUser)) {
-            if(!newPost.getText().equals(oldPost.getText())) {
-                oldPost.setText(newPost.getText());
-            }
-            if(!newPost.getAttachedImgs().equals(oldPost.getAttachedImgs())) {
-                oldPost.setAttachedImgs(newPost.getAttachedImgs());
-            }
+    public Post update(Long postId, Post newPost) {
+        Post oldPost = repo.findById(postId).orElseThrow(() -> new NotFoundException("Post not found."));
+        
+        if(!newPost.getText().equals(oldPost.getText())) {
+            oldPost.setText(newPost.getText());
+        }
+        if(!newPost.getAttach().equals(oldPost.getAttach())) {
+            oldPost.setAttach(newPost.getAttach());
+        }
 
-            return repo.save(oldPost);
-        }else throw new UnauthorizedException("Unauthorized operation.");
+        return repo.save(oldPost);
     }
     
-    public void delete(Long postId) {
+    public void delete(Long userId, Long postId) {
         Post post = repo.findById(postId).orElseThrow(() -> new NotFoundException("Post not found."));
-        if(post.getCreator().getUsername().equals(this.currentUser)) {
-            repo.deleteById(postId);
-        }else throw new UnauthorizedException("Unauthorized operation.");
+        repo.deleteById(postId);
     }
 }

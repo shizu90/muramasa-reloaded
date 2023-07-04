@@ -8,6 +8,10 @@ import com.gabriel.muramasa.models.Follower;
 import com.gabriel.muramasa.models.Log;
 import com.gabriel.muramasa.models.MediaList;
 import com.gabriel.muramasa.models.Account;
+import com.gabriel.muramasa.models.Post;
+import com.gabriel.muramasa.models.Media;
+import com.gabriel.muramasa.models.Character;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,12 +31,17 @@ public class UserDTO {
     private Integer followersCount;
     private Integer followingCount;
     private List<Log> recentUpdates;
+    private List<Post> posts;
+    private List<Character> favoriteCharacters;
+    private List<Media> favoriteAnimes = new ArrayList<Media>();
+    private List<Media> favoriteMangas = new ArrayList<Media>();
     
     public UserDTO() {}
     public UserDTO(
             Long id, String username, String resume, String imgUrl, String bannerImgUrl, 
             MediaList animeList, MediaList mangaList, List<Follower> followers, 
-            List<Follower> following, List<Log> recentUpdates) {
+            List<Follower> following, List<Log> recentUpdates, List<Post> posts, 
+            List<Character> favoriteCharacters, List<Media> favoriteAnimes, List<Media> favoriteMangas) {
         this.id = id;
         this.username = username;
         this.resume = resume;
@@ -45,6 +54,9 @@ public class UserDTO {
         this.recentUpdates = recentUpdates;
         this.animeListId = animeList.getId();
         this.mangaListId = mangaList.getId();
+        this.posts = posts;
+        this.favoriteCharacters = favoriteCharacters;
+        this.favoriteAnimes = favoriteAnimes;
     }
     public UserDTO(Account acc) {
         this.id = acc.getId();
@@ -59,6 +71,13 @@ public class UserDTO {
         this.recentUpdates = acc.getRecentUpdates();
         this.animeListId = acc.getAnimeList().getId();
         this.mangaListId = acc.getMangaList().getId();
+        this.favoriteCharacters = acc.getFavoritedCharacters();
+        acc.getAnimeList().getItems().forEach((Media md) -> {
+            if(md.getFavorited() == 1) this.favoriteAnimes.add(md);
+        });
+        acc.getMangaList().getItems().forEach((Media md) -> {
+            if(md.getFavorited() == 1) this.favoriteMangas.add(md);
+        });
     }
 
     public Long getId() {
@@ -144,4 +163,38 @@ public class UserDTO {
     public Long getMangaListId() {
         return mangaListId;
     }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    public List<Character> getFavoriteCharacters() {
+        return favoriteCharacters;
+    }
+
+    public void setFavoriteCharacters(List<Character> favoriteCharacters) {
+        this.favoriteCharacters = favoriteCharacters;
+    }
+
+    public List<Media> getFavoriteAnimes() {
+        return favoriteAnimes;
+    }
+
+    public void setFavoriteAnimes(List<Media> favoriteAnimes) {
+        this.favoriteAnimes = favoriteAnimes;
+    }
+
+    public List<Media> getFavoriteMangas() {
+        return favoriteMangas;
+    }
+
+    public void setFavoriteMangas(List<Media> favoriteMangas) {
+        this.favoriteMangas = favoriteMangas;
+    }
+    
+    
 }

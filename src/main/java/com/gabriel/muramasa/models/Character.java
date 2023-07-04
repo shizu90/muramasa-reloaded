@@ -5,12 +5,10 @@
 package com.gabriel.muramasa.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.io.Serializable;
@@ -20,37 +18,30 @@ import java.util.Objects;
  *
  * @author giraf
  */
-
 @Entity
-@Table(name = "muramasa_reply")
-public class Reply implements Serializable {
+@Table(name = "muramasa_character")
+public class Character implements Serializable {
     private static final long serialVersionUID = 1L;
     
     //Common attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String text;
-    private String attachedImgs;
+    private Long code;
+    private String name;
+    private String img;
     
     //Relations
-    @ManyToOne
-    @JsonIgnoreProperties({"followers", "following", "animeList", "mangaList", "password", "email"})
-    @JoinColumn(name = "account_id")
-    private Account creator;
-    @ManyToOne
+    @ManyToOne(targetEntity = Account.class)
     @JsonIgnore
-    @JoinColumn(name = "post_id")
-    private Post post;
+    private Account favoritedBy;
     
-    public Reply() {}
-
-    public Reply(Long id, String text, String attachedImgs, Account creator, Post post) {
+    public Character() {}
+    public Character(Long id, Long code, String name, String img) {
         this.id = id;
-        this.text = text;
-        this.attachedImgs = attachedImgs;
-        this.creator = creator;
-        this.post = post;
+        this.code = code;
+        this.name = name;
+        this.img = img;
     }
 
     public Long getId() {
@@ -61,42 +52,42 @@ public class Reply implements Serializable {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public Long getCode() {
+        return code;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setCode(Long code) {
+        this.code = code;
     }
 
-    public String getAttachedImgs() {
-        return attachedImgs;
+    public String getName() {
+        return name;
     }
 
-    public void setAttachedImgs(String attachedImgs) {
-        this.attachedImgs = attachedImgs;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Account getCreator() {
-        return creator;
+    public String getImg() {
+        return img;
     }
 
-    public void setCreator(Account creator) {
-        this.creator = creator;
+    public void setImg(String img) {
+        this.img = img;
     }
 
-    public Post getPost() {
-        return post;
+    public Account getFavoritedBy() {
+        return favoritedBy;
     }
 
-    public void setPost(Post post) {
-        this.post = post;
+    public void setFavoritedBy(Account favoritedBy) {
+        this.favoritedBy = favoritedBy;
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 37 * hash + Objects.hashCode(this.id);
+        hash = 67 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -111,7 +102,7 @@ public class Reply implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Reply other = (Reply) obj;
+        final Character other = (Character) obj;
         return Objects.equals(this.id, other.id);
     }
 }

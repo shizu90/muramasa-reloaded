@@ -4,6 +4,7 @@
  */
 package com.gabriel.muramasa.controllers;
 
+import com.gabriel.muramasa.dto.AuthDTO;
 import com.gabriel.muramasa.dto.LoginDTO;
 import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.services.TokenService;
@@ -31,13 +32,21 @@ public class AuthController {
     private TokenService tokenService;
     
     @PostMapping("/login")
-    public String login(@RequestBody LoginDTO login) {
+    public AuthDTO login(@RequestBody LoginDTO login) {
         UsernamePasswordAuthenticationToken usrPasswdToken = new UsernamePasswordAuthenticationToken(
                 login.getUsername(), login.getPassword()
         );
         Authentication authenticate = this.authManager.authenticate(usrPasswdToken);
         var account = (Account) authenticate.getPrincipal();
         
-        return tokenService.generateToken(account);
+        AuthDTO auth = new AuthDTO(
+                account.getId(), 
+                account.getUsername(), 
+                account.getEmail(), 
+                account.getAnimeList().getId(), 
+                account.getMangaList().getId(), 
+                tokenService.generateToken(account));
+        
+        return auth;
     }
 }

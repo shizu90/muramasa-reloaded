@@ -103,7 +103,7 @@ function Manga() {
                                         </div>
                                         </a>
                                     )) : null
-                                : news.map((newsItem: any) => (
+                                : news ? news.map((newsItem: any) => (
                                     <a href={newsItem.url} target="_blank">
                                     <div className="flex flex-col bg-darkocean rounded w-60 max-sm:w-full max-xl:w-44 h-96">
                                         <img src={newsItem.images.jpg.image_url} className="w-full h-40 object-cover rounded"/>
@@ -111,7 +111,7 @@ function Manga() {
                                         <p className="w-full text-center text-sm text-slate-400 p-2 text-ellipsis">{newsItem.excerpt}</p>
                                     </div>
                                     </a>
-                                ))}
+                                )) : <Loading/>}
                             </div>
                         </div>
                     </div>

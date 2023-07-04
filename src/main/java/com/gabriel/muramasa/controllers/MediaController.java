@@ -4,11 +4,14 @@
  */
 package com.gabriel.muramasa.controllers;
 
+import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
+import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.models.Media;
+import com.gabriel.muramasa.models.MediaList;
 import com.gabriel.muramasa.services.MediaService;
-import com.gabriel.muramasa.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -28,33 +30,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MediaController {
     @Autowired
     private MediaService service;
-    @Autowired
-    private TokenService tokenService;
     
     @GetMapping(value = "/{code}/{listId}")
     public ResponseEntity<Media> getMedia(@PathVariable Long code, @PathVariable Long listId) {
         return ResponseEntity.ok().body(service.findByCodeAndList(code, listId));
     }
     
-    @PostMapping(value = "/{userId}")
-    public ResponseEntity<Media> postMedia(@RequestBody Media media, @PathVariable Long userId, @RequestHeader(value = "Authorization") String bearer) {
-        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
-        service.setCurrentUser(username);
-        return ResponseEntity.ok().body(service.insert(userId, media));
+    @PostMapping
+    public ResponseEntity<Media> postMedia(@RequestBody Media media, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        return ResponseEntity.ok().body(service.insert(acc.getId(), media));
     }
     
-    @PutMapping(value = "/{mediaId}")
-    public ResponseEntity<Media> putMedia(@RequestBody Media media, @PathVariable Long mediaId, @RequestHeader(value = "Authorization") String bearer) {
-        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
-        service.setCurrentUser(username);
-        return ResponseEntity.ok().body(service.update(mediaId, media));
+    @PutMapping(value = "/{code}")
+    public ResponseEntity<Media> putMedia(@RequestBody Media media, @PathVariable Long code, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        MediaList list = media.getType().equals("anime") ? acc.getAnimeList() : acc.getMangaList();
+        Media md = service.findByCodeAndList(code, list.getId());
+        return ResponseEntity.ok().body(service.update(md.getId(), media));
     }
     
-    @DeleteMapping(value = "/{mediaId}")
-    public ResponseEntity<String> deleteMedia(@PathVariable Long mediaId, @RequestHeader(value = "Authorization") String bearer) {
-        String username = tokenService.getSubject(bearer.replace("Bearer ", ""));
-        service.setCurrentUser(username);
-        service.delete(mediaId);
+    @DeleteMapping(value = "/{code}")
+    public ResponseEntity<String> deleteMedia(@PathVariable Long code, @PathVariable Long listId, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        Media md;
+        try {
+            md = service.findByCodeAndList(code, acc.getAnimeList().getId());
+        } catch(NotFoundException e) {
+            md = service.findByCodeAndList(code, acc.getMangaList().getId());
+        }
+        service.delete(md.getId());
         return ResponseEntity.ok().body("Media deleted.");
     }
     
