@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import jikan_api from "../api/jikan/routes";
-import Loading from "../components/Loading";
-import Heart from "../components/Heart";
+import Loading from "../components/icons/Loading";
+import Heart from "../components/icons/Heart";
 
 function Media() {
     const [media, setMedia] = useState<any>(null);

@@ -1,8 +1,7 @@
 import {useState, useEffect} from 'react';
 import jikan_api from "../api/jikan/routes";
-import Loading from '../components/Loading';
-import Heart from '../components/Heart';
-import { filterKeysAbout } from '../modules/filterAbout';
+import Loading from '../components/icons/Loading';
+import Heart from '../components/icons/Heart';
 
 function Character() {
     const [character, setCharacter] = useState<any>(null);
@@ -18,7 +17,6 @@ function Character() {
         }
     }, [character]);
 
-    if(character) filterKeysAbout(character.about)
     return (
         <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
             {
@@ -26,9 +24,6 @@ function Character() {
                         <div className="flex justify-around w-full max-sm:flex-col max-sm:w-10/12 max-sm:text-center max-xl:gap-4">
                             <div className="flex flex-col gap-4 w-64">
                                 <img src={character.images.webp.image_url} className="rounded object-cover max-xl:w-full max-sm:w-full"/>
-                                <div className="bg-darkocean w-full p-4 rounded text-sm max-sm:h-60 max-sm:overflow-y-auto">
-
-                                </div>
                             </div>
                             <div className="w-8/12 max-sm:w-full max-md:w-full">
                                 <div className="flex justify-between max-sm:flex-col gap-2">

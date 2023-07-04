@@ -1,7 +1,7 @@
 import Log from "../components/Log";
 import {useEffect, useState} from 'react';
 import jikan_api from "../api/jikan/routes";
-import Loading from "../components/Loading";
+import Loading from "../components/icons/Loading";
 
 function Home() {
     const [recentDatas, setRecentDatas] = useState<Array<any>>([]);
@@ -106,6 +106,10 @@ function Home() {
                             </div>
                             </a>
                         )) : <Loading/>}
+                </div>
+                <h2 className="text-slate-50 font-medium text-lg my-4">Recent posts</h2>
+                <div className="flex flex-col gap-4">
+
                 </div>
            </section>
         </main>

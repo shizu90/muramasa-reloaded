@@ -10,6 +10,9 @@ import Social from "./pages/Social"
 import Anime from "./pages/Anime"
 import Manga from "./pages/Manga"
 import Character from "./pages/Character"
+import SearchAnime from "./pages/search/SearchAnime"
+import SearchManga from "./pages/search/SearchManga"
+import SearchCharacter from "./pages/search/SearchCharacter"
 
 function App() {
   return (
@@ -26,6 +29,9 @@ function App() {
           <Route path="/anime" element={<Anime/>}></Route>
           <Route path="/manga" element={<Manga/>}></Route>
           <Route path="/character" element={<Character/>}></Route>
+          <Route path="/search/anime" element={<SearchAnime/>}></Route>
+          <Route path="/search/manga" element={<SearchManga/>}></Route>
+          <Route path="/search/character" element={<SearchCharacter/>}></Route>
         </Routes>
       </section>
     <Footer/>

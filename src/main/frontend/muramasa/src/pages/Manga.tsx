@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import jikan_api from "../api/jikan/routes";
-import Heart from '../components/Heart';
-import Loading from '../components/Loading';
+import Heart from '../components/icons/Heart';
+import Loading from '../components/icons/Loading';
 
 function Manga() {
     const [media, setMedia] = useState<any>(null);
