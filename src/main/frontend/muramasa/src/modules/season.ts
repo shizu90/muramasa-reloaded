@@ -10,8 +10,20 @@ export function getSeason(date: Date) {
     }else return "winter";
 }
 
-export const current_season = {
-    
+export function getSeasonStartingMonth(str: string) {
+    if(str == 'summer') {
+        return '06';
+    }else if(str == 'spring') {
+        return '03';
+    }else if(str == 'fall') {
+        return '09';
+    }else if(str == 'winter') {
+        return '12'
+    }
 }
+
+export const currentSeason = getSeason(new Date());
+export const currentYear = new Date().getFullYear() + "";
+export const currentSeasonStartingMonth = getSeasonStartingMonth(currentSeason);
 
 

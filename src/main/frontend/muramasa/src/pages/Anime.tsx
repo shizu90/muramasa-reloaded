@@ -40,6 +40,9 @@ function Media() {
                         <div className="flex flex-col gap-4 max-sm:text-center">
                             <img src={media.images.webp.large_image_url} className="rounded object-cover w-64 max-xl:w-full max-sm:w-full"/>
                             <div className="bg-darkocean w-full p-4 rounded text-sm max-sm:h-60 max-sm:overflow-y-auto">
+                                <span className="font-medium">Studios</span><br/>
+                                <span className="text-slate-400">{media.studios.map((studio: any, index: number) =>  index+1 == media.studios.length ? studio.name : studio.name + ', ')}</span>
+                                <br/><br/>
                                 <span className="font-medium">Season</span><br/>
                                 <span className="text-slate-400">{media.season ? (media.season as string).slice(0, 1).toUpperCase() + (media.season as string).slice(1) : '-'} - {media.year}</span>
                                 <br/><br/>
