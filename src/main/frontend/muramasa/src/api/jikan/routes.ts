@@ -6,6 +6,11 @@ export default {
     getById: (animeId: string | number, type = "anime") => {
         return axios.get(jikan_url + `${type}/${animeId}/full`);
     },
+    searchCharacters: (page = 1, limit = 24, query: string) => {
+        return query.length === 0 ? 
+            axios.get(jikan_url + `characters?page=${page}&limit=${limit}&order_by=favorites&sort=desc`) : 
+            axios.get(jikan_url + `characters?page=${page}&limit=${limit}&q=${query}&order_by=favorites&sort=desc`)
+    },
     getCharacters: (animeId: string | number, type = "anime") => {
         return axios.get(jikan_url + `${type}/${animeId}/characters`);
     },

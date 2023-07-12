@@ -35,7 +35,7 @@ function SearchManga() {
             }, 100);
         }
     }, []);
-    console.log(content);
+
     useEffect(() => {
         if(!mounted) {
             let currParams = urlParams;
@@ -50,7 +50,7 @@ function SearchManga() {
                 currParams.delete('page');
                 currParams.delete('search');
                 redirect(currParams);
-            }, 2000);
+            }, 600);
             return () => clearTimeout(delay);
         }else mounted=false;
     }, [filters]);
@@ -122,12 +122,12 @@ function SearchManga() {
                         </span>
                         {generatePages(currentPage || 1, content.pagination.last_visible_page).map((page: number) => (
                             page != currentPage ? 
-                                <span className="bg-darkocean px-2 py-1 rounded cursor-pointer w-10 text-center hover:text-rose-500 transition-all" 
+                                <span className="bg-darkocean px-2 py-1 rounded cursor-pointer text-center hover:text-rose-500 transition-all" 
                                     onClick={() => redirectToPage(urlParams, page)} key={page}>
                                         {page}
                                 </span> 
                                 :
-                                <span className="bg-midnight px-2 py-1 rounded w-10 text-center hover:text-rose-500 transition-all" key={page}>
+                                <span className="bg-midnight px-2 py-1 rounded text-center hover:text-rose-500 transition-all" key={page}>
                                     {page}
                                 </span>
                         ))}

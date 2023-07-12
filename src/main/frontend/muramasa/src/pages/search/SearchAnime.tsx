@@ -89,7 +89,7 @@ function SearchAnime() {
                 currParams.delete('page');
                 currParams.delete('search');
                 redirect(currParams);
-            }, 2000);
+            }, 600);
             return () => clearTimeout(delay);
         }else mounted=false;
     }, [filters]);

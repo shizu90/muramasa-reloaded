@@ -32,7 +32,7 @@ function Navbar() {
                     <div className="bg-darkocean shadow-lg shadow-midnight absolute p-4 flex-col gap-2 rounded v&status=airingext-start text-sm hidden group-hover:flex group-focus:flex">
                         <a href={`/search/anime?search=current`} className="hover:text-slate-50 w-full focus:text-slate-50 transition-colors flex gap-2"><Tv/> Anime</a>
                         <a href="/search/manga" className="hover:text-slate-50 focus:text-slate-50 transition-colors flex gap-2"><Book/> Manga</a>
-                        <a href="/search/characters" className="hover:text-slate-50 focus:text-slate-50 transition-colors flex gap-2"><User/> Character</a>
+                        <a href="/search/character" className="hover:text-slate-50 focus:text-slate-50 transition-colors flex gap-2"><User/> Character</a>
                     </div>
                 </div>
                 <div className="mx-6 flex gap-4 max-sm:flex-col max-sm:mx-0 items-center">

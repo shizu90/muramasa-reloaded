@@ -5,7 +5,7 @@ import Heart from '../components/icons/Heart';
 
 function Character() {
     const [character, setCharacter] = useState<any>(null);
-    const [page, setPage] = useState<string>("voices");
+    const [page, setPage] = useState<string>("about");
 
     useEffect(() => {
         if(character == null) {
