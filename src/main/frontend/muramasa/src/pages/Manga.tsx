@@ -32,33 +32,33 @@ function Manga() {
                     <div className="flex justify-around w-full max-sm:flex-col max-sm:w-10/12 max-xl:gap-4">
                         <div className="flex flex-col gap-4 max-sm:text-center">
                             <img src={media.images.webp.large_image_url} className="rounded object-cover w-64 max-xl:w-full max-sm:w-full"/>
-                            <div className="bg-darkocean w-full p-4 rounded text-sm max-sm:h-60 max-sm:overflow-y-auto">
-                                <span className="font-medium">Season</span><br/>
-                                <span className="text-slate-400">{media.season ? (media.season as string).slice(0, 1).toUpperCase() + (media.season as string).slice(1) : NaN} - {media.year}</span>
+                            <div className="bg-darkocean w-64 p-4 rounded text-sm max-sm:h-60 max-sm:overflow-y-auto">
+                                <span className="font-medium">Authors</span><br/>
+                                <span className="text-slate-400">{media.authors.map((author: any, index: number) => index+1 == media.authors.length ? author.name : author.name + "; ")}</span>
                                 <br/><br/>
                                 <span className="font-medium">Type</span><br/>
                                 <span className="text-slate-400">{media.type}</span>
                                 <br/><br/>
                                 <span className="font-medium">Rating</span><br/>
-                                <span className="text-slate-400">{media.score > 0 ? media.score : NaN}</span>
+                                <span className="text-slate-400">{media.score > 0 ? media.score : '-'}</span>
                                 <br/><br/>
                                 <span className="font-medium">Favorites</span><br/>
                                 <span className="text-slate-400">{media.favorites}</span>
                                 <br/><br/>
                                 <span className="font-medium">Rank</span><br/>
-                                <span className="text-slate-400">{media.rank || NaN}</span>
+                                <span className="text-slate-400">{media.rank || '-'}</span>
                                 <br/><br/>
                                 <span className="font-medium">Status</span><br/>
                                 <span className="text-slate-400">{media.status}</span>
                                 <br/><br/>
                                 <span className="font-medium">Chapters</span><br/>
-                                <span className="text-slate-400">{media.chapters || NaN}</span>
+                                <span className="text-slate-400">{media.chapters || '-'}</span>
                                 <br/><br/>
                                 <span className="font-medium">Volumes</span><br/>
                                 <span className="text-slate-400">{media.volumes}</span>
                                 <br/><br/>
                                 <span className="font-medium">Date</span><br/>
-                                <span className="text-slate-400">{media.published.from ? media.published.from.split('T')[0] : NaN} - {media.published.to ? media.published.to.split('T')[0] : NaN}</span>
+                                <span className="text-slate-400">{media.published.from ? media.published.from.split('T')[0] : '-'} - {media.published.to ? media.published.to.split('T')[0] : '-'}</span>
                                 <br/><br/>
                                 <span className="font-medium">Genres</span><br/>
                                 <span className="text-slate-400">
@@ -103,7 +103,7 @@ function Manga() {
                                         </div>
                                         </a>
                                     )) : null
-                                : news ? news.map((newsItem: any) => (
+                                : news ?  news.map((newsItem: any) => (
                                     <a href={newsItem.url} target="_blank">
                                     <div className="flex flex-col bg-darkocean rounded w-60 max-sm:w-full max-xl:w-44 h-96">
                                         <img src={newsItem.images.jpg.image_url} className="w-full h-40 object-cover rounded"/>

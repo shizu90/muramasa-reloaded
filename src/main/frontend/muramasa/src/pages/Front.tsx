@@ -64,7 +64,7 @@ function Front() {
                 <section className="w-full flex flex-col gap-4 justify-center">
                     <div className="w-full flex items-center justify-between text-xl max-sm:text-sm">
                         <h1 className="font-medium">Current season</h1>
-                        <a className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 transform hover:translate-x-2 focus:translate-x-2 focus:bg-rose-500 rounded transition-all" tabIndex={0}>View more</a>
+                        <a href="/search/anime?search=current" className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 transform hover:translate-x-2 focus:translate-x-2 focus:bg-rose-500 rounded transition-all" tabIndex={0}>View more</a>
                     </div>
                     <div className="flex gap-4 justify-center flex-shrink flex-wrap">
                         {
@@ -86,7 +86,7 @@ function Front() {
                 <section className="w-full flex flex-col gap-4 justify-center">
                     <div className="w-full flex items-center justify-between text-xl max-sm:text-sm">
                         <h1 className="font-medium">Upcoming season</h1>
-                        <a className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 focus:translate-x-2 focus:bg-rose-500 transform hover:translate-x-2 rounded transition-all" tabIndex={0}>View more</a>
+                        <a href="/search/anime?search=upcoming" className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 focus:translate-x-2 focus:bg-rose-500 transform hover:translate-x-2 rounded transition-all" tabIndex={0}>View more</a>
                     </div>
                     <div className="flex gap-4 justify-center flex-shrink flex-wrap">
                         {
@@ -108,7 +108,7 @@ function Front() {
                 <section className="w-full flex flex-col gap-4 justify-center">
                     <div className="w-full flex items-center justify-between text-xl max-sm:text-sm">
                         <h1 className="font-medium">Top anime</h1>
-                        <a className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 focus:translate-x-2 focus:bg-rose-500 transform hover:translate-x-2 rounded transition-all" tabIndex={0}>View more</a>
+                        <a href="/search/anime?search=top" className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 focus:translate-x-2 focus:bg-rose-500 transform hover:translate-x-2 rounded transition-all" tabIndex={0}>View more</a>
                     </div>
                     <div className="flex gap-4 justify-center flex-shrink flex-wrap">
                         {

@@ -11,15 +11,37 @@ export function getSeason(date: Date) {
 }
 
 export function getSeasonStartingMonth(str: string) {
-    if(str == 'summer') {
-        return '06';
-    }else if(str == 'spring') {
-        return '03';
-    }else if(str == 'fall') {
-        return '09';
-    }else if(str == 'winter') {
-        return '12'
+    switch(str) {
+        case 'summer':
+            return '06';
+        case 'spring':
+            return '03';
+        case 'fall':
+            return '09';
+        case 'winter':
+            return '12';
+        default:
+            return null;
     }
+}
+
+export function getNextSeason(str: string) {
+    switch(str) {
+        case 'spring':
+            return 'summer';
+        case 'summer':
+            return 'fall';
+        case 'fall':
+            return 'winter';
+        case 'winter':
+            return 'spring';
+        default:
+            return null;
+    }
+}
+
+export function getNextSeasonDate(year: string | number = new Date().getFullYear(), str: string) {
+    return `${str === 'winter' ? Number(year) + 1 : year}-${getSeasonStartingMonth(getNextSeason(str) as string)}-01`;
 }
 
 export const currentSeason = getSeason(new Date());

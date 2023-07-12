@@ -18,26 +18,29 @@ export default {
     getNews: (animeId: string | number, type = "anime") => {
         return axios.get(jikan_url + `${type}/${animeId}/news`);
     },
-    search: (page: number, limit: number, query: string, type = "anime", media_type = "tv", min_score = 0, max_score = 10.0, status = "complete") => {
-        const default_orderby = "popularity";
-        if(type === "manga" && !["manga", "novel", "lightnovel", "manhwa", "manhua", "doujin", "oneshot"].includes(media_type)) {
-            media_type = "manga";
+    search: (page: number, limit: number, type = "anime", filters: any) => {
+        let searchUrl = `${type}?page=${page}&limit=${limit}`;
+
+        for(const filter of Object.keys(filters)) {
+            searchUrl = searchUrl + `&${filter}=${filters[filter]}`;
         }
-        return axios.get(jikan_url + 
-            `${type}?q=${query}&page=${page}&limit=${limit}&type=${type}&min_score=${min_score}&max_score=${max_score}&status=${status}&order_by=${default_orderby}`);
+        return axios.get(jikan_url + searchUrl + '&order_by=popularity');
     },
-    getSeasonNow: () => {
-        return axios.get(jikan_url + `seasons/now`);
+    getSeason: (page = 1, limit = 24, season: string, year: string) => {
+        return axios.get(jikan_url + `seasons/${year}/${season}?page=${page}&limit=${limit}`);
     },
-    getUpcomingSeason: () => {
-        return axios.get(jikan_url + 'seasons/upcoming');
+    getSeasonNow: (page = 1, limit = 24) => {
+        return axios.get(jikan_url + `seasons/now?page=${page}&limit=${limit}`);
+    },
+    getUpcomingSeason: (page = 1, limit = 24) => {
+        return axios.get(jikan_url + `seasons/upcoming?page=${page}&limit=${limit}`);
     },
     getTrending: (limit: number, type = "anime") => {
         const media_type = type === "anime" ? "tv" : "manga";
         return axios.get(jikan_url + `${type}?order_by=popularity&limit=${limit}&type=${media_type}&status=complete&sort=asc`);
     },
-    getTop: (type = "anime", limit: number) => {
-        return axios.get(jikan_url + `top/${type}?limit=${limit}`)
+    getTop: (type = "anime", limit: number, page = 1) => {
+        return axios.get(jikan_url + `top/${type}?limit=${limit}&page=${page}`)
     },
     getAll: (page: number, type = "anime") => {
         return axios.get(jikan_url + `${type}?page=${page}`);

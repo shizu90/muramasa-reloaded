@@ -6,6 +6,7 @@ import Book from "./icons/Book";
 import User from "./icons/User";
 import Settings from "./icons/Settings";
 import Logout from "./icons/Logout";
+import { currentSeason } from "../modules/season";
 
 function Navbar() {
     const [navVisible, setNavVisible] = useState<boolean>(false);
@@ -29,8 +30,8 @@ function Navbar() {
                 <a href="/social" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Social</a>
                 <div className="group">
                     <button className="hover:text-slate-50 focus:text-slate-50 transition-colors flex items-center">Search <ArrowDown/></button>
-                    <div className="bg-darkocean shadow-lg shadow-midnight absolute p-4 flex-col gap-2 rounded text-start text-sm hidden group-hover:flex group-focus:flex">
-                        <a href="/search/anime" className="hover:text-slate-50 w-full focus:text-slate-50 transition-colors flex gap-2"><Tv/> Anime</a>
+                    <div className="bg-darkocean shadow-lg shadow-midnight absolute p-4 flex-col gap-2 rounded v&status=airingext-start text-sm hidden group-hover:flex group-focus:flex">
+                        <a href={`/search/anime?year=${new Date().getFullYear()}&season=${currentSeason}&type=tv&status=airing`} className="hover:text-slate-50 w-full focus:text-slate-50 transition-colors flex gap-2"><Tv/> Anime</a>
                         <a href="/search/manga" className="hover:text-slate-50 focus:text-slate-50 transition-colors flex gap-2"><Book/> Manga</a>
                         <a href="/search/characters" className="hover:text-slate-50 focus:text-slate-50 transition-colors flex gap-2"><User/> Character</a>
                     </div>
