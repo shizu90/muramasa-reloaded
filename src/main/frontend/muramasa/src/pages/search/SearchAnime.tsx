@@ -4,11 +4,7 @@ import { generatePages, redirectToPage } from "../../modules/pagination";
 import capitallize from "../../modules/capitallize";
 import jikan_api from "../../api/jikan/routes";
 import Loading from "../../components/icons/Loading";
-
-function redirect(urlParams: URLSearchParams) {
-    const searchurl = urlParams.toString();
-    window.location.href = window.location.href.split('?')[0] + '?' + searchurl;
-}
+import { redirect } from "../../modules/redirection";
 
 function createYearArray() {
     const arr = [];
@@ -21,6 +17,7 @@ function createYearArray() {
 const urlParams = new URLSearchParams(window.location.search);
 const yearArr = createYearArray();
 const filterArr = ['q', 'season', 'year', 'type', 'status'];
+const currentPage = Number(urlParams.get('page') as any)
 let mounted = true;
 
 function SearchAnime() {
@@ -51,30 +48,30 @@ function SearchAnime() {
                 let searchParam = urlParams.get('search');
                 switch(searchParam) {
                     case 'top':
-                        jikan_api.getTop("anime", 24, Number(urlParams.get('page')) || 1)
+                        jikan_api.getTop("anime", 24, currentPage || 1)
                         .then(res => setContent(res.data))
                         break;
                     case 'upcoming':
-                        jikan_api.getUpcomingSeason(Number(urlParams.get('page')) || 1, 24)
+                        jikan_api.getUpcomingSeason(currentPage || 1, 24)
                         .then(res => setContent(res.data))
                         break;
                     case 'current':
-                        jikan_api.getSeasonNow(Number(urlParams.get('page')) || 1, 24)
+                        jikan_api.getSeasonNow(currentPage || 1, 24)
                         .then(res => setContent(res.data))
                         break;
                     default:
                         if(Object.keys(obj).includes('season') && !Object.keys(obj).includes('q')) {
-                            jikan_api.getSeason(Number(urlParams.get('page')) || 1, 24, obj['season'], obj['year'])
+                            jikan_api.getSeason(currentPage || 1, 24, obj['season'], obj['year'])
                             .then(res => setContent(res.data))
                             .catch(() => setContent(-1));
                         }else {
-                            jikan_api.search(Number(urlParams.get('page')) || 1, 24, 'anime', obj)
+                            jikan_api.search(currentPage || 1, 24, 'anime', obj)
                             .then(res => setContent(res.data))
                             .catch(() => setContent(-1));
                         }
                         break;
                 }
-            }, 200);
+            }, 100);
         }
     }, [])
 
@@ -89,13 +86,14 @@ function SearchAnime() {
                         currParams.set(filter, filters[filter]);
                     }
                 });
+                currParams.delete('page');
                 currParams.delete('search');
                 redirect(currParams);
             }, 2000);
             return () => clearTimeout(delay);
         }else mounted=false;
     }, [filters]);
-    console.log(generatePages(urlParams.get('page') as any || 1, 897));
+
     return (
         <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
             <div className="flex gap-2 w-full text-sm font-medium justify-center flex-wrap">
@@ -175,13 +173,29 @@ function SearchAnime() {
                         )) : <h2>Found anything {':('}</h2>: <Loading/>
                 }
             </div>
-            <div className="text-white text-sm font-medium flex gap-2 ">
-                {content && 
-                    generatePages(Number(urlParams.get('page')) || 1, content.pagination.last_visible_page).map((page: number) => (
-                        <span className="bg-darkocean p-1 rounded cursor-pointer w-6 text-center hover:text-rose-500 transition-all" onClick={() => redirectToPage(urlParams, page)} key={page}>
-                            {page}
+            <div className="text-white text-sm max-sm:text-[12px] font-medium flex gap-2 ">
+                {content && (
+                    <>
+                        <span className="bg-darkocean px-2 py-1 rounded cursor-pointer text-center hover:text-rose-500 transition-all" onClick={() => redirectToPage(urlParams, 1)}>
+                            {'<<'}
                         </span>
-                ))}
+                        {generatePages(currentPage || 1, content.pagination.last_visible_page).map((page: number) => (
+                            page != currentPage ? 
+                                <span className="bg-darkocean px-2 py-1 rounded cursor-pointer text-center hover:text-rose-500 transition-all" 
+                                    onClick={() => redirectToPage(urlParams, page)} key={page}>
+                                        {page}
+                                </span> 
+                                :
+                                <span className="bg-midnight px-2 py-1 rounded text-center hover:text-rose-500 transition-all" key={page}>
+                                    {page}
+                                </span>
+                            ))}
+                        <span className="bg-darkocean px-2 py-1 rounded cursor-pointer text-center hover:text-rose-500 transition-all" 
+                            onClick={() => redirectToPage(urlParams, content.pagination.last_visible_page)}>
+                                {'>>'}
+                        </span>
+                    </>
+                )}
             </div>
         </main>
     )
