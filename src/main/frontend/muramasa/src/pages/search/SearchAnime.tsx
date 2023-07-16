@@ -167,7 +167,7 @@ function SearchAnime() {
                             <a href={`/anime?id=${anime.mal_id}`} key={anime.mal_id}>
                                 <div className="flex flex-col gap-1 w-40 h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-24">
                                     <img src={anime.images.jpg.image_url} className="w-full h-56 max-sm:h-36 object-cover cursor-pointer rounded"/>
-                                    <h2 className="truncate text-ellipsis max-sm:text-sm">{anime.title}</h2>
+                                    <h2 className="truncate text-ellipsis text-sm font-medium">{anime.title}</h2>
                                 </div>
                             </a>
                         )) : <h2>Found anything {':('}</h2>: <Loading/>

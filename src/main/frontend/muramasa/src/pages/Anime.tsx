@@ -39,7 +39,7 @@ function Media() {
                     <div className="flex justify-around w-full max-sm:flex-col max-sm:w-10/12 max-xl:gap-4">
                         <div className="flex flex-col gap-4 max-sm:text-center">
                             <img src={media.images.webp.large_image_url} className="rounded object-cover w-64 max-xl:w-full max-sm:w-full"/>
-                            <div className="bg-darkocean w-full p-4 rounded text-sm max-sm:h-60 max-sm:overflow-y-auto">
+                            <div className="bg-darkocean w-64 p-4 rounded text-sm max-sm:h-60 max-sm:overflow-y-auto">
                                 <span className="font-medium">Studios</span><br/>
                                 <span className="text-slate-400">{media.studios.map((studio: any, index: number) =>  index+1 == media.studios.length ? studio.name : studio.name + ', ')}</span>
                                 <br/><br/>

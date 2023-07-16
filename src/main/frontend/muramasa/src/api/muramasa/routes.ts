@@ -2,6 +2,18 @@ import axios from "axios";
 
 const default_url = "http://localhost:8080/"
 
+interface RegisterData {
+    username: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+}
+
+interface LoginData {
+    username: string,
+    password: string
+}
+
 export default {
     user: {
         get: (username: string) => {
@@ -13,7 +25,10 @@ export default {
         getInfo: (id: number) => {
             return axios.get(default_url + `users/info/${id}`);
         },
-        register: (data: any) => {
+        login: (data: LoginData) => {
+            return axios.post(default_url + 'login', data);
+        },
+        register: (data: RegisterData) => {
             return axios.post(default_url + 'users', data);
         },
         update: (data: any, id: number) => {

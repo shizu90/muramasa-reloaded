@@ -2,6 +2,7 @@ import Log from "../components/Log";
 import {useEffect, useState} from 'react';
 import jikan_api from "../api/jikan/routes";
 import Loading from "../components/icons/Loading";
+import Post from "../components/Post";
 
 function Home() {
     const [recentDatas, setRecentDatas] = useState<Array<any>>([]);
@@ -78,9 +79,9 @@ function Home() {
                 <div className="grid grid-cols-6 gap-2 max-sm:grid-cols-3">
                     {
                         recentDatas ? recentDatas.slice(0, 6).map((anime) => (
-                            <a href={`/anime?id=${anime.mal_id}`} className="w-26">
+                            <a href={`/anime?id=${anime.mal_id}`} className="w-26 h-38">
                             <div className="flex flex-col gap-1 w-full h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-20">
-                                <img src={anime.images.jpg.image_url} className="w-full h-full cursor-pointer rounded"/>
+                                <img src={anime.images.jpg.image_url} className="w-full h-full object-cover cursor-pointer rounded"/>
                             </div>
                             </a>
                         )) : <Loading/>}
@@ -89,9 +90,9 @@ function Home() {
                 <div className="grid grid-cols-6 gap-2 max-sm:grid-cols-3">
                     {
                         recentDatas ? recentDatas.slice(6, 12).map((anime) => (
-                            <a href={`/anime?id=${anime.mal_id}`} className="w-26">
+                            <a href={`/anime?id=${anime.mal_id}`} className="w-26 h-38">
                             <div className="flex flex-col gap-1 w-full h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-20">
-                                <img src={anime.images.jpg.image_url} className="w-full h-full cursor-pointer rounded"/>
+                                <img src={anime.images.jpg.image_url} className="w-full h-full object-cover cursor-pointer rounded"/>
                             </div>
                             </a>
                         )) : <Loading/>}
@@ -100,16 +101,17 @@ function Home() {
                 <div className="grid grid-cols-6 gap-2 max-sm:grid-cols-3">
                     {
                         recentDatas ? recentDatas.slice(12).map((manga) => (
-                            <a href={`/manga?id=${manga.mal_id}`} className="w-26">
+                            <a href={`/manga?id=${manga.mal_id}`} className="w-26 h-38">
                             <div className="flex flex-col gap-1 w-full h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-20">
-                                <img src={manga.images.jpg.image_url} className="w-full h-full cursor-pointer rounded"/>
+                                <img src={manga.images.jpg.image_url} className="w-full h-full object-cover cursor-pointer rounded"/>
                             </div>
                             </a>
                         )) : <Loading/>}
                 </div>
                 <h2 className="text-slate-50 font-medium text-lg my-4">Recent posts</h2>
                 <div className="flex flex-col gap-4">
-
+                    <Post/>
+                    <Post/>
                 </div>
            </section>
         </main>
