@@ -5,22 +5,11 @@ import Heart from "../components/icons/Heart";
 import useAuth from "../hooks/useAuth";
 import muramasa_api from "../api/muramasa/routes";
 import popupMessage from "../modules/toaster";
+import { MediaData, JikanAnime, JikanNew, JikanCharacterCard, JikanStaff, JikanGenreObject } from "../modules/mediaData";
 
-interface MediaData {
-    id: number | null,
-    code: number,
-    name: string,
-    imgUrl: string,
-    type: string,
-    favorited: 0 | 1, 
-    count: number,
-    cLength: number,
-    status: number
-}
-
-function saveMedia(data: MediaData, token: string) {
-    muramasa_api.media.auth(token).add(data)
-    .then(() => popupMessage.success("Anime saved successfully."))
+async function saveMedia(data: MediaData, token: string, setMedia: Function) {
+    return muramasa_api.media.auth(token).add(data)
+    .then((res) => {popupMessage.success("Anime saved successfully.");setMedia(res.data)})
     .catch(() => popupMessage.error("Cannot save that anime."));
 }
 
@@ -40,16 +29,16 @@ const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type:
 
 function Media() {
     const auth = useAuth();
-    const [media, setMedia] = useState<any>(null);
+    const [media, setMedia] = useState<JikanAnime | null | number>(null);
     const [existentMedia, setExistentMedia] = useState<MediaData>(default_media);
-    const [characters, setCharacters] = useState<any>(null);
-    const [news, setNews] = useState<any>(null);
-    const [staff, setStaff] = useState<any>(null);
+    const [characters, setCharacters] = useState<Array<JikanCharacterCard> | null>(null);
+    const [news, setNews] = useState<Array<JikanNew> | null>(null);
+    const [staff, setStaff] = useState<Array<JikanStaff> | null>(null);
     const [page, setPage] = useState<string>('characters');
     const [showModal, setShowModal] = useState<boolean>(false);
     
     useEffect(() => {
-        if(auth.isAuthenticated && media) {
+        if(auth.isAuthenticated && (media && typeof media != 'number')) {
             muramasa_api.media.auth(auth.authObject?.token || '').get(media.mal_id, auth.authObject?.animeListId as number)
             .then(res => setExistentMedia(res.data))
             .catch(() => setExistentMedia(default_media));
@@ -57,8 +46,8 @@ function Media() {
     }, [media]);
 
     useEffect(() => {
-        const url = new URLSearchParams(window.location.search);
-        const id = url.get("id") as unknown as number;
+        const url: URLSearchParams = new URLSearchParams(window.location.search);
+        const id: number = url.get("id") as unknown as number;
         if(media === null) {
             setTimeout(() => {
                 jikan_api.getById(id, "anime")
@@ -79,7 +68,7 @@ function Media() {
     }, [media, page]);
 
     useEffect(() => {
-        if(media && (existentMedia.imgUrl.length === 0 || existentMedia.cLength === -1)) {
+        if((media && typeof media != 'number') && (existentMedia.imgUrl.length === 0 || existentMedia.cLength === -1)) {
             setExistentMedia({...existentMedia, 'cLength': media.episodes || 0, 'imgUrl': media.images.webp.large_image_url, 'code': media.mal_id, 'name': media.title});
         }
     }, [existentMedia]);
@@ -88,7 +77,7 @@ function Media() {
     return (
         <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
             {
-                media != -1 && media ? (
+                media && typeof media != 'number' ? (
                     <>
                     <div className="flex justify-around w-full max-sm:flex-col max-sm:w-10/12 max-xl:gap-4">
                         <div className="flex flex-col gap-4 max-sm:text-center">
@@ -126,7 +115,7 @@ function Media() {
                                 <br/><br/>
                                 <span className="font-medium">Genres</span><br/>
                                 <span className="text-slate-400">
-                                    {media.genres.map((genre: any, index: number) => index+1 == media.genres.length ? genre.name : genre.name + ', ')}
+                                    {media.genres.map((genre: JikanGenreObject, index: number) => index+1 == media.genres.length ? genre.name : genre.name + ', ')}
                                 </span>
                             </div>
                         </div>
@@ -170,7 +159,7 @@ function Media() {
                             <br/><br/>
                             <div className="flex flex-wrap gap-4 max-sm:h-96 max-sm:w-full max-sm:overflow-y-auto">
                                 {page == 'characters' ?
-                                    characters ? characters.map((character: any) => (
+                                    characters ? characters.map((character: JikanCharacterCard) => (
                                         <a href={`/character?id=${character.character.mal_id}`} key={character.character.mal_id} className="max-sm:w-full">
                                         <div className="flex flex-row cursor-pointer w-60 max-sm:w-full gap-2 max-xl:w-48 bg-darkocean rounded">
                                             <img src={character.character.images.webp.image_url} className="w-16 rounded"/>
@@ -181,7 +170,7 @@ function Media() {
                                         </div>
                                         </a>
                                     )) : <Loading/>
-                                : page == 'news' ? news ? news.map((newsItem: any) => (
+                                : page == 'news' ? news ? news.map((newsItem: JikanNew) => (
                                     <a href={newsItem.url} target="_blank" key={newsItem.mal_id}>
                                     <div className="flex flex-col bg-darkocean rounded w-60 max-sm:w-full max-xl:w-44 h-96">
                                         <img src={newsItem.images.jpg.image_url} className="w-full h-40 object-cover rounded"/>
@@ -189,13 +178,13 @@ function Media() {
                                         <p className="w-full text-center text-sm text-slate-400 p-2 text-ellipsis">{newsItem.excerpt}</p>
                                     </div>
                                     </a>
-                                )) : <Loading/> : staff ? staff.map((person: any) => (
+                                )) : <Loading/> : staff ? staff.map((person: JikanStaff) => (
                                     <div className="flex flex-row cursor-pointer w-60 max-sm:w-full gap-2 max-xl:w-48 bg-darkocean rounded" key={person.person.mal_id}>
                                         <img src={person.person.images.jpg.image_url} className="w-16 rounded"/>
                                         <div>
                                             <h2 className="w-40 max-sm:w-full max-xl:w-28 text-ellipsis truncate font-medium pt-2 max-sm:text-sm">{person.person.name}</h2>
                                             <span className="text-sm text-slate-400">{
-                                                person.positions.map((position: any, index: number) => index+1 == person.positions.length ? position : position + ', ')
+                                                person.positions.map((position: string, index: number) => index+1 == person.positions.length ? position : position + ', ')
                                             }</span>
                                         </div>
                                     </div>
@@ -216,7 +205,7 @@ function Media() {
                                     <h2 className="font-medium text-sm">Select a status: </h2>
                                     <div className="flex gap-4 mt-4 text-sm max-sm:flex-col">
                                         {
-                                            ["Watching", "Completed", "Dropped", "Plan to watch", "On hold"].map((status, index) =>
+                                            ["Watching", "Completed", "Dropped", "Plan to watch", "On hold"].map((status: string, index: number) =>
                                                 <span
                                                     key={index+1} 
                                                     className={
@@ -224,7 +213,7 @@ function Media() {
                                                         "p-2 bg-rose-500 hover:bg-rose-500 rounded transition-all cursor-pointer"
                                                         : "p-2 hover-bg-rose-500 rounded transition-all cursor-pointer bg-midnight"
                                                     }
-                                                    onClick={() => setExistentMedia({...existentMedia, 'status': index+1})}
+                                                    onClick={() => setExistentMedia({...existentMedia, 'status': index+1, 'count': index+1 === 2 ? media.episodes || existentMedia.count : existentMedia.count})}
                                                     >
                                                     {status}
                                                 </span>
@@ -256,19 +245,22 @@ function Media() {
                                     className="text-sm underline cursor-pointer" 
                                     onClick={() => {
                                         remove(existentMedia, auth.authObject?.token || '');
+                                        setExistentMedia(default_media);
                                         setShowModal(false);
                                     }}>
                                     Remove anime
                                 </span> : <span></span>}
                                 <button 
                                 className="bg-rose-500 px-4 py-2 rounded font-medium cursor-pointer hover:bg-rose-600 transition-all float-right"
-                                onClick={() => {saveMedia(existentMedia, auth.authObject?.token || '');setShowModal(false)}}
+                                onClick={() => {
+                                    saveMedia(existentMedia, auth.authObject?.token || '', setExistentMedia);
+                                    setShowModal(false)}}
                                 >Save</button>
                             </footer>
                         </div>
                     </div>}
                     </>
-                ) : media === -1 ? (
+                ) : typeof media === 'number' ? (
                     <>
                         <h2>We cannot find that anime {':('}</h2>
                     </>
