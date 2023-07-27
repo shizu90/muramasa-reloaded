@@ -7,10 +7,16 @@ import muramasa_api from "../api/muramasa/routes";
 import popupMessage from "../modules/toaster";
 import { MediaData, JikanAnime, JikanNew, JikanCharacterCard, JikanStaff, JikanGenreObject } from "../modules/mediaData";
 
-async function saveMedia(data: MediaData, token: string, setMedia: Function) {
-    return muramasa_api.media.auth(token).add(data)
+function saveMedia(data: MediaData, token: string, setMedia: Function) {
+    muramasa_api.media.auth(token).add(data)
     .then((res) => {popupMessage.success("Anime saved successfully.");setMedia(res.data)})
     .catch(() => popupMessage.error("Cannot save that anime."));
+}
+
+function updateMedia(data: MediaData, token: string) {
+    muramasa_api.media.auth(token).update(data)
+    .then(() => popupMessage.success("Anime updated."))
+    .catch(() => popupMessage.error("Cannot update anime."));
 }
 
 function favorite(data: MediaData, token: string) {
@@ -25,7 +31,7 @@ function remove(data: MediaData, token: string) {
     .catch((err) => popupMessage.error(err.response.data.message));
 }
 
-const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type: 'anime', favorited: 0, count: 0, cLength: -1, status: 1};
+const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type: 'anime', favorited: 0, count: 0, cLength: -1, status: 1, score: 0};
 
 function Media() {
     const auth = useAuth();
@@ -222,15 +228,27 @@ function Media() {
                                     </div>
                                 </section>
                                 <br/>
-                                <section>
-                                    <h2 className="font-medium text-sm">View count: </h2>
-                                    <input 
-                                        type="number" 
-                                        min="0" max={media.episodes} step="1" 
-                                        className="mt-4 bg-midnight rounded outline-none placeholder-slate-500 p-2 caret-slate-500"
-                                        value={existentMedia['count']}
-                                        onChange={(e) => setExistentMedia({...existentMedia, 'count': Number(e.target.value)})}
-                                    />
+                                <section className="flex gap-4">
+                                    <div>
+                                        <h2 className="font-medium text-sm">View count: </h2>
+                                        <input 
+                                            type="number" 
+                                            min="0" max={media.episodes} step="1" 
+                                            className="mt-4 bg-midnight rounded outline-none placeholder-slate-500 p-2 caret-slate-500"
+                                            value={existentMedia['count']}
+                                            onChange={(e) => setExistentMedia({...existentMedia, 'count': Number(e.target.value)})}
+                                        />
+                                    </div>
+                                    <div>
+                                        <h2 className="font-medium text-sm">Score: </h2>
+                                        <input
+                                            type="number" 
+                                            min="0" max="10" step="0.1" 
+                                            className="mt-4 bg-midnight rounded outline-none placeholder-slate-500 p-2 caret-slate-500"
+                                            value={existentMedia['score']}
+                                            onChange={(e) => setExistentMedia({...existentMedia, 'score': Number(e.target.value)})}
+                                        />
+                                    </div>
                                 </section>
                                 <br/>
                                 <section className="flex gap-2">
@@ -253,7 +271,9 @@ function Media() {
                                 <button 
                                 className="bg-rose-500 px-4 py-2 rounded font-medium cursor-pointer hover:bg-rose-600 transition-all float-right"
                                 onClick={() => {
-                                    saveMedia(existentMedia, auth.authObject?.token || '', setExistentMedia);
+                                    !existentMedia.id ? 
+                                        saveMedia(existentMedia, auth.authObject?.token || '', setExistentMedia)
+                                    : updateMedia(existentMedia, auth.authObject?.token || '');
                                     setShowModal(false)}}
                                 >Save</button>
                             </footer>

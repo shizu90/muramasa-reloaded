@@ -87,8 +87,13 @@ export default {
         }
     },
     recentUpdates: {
-        following: (userId: number) => {
-            return axios.get(default_url + `recentupdates/following/${userId}`);
+        auth: (token: string) => {
+            let config = {headers: {Authorization: `Bearer ${token}`}};
+            return {
+                following: (userId: number) => {
+                    return axios.get(default_url + `recentupdates/following/${userId}`, config);
+                }
+            }
         }
     }
 }

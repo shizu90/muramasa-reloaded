@@ -13,6 +13,12 @@ function saveMedia(data: MediaData, token: string, setMedia: Function) {
     .catch((err) => popupMessage.error(err.response.data.message));
 }
 
+function updateMedia(data: MediaData, token: string) {
+    muramasa_api.media.auth(token).update(data)
+    .then(() => popupMessage.success("Manga updated."))
+    .catch(() => popupMessage.error("Cannot update manga."));
+}
+
 function favorite(data: MediaData, token: string) {
     muramasa_api.media.auth(token).update(data)
     .then(() => popupMessage.success(data.favorited === 0 ? "Unfavorited manga." : "Favorited manga."))
@@ -25,7 +31,7 @@ function remove(data: MediaData, token: string) {
     .catch((err) => popupMessage.error(err.response.data.message));
 }
 
-const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type: 'manga', favorited: 0, count: 0, cLength: -1, status: 1};
+const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type: 'manga', favorited: 0, count: 0, cLength: -1, status: 1, score: 0};
 
 function Manga() {
     const auth = useAuth();
@@ -38,7 +44,7 @@ function Manga() {
     
     useEffect(() => {
         if(auth.isAuthenticated && (media && typeof media != 'number')) {
-            muramasa_api.media.auth(auth.authObject?.token || '').get(media.mal_id, auth.authObject?.animeListId as number)
+            muramasa_api.media.auth(auth.authObject?.token || '').get(media.mal_id, auth.authObject?.mangaListId as number)
             .then(res => setExistentMedia(res.data))
             .catch(() => setExistentMedia(default_media));
         }
@@ -201,15 +207,27 @@ function Manga() {
                                         </div>
                                     </section>
                                     <br/>
-                                    <section>
-                                        <h2 className="font-medium text-sm">Read count: </h2>
-                                        <input 
-                                            type="number" 
-                                            min="0" max={media.chapters} step="1" 
-                                            className="mt-4 bg-midnight rounded outline-none placeholder-slate-500 p-2 caret-slate-500"
-                                            value={existentMedia['count']}
-                                            onChange={(e) => setExistentMedia({...existentMedia, 'count': Number(e.target.value)})}
-                                        />
+                                    <section className="flex gap-4">
+                                        <div>
+                                            <h2 className="font-medium text-sm">View count: </h2>
+                                            <input 
+                                                type="number" 
+                                                min="0" max={media.chapters} step="1" 
+                                                className="mt-4 bg-midnight rounded outline-none placeholder-slate-500 p-2 caret-slate-500"
+                                                value={existentMedia['count']}
+                                                onChange={(e) => setExistentMedia({...existentMedia, 'count': Number(e.target.value)})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <h2 className="font-medium text-sm">Score: </h2>
+                                            <input
+                                                type="number" 
+                                                min="0" max="10" step="0.1" 
+                                                className="mt-4 bg-midnight rounded outline-none placeholder-slate-500 p-2 caret-slate-500"
+                                                value={existentMedia['score']}
+                                                onChange={(e) => setExistentMedia({...existentMedia, 'score': Number(e.target.value)})}
+                                            />
+                                        </div>
                                     </section>
                                     <br/>
                                     <section className="flex gap-2">
@@ -227,11 +245,16 @@ function Manga() {
                                             setExistentMedia(default_media);
                                             setShowModal(false);
                                         }}>
-                                        Remove anime
+                                        Remove manga
                                     </span> : <span></span>}
                                     <button 
                                     className="bg-rose-500 px-4 py-2 rounded font-medium cursor-pointer hover:bg-rose-600 transition-all float-right"
-                                    onClick={() => {saveMedia(existentMedia, auth.authObject?.token || '', setExistentMedia);setShowModal(false)}}
+                                    onClick={() => {
+                                        !existentMedia.id ? 
+                                            saveMedia(existentMedia, auth.authObject?.token || '', setExistentMedia)
+                                        : updateMedia(existentMedia, auth.authObject?.token || '');
+                                        setShowModal(false)
+                                    }}
                                     >Save</button>
                                 </footer>
                             </div>

@@ -7,7 +7,8 @@ export interface MediaData {
     favorited: 0 | 1, 
     count: number,
     cLength: number,
-    status: number
+    status: number,
+    score: number
 }
 
 export interface JikanImageObject {
