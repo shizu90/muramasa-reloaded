@@ -51,7 +51,7 @@ public class MediaController {
     }
     
     @DeleteMapping(value = "/{code}")
-    public ResponseEntity<String> deleteMedia(@PathVariable Long code, @PathVariable Long listId, Authentication auth) {
+    public ResponseEntity<String> deleteMedia(@PathVariable Long code, Authentication auth) {
         var acc = (Account) auth.getPrincipal();
         Media md;
         try {

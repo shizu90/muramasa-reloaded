@@ -71,6 +71,7 @@ public class UserDTO {
         this.recentUpdates = acc.getRecentUpdates();
         this.animeListId = acc.getAnimeList().getId();
         this.mangaListId = acc.getMangaList().getId();
+        this.posts = acc.getPosts();
         this.favoriteCharacters = acc.getFavoritedCharacters();
         acc.getAnimeList().getItems().forEach((Media md) -> {
             if(md.getFavorited() == 1) this.favoriteAnimes.add(md);

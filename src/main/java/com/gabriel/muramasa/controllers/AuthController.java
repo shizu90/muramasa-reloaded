@@ -42,6 +42,7 @@ public class AuthController {
         AuthDTO auth = new AuthDTO(
                 account.getId(), 
                 account.getUsername(), 
+                account.getImgUrl(),
                 account.getEmail(), 
                 account.getAnimeList().getId(), 
                 account.getMangaList().getId(), 

@@ -11,15 +11,17 @@ package com.gabriel.muramasa.dto;
 public class AuthDTO {
     private Long id;
     private String username;
+    private String userImg;
     private String email;
     private Long animeListId;
     private Long mangaListId;
     private String token;
     
     public AuthDTO() {}
-    public AuthDTO(Long id, String username, String email, Long animeListId, Long mangaListId, String token) {
+    public AuthDTO(Long id, String username, String userImg, String email, Long animeListId, Long mangaListId, String token) {
         this.id = id;
         this.username = username;
+        this.userImg = userImg;
         this.email = email;
         this.animeListId = animeListId;
         this.mangaListId = mangaListId;
@@ -40,6 +42,14 @@ public class AuthDTO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+    
+    public String getUserImg() {
+        return userImg;
+    }
+    
+    public void setUserImg(String userImg) {
+        this.userImg = userImg;
     }
 
     public String getEmail() {

@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 /**
  *
  * @author manou
@@ -33,7 +34,7 @@ public class Configurations {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeHttpRequests()
+                .and().cors().and().authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/login")
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/users/**")
