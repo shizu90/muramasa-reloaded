@@ -64,7 +64,11 @@ export interface JikanAnime {
     season: string,
     year: number,
     genres: Array<JikanGenreObject>,
-    studios: Array<JikanStudioObject>
+    studios: Array<JikanStudioObject>,
+    news: Array<JikanNew> | null,
+    characters: Array<JikanCharacterCard> | null,
+    staff: Array<JikanStaff> | null,
+    page: string
 }
 
 export interface JikanManga {
@@ -87,7 +91,10 @@ export interface JikanManga {
     synopsis: string,
     year: number,
     genres: Array<JikanGenreObject>,
-    authors: Array<JikanPersonObject>    
+    authors: Array<JikanPersonObject>,
+    news: Array<JikanNew> | null,
+    characters: Array<JikanCharacterCard> | null,
+    page: string
 }
 
 export interface JikanNew {
