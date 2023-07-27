@@ -14,6 +14,18 @@ interface LoginData {
     password: string
 }
 
+interface MediaData {
+    id: number | null,
+    code: number,
+    name: string,
+    imgUrl: string,
+    type: string,
+    favorited: 0 | 1, 
+    count: number,
+    cLength: number,
+    status: number
+}
+
 export default {
     user: {
         get: (username: string) => {
@@ -56,17 +68,22 @@ export default {
         }
     },
     media: {
-        get: (code: number, listId: number) => {
-            return axios.get(default_url + `media/${code}/${listId}`);
-        },
-        add: (userId: number, data: any) => {
-            return axios.post(default_url + `media/${userId}`, data);
-        },
-        update: (mediaId: number, data: any) => {
-            return axios.put(default_url + `media/${mediaId}`, data);
-        },
-        delete: (mediaId: number) => {
-            return axios.delete(default_url + `media/${mediaId}`);
+        auth: (token: string) => {
+            const config = {headers: {Authorization: `Bearer ${token}`}}
+            return {
+                get: (code: number, listId: number) => {
+                    return axios.get(default_url + `media/${code}/${listId}`, config);
+                },
+                add: (data: MediaData) => {
+                    return axios.post(default_url + `media`, data, config);
+                },
+                update: (data: MediaData) => {
+                    return axios.put(default_url + `media/${data.code}`, data, config);
+                },
+                delete: (data: MediaData) => {
+                    return axios.delete(default_url + `media/${data.code}`, config);
+                }
+            }
         }
     },
     recentUpdates: {

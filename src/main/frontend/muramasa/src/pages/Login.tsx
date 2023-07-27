@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { FormInput } from "../components/FormInput"
 import muramasa_api from "../api/muramasa/routes";
-import { toast } from "react-hot-toast";
+import popupMessage from "../modules/toaster";
 
 interface IFormData {
     username: string,
@@ -30,7 +30,7 @@ function Login() {
             muramasa_api.user.login({"username": formData.username, "password": formData.password})
             .then((res) => 
             {
-                toast(`Welcome back, ${formData.username}!`, {className: "bg-green-600 text-slate-50 font-medium"});
+                popupMessage.success(`Welcome back, ${formData.username}!`);
                 let auth = res.data;
                 if(formData.rememberMe) {
                     document.cookie = `auth=${JSON.stringify(auth)}; expires=Session`
@@ -41,7 +41,7 @@ function Login() {
                 }        
                 window.location.href = "/";
             })
-            .catch(err => toast(err.response.data.message, {className: "bg-rose-500 text-slate-50 font-medium"}))
+            .catch(err => popupMessage.error(err.response.data.message))
         }
     }
     return (

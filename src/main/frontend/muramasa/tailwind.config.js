@@ -8,12 +8,12 @@ export default {
       backgroundImage: {
         'wallpaper': "linear-gradient(180deg, rgba(9,9,121,0.2) 10%, #0B1622), url('/template.png')"
       },
-      keyframes: {
+      keyframes: () =>  ({
         fadeIn: {
           '0%': {opacity: 0},
           '100%': {opacity: 1}
         }
-      },
+      }),
       animation: {
         fade: 'fadeIn 0.3s ease-in linear'
       },

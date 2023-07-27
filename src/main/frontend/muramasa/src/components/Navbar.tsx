@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState } from "react";
 import ArrowDown from "./icons/ArrowDown";
 import EllipsisVertical from "./icons/EllipsisVertical";
 import Tv from "./icons/Tv";
@@ -6,7 +6,7 @@ import Book from "./icons/Book";
 import User from "./icons/User";
 import Settings from "./icons/Settings";
 import Logout from "./icons/Logout";
-import { AuthContext } from "../context/AuthContext";
+import useAuth from "../hooks/useAuth";
 
 function stylishNavbar() {
     let lastScrollY = window.scrollY;
@@ -22,31 +22,21 @@ function stylishNavbar() {
 }
 
 function Navbar() {
-    const authContext = useContext(AuthContext);
-    const authObject = authContext?.auth;
     const [navVisible, setNavVisible] = useState<boolean>(false);
-    const [authenticated, setAuthenticated] = useState<boolean>(authObject ? true : false);
-
-    useEffect(() => {
-        if(authObject) { 
-            setAuthenticated(true);
-        }else setAuthenticated(false);
-    }, [authContext?.auth]);
-    
+    const auth = useAuth();
     stylishNavbar();
 
     function logout() {
         document.cookie = "auth=; max-age=0";
         localStorage.removeItem("auth");
-        authContext?.setAuth(null);
-        setAuthenticated(false);
+        auth.logout();
     }
 
     return (
         <header className={"w-full h-20 fixed top-0 flex justify-around items-center px-12 transition bg-darkocean z-50"} id="header">
             <a className="text-white text-2xl font-bold tracking-wider items-center cursor-pointer" href="/">MURAMASA</a>
             <nav className={"z-10 flex gap-4 max-sm:flex-col text-slate-300 font-medium items-center max-sm:absolute relative max-sm:w-full max-sm:bg-darkocean py-4 max-sm:top-20 max-sm:px-2 transition-all" + (navVisible ? " transition-y-0" : " max-sm:translate-y-[-22rem]")}>
-                {authenticated && <a href="/" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Home</a>}
+                {auth.isAuthenticated && <a href="/" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Home</a>}
                 <a href="/social" className="hover:text-slate-50 focus:text-slate-50 transition-colors">Social</a>
                 <div className="group">
                     <button className="hover:text-slate-50 focus:text-slate-50 transition-colors flex items-center">Search <ArrowDown/></button>
@@ -57,12 +47,12 @@ function Navbar() {
                     </div>
                 </div>
                 {
-                    authenticated ? (
+                    auth.isAuthenticated ? (
                     <>
                         <div className="mx-6 flex gap-4 max-sm:mx-0 items-center">
                             <a href="#" className="hover:text-slate-50 focus:text-slate-50 items-center justify-center transition-colors flex gap-2">
-                                {authObject?.username}
-                                <img className="w-8 h-8 rounded-lg object-cover" src={authObject?.userImg ? authObject.userImg : "https://tm.ibxk.com.br/2022/07/15/15134137814281.jpg?ims=1200x675"}/>
+                                {auth.authObject?.username}
+                                <img className="w-8 h-8 rounded-lg object-cover" src={auth.authObject?.userImg ? auth.authObject.userImg : "https://tm.ibxk.com.br/2022/07/15/15134137814281.jpg?ims=1200x675"}/>
                             </a>
                         </div>
                         <div className="group">

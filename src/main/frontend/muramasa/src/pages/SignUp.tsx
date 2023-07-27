@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FormInput } from "../components/FormInput";
 import muramasa_api from "../api/muramasa/routes";
-import { toast } from "react-hot-toast";
+import popupMessage from "../modules/toaster";
 
 interface IFormData {
     username: string,
@@ -34,8 +34,8 @@ function SignUp() {
         setFormData({"username": "", "email": "", "password": "", "confirmPassword": ""});
         if(isFormValid(formData)){
             muramasa_api.user.register(formData)
-            .then(() => toast("Account successfully created.", {className: "bg-green-600 text-slate-50 font-medium"}))
-            .catch(err => toast(err.response.data.message, {className: "bg-rose-500 text-slate-50 font-medium"}));
+            .then(() => popupMessage.success("Account successfully created."))
+            .catch(err => popupMessage.error(err.response.data.message));
         }
     }
 
