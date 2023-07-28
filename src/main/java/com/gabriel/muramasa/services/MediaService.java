@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 
 import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
-import com.gabriel.muramasa.handlers.exceptions.UnauthorizedException;
 import com.gabriel.muramasa.repositories.MediaRepository;
 import com.gabriel.muramasa.models.Media;
 import com.gabriel.muramasa.models.MediaList;
@@ -17,6 +16,7 @@ import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.models.Log;
 import com.gabriel.muramasa.repositories.AccountRepository;
 import com.gabriel.muramasa.repositories.MediaListRepository;
+import com.gabriel.muramasa.repositories.ReviewRepository;
 import java.text.ParseException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +34,8 @@ public class MediaService {
     private MediaListRepository mediaListRepo;
     @Autowired
     private AccountRepository accRepo;
+    @Autowired
+    private ReviewRepository reviewRepo;
     @Autowired
     private LogService logService;
     
@@ -54,6 +56,10 @@ public class MediaService {
             default:
                 return null;
         }
+    }
+    
+    public Media findById(Long id) {
+        return repo.findById(id).orElseThrow(() -> new NotFoundException("Media not found."));
     }
     
     public Media findByCodeAndList(Long code, Long listId) {
@@ -88,18 +94,21 @@ public class MediaService {
         if(!media.getCount().equals(md.getCount())) {
             md.setCount(media.getCount());
             if(type.equals("anime")) {
-                log.setMessage(acc.getUsername() + " watched " + media.getCount() + "/" + md.getCountLength() + " episodes of " + md.getName() + ".");
+                log.setMessage(acc.getUsername() + " watched " + media.getCount() + "/" + md.getLength() + " episodes of " + md.getName() + ".");
             }else
-                log.setMessage(acc.getUsername() + " read " + media.getCount() + "/" + md.getCountLength() + " chapters of " + md.getName() + ".");
+                log.setMessage(acc.getUsername() + " read " + media.getCount() + "/" + md.getLength() + " chapters of " + md.getName() + ".");
         }
         if(!media.getStatus().equals(md.getStatus())) {
-            md.setStatus(md.getCount().equals(md.getCountLength()) ? 2 : media.getStatus());
+            md.setStatus(md.getCount().equals(md.getLength()) ? 2 : media.getStatus());
             String status = parseStatus(md.getStatus(), media.getType());
             log.setMessage(acc.getUsername() + " now " + status + " " + md.getName() + ".");
         }
         if(!media.getFavorited().equals(md.getFavorited())) {
             md.setFavorited(media.getFavorited());
-            log.setMessage(acc.getUsername() + (md.getFavorited() > 0 ? " favorited " : "unfavorited ") + md.getName() + ".");
+            log.setMessage(acc.getUsername() + (md.getFavorited() > 0 ? " favorited " : " unfavorited ") + md.getName() + ".");
+        }
+        if(!media.getScore().equals(md.getScore())) {
+            md.setScore(media.getScore());
         }
 
         try {
@@ -113,9 +122,12 @@ public class MediaService {
     }
     
     public void delete(Long mediaId) {
-        Media md = repo.findById(mediaId).orElseThrow(() -> new NotFoundException("Media not found."));
+        Media media = this.findById(mediaId);
         try {
-            repo.deleteById(mediaId);
+            if(media.getReview() != null) {
+                reviewRepo.delete(media.getReview());
+            }
+            repo.delete(media);
         }catch(ConstraintViolationException e) {
             throw new DatabaseException(e.getMessage());
         }

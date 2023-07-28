@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 /**
@@ -35,27 +36,35 @@ public class Media implements Serializable {
     private String type;
     private Integer favorited;
     private Integer count;
-    private Integer cLength;
+    private Integer length;
     private Integer status; //1 - WATCHING/READING; 2 - COMPLETED; 3 - PLANS TO WATCH/READ; 4 - DROPPED; 5 - ON HOLD;
+    private Double score;
     
     //Relations
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "list_id")
     private MediaList list;
+    @OneToOne(mappedBy = "media")
+    @JoinColumn(name = "review_Id")
+    private Review review;
     
     public Media() {}
-    public Media(Long id, Long code, MediaList list, String name, Integer count, Integer cLength, Integer status, String imgUrl, String type, Integer favorited) {
+    public Media(
+            Long id, Long code, MediaList list, String name, Integer count, Integer length, 
+            Integer status, String imgUrl, String type, Integer favorited, Double score, Review review) {
         this.id = id;
         this.code = code;
         this.list = list;
         this.name = name;
         this.count = count;
-        this.cLength = cLength;
+        this.length = length;
         this.status = status > 5 ? 5 : status < 1 ? 1 : status;
         this.imgUrl = imgUrl;
         this.type = type;
         this.favorited = favorited;
+        this.score = score;
+        this.review = review;
     }
 
     public Long getId() {
@@ -106,14 +115,6 @@ public class Media implements Serializable {
         this.count = count;
     }
     
-    public Integer getCountLength() {
-        return cLength;
-    }
-    
-    public void setCountLength(Integer cLength) {
-        this.cLength = cLength;
-    }
-
     public Integer getStatus() {
         return status;
     }
@@ -137,6 +138,32 @@ public class Media implements Serializable {
     public void setFavorited(Integer favorited) {
         this.favorited = favorited;
     }
+    
+    public Double getScore() {
+        return score;
+    }
+    
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public Integer getLength() {
+        return length;
+    }
+
+    public void setLength(Integer length) {
+        this.length = length;
+    }
+
+    public Review getReview() {
+        return review;
+    }
+
+    public void setReview(Review review) {
+        this.review = review;
+    }
+    
+    
 
     @Override
     public int hashCode() {

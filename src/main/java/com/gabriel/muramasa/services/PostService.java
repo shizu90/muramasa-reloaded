@@ -7,7 +7,6 @@ package com.gabriel.muramasa.services;
 import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.InvalidFormatException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
-import com.gabriel.muramasa.handlers.exceptions.UnauthorizedException;
 import com.gabriel.muramasa.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

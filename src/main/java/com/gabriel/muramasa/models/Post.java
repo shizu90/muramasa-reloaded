@@ -4,9 +4,11 @@
  */
 package com.gabriel.muramasa.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -48,9 +50,9 @@ public class Post implements Serializable, Comparable<Post> {
     @JsonIgnore
     private List<Like> likes;
     @ManyToOne(targetEntity = Post.class)
+    @JsonBackReference
     private Post parent;
-    @OneToMany(targetEntity = Post.class, mappedBy = "parent")
-    @JsonIgnoreProperties({"parent"})
+    @OneToMany(targetEntity = Post.class, mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Post> replies;
 
     public Post() {}

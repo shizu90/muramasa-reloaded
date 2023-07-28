@@ -22,6 +22,7 @@ import com.gabriel.muramasa.models.Media;
 import com.gabriel.muramasa.models.MediaList;
 import com.gabriel.muramasa.models.Post;
 import com.gabriel.muramasa.models.Character;
+import com.gabriel.muramasa.models.Review;
 import com.gabriel.muramasa.repositories.MediaListRepository;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -72,7 +73,7 @@ public class AccountService {
             Account acc = new Account(
                     null, credentials.getUsername(), credentials.getEmail(), encoder.encode(credentials.getPassword()), 
                     "", "", "", null, null, new ArrayList<Follower>(), new ArrayList<Follower>(), 
-                    new ArrayList<Log>(), new ArrayList<Post>(), new ArrayList<Like>(), new ArrayList<Character>()
+                    new ArrayList<Log>(), new ArrayList<Post>(), new ArrayList<Like>(), new ArrayList<Character>(), new ArrayList<Review>()
             );
             acc = repo.save(acc);
             MediaList animeList = new MediaList(null, new ArrayList<Media>(), acc, "anime");

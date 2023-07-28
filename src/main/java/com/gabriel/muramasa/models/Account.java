@@ -70,14 +70,17 @@ public class Account implements Serializable, UserDetails {
     @OneToMany(targetEntity = Character.class, mappedBy = "favoritedBy")
     @JsonIgnore
     private List<Character> favoritedCharacters;
-    
+    @OneToMany(targetEntity = Review.class, mappedBy = "reviewer")
+    @JsonIgnore
+    private List<Review> reviews;
+            
     public Account() {}
     public Account(
             Long id, String username, String email, 
             String password, String imgUrl, String bannerImgUrl, 
             String resume, MediaList animeList, MediaList mangaList,
             List<Follower> followers, List<Follower> following, List<Log> recentUpdates, 
-            List<Post> posts, List<Like> likes, List<Character> favoritedCharacters) 
+            List<Post> posts, List<Like> likes, List<Character> favoritedCharacters, List<Review> reviews) 
     
     {
         this.id = id;
@@ -95,6 +98,7 @@ public class Account implements Serializable, UserDetails {
         this.posts = posts;
         this.likes = likes;
         this.favoritedCharacters = favoritedCharacters;
+        this.reviews = reviews;
     }
 
     public Long getId() {
@@ -217,6 +221,14 @@ public class Account implements Serializable, UserDetails {
 
     public void setFavoritedCharacters(List<Character> favoritedCharacters) {
         this.favoritedCharacters = favoritedCharacters;
+    }
+    
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
     
     @Override
