@@ -29,6 +29,12 @@ public class FollowerController {
     @Autowired
     private FollowService service;
     
+    @GetMapping(value = "/{toId}")
+    public ResponseEntity<Boolean> currentFollowing(@PathVariable Long toId, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        return ResponseEntity.ok().body(service.currentFollowing(acc.getId(), toId));
+    }
+    
     @GetMapping(value = "/following/{userId}")
     public ResponseEntity<List<Follower>> getFollowing(@PathVariable Long userId) {
         return ResponseEntity.ok().body(service.getFollowing(userId));

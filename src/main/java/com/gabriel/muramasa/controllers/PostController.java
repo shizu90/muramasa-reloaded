@@ -52,6 +52,12 @@ public class PostController {
         return ResponseEntity.ok().body(service.insert(acc.getId(), post));
     }
     
+    @PostMapping("/{parentId}")
+    public ResponseEntity<Post> replyPost(@RequestBody Post post, @PathVariable Long parentId, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        return ResponseEntity.ok().body(service.insert(acc.getId(), post, parentId));
+    }
+    
     @PutMapping(value = "/{postId}")
     public ResponseEntity<Post> updatePost(@PathVariable Long postId, @RequestBody Post post, Authentication auth) {
         var acc = (Account) auth.getPrincipal();

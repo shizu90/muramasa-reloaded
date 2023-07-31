@@ -13,6 +13,7 @@ import com.gabriel.muramasa.repositories.FollowerRepository;
 import com.gabriel.muramasa.models.Follower;
 import com.gabriel.muramasa.models.Account;
 import java.util.List;
+import java.util.Optional;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,16 @@ public class FollowService {
     private FollowerRepository repo;
     @Autowired
     private AccountRepository accRepo;
+    
+    public boolean currentFollowing(Long userId, Long followingId) {
+        Account from = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
+        Account to = accRepo.findById(followingId).orElseThrow(() -> new NotFoundException("User not found."));
+        String searchParameter = "" + from.hashCode() + to.hashCode();
+        Optional<Follower> found = repo.findBySearchParameter(searchParameter);
+        if(found.isPresent()) {
+            return true;
+        }else return false;
+    }
     
     public List<Follower> getFollowing(Long userId) {
         Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));

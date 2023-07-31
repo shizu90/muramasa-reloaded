@@ -50,6 +50,7 @@ public class Post implements Serializable, Comparable<Post> {
     @JsonIgnore
     private List<Like> likes;
     @ManyToOne(targetEntity = Post.class)
+    @JoinColumn(name = "parent_id")
     @JsonBackReference
     private Post parent;
     @OneToMany(targetEntity = Post.class, mappedBy = "parent", cascade = CascadeType.ALL)

@@ -68,15 +68,38 @@ public class PostService {
     public Post insert(Long userId, Post post) {
         Account acc = accService.findById(userId);
         String[] words = post.getText().split(" ");
-        String[] imgs = post.getAttach().split(";");
+        String[] attach = post.getAttach().split(";");
         if(words.length > 500) {throw new InvalidFormatException("Post text surpass limit of 500 words.");}
-        if(imgs.length > 4) {throw new InvalidFormatException("Post attached images surpass limit of 4 images.");}
+        if(attach.length > 4) {throw new InvalidFormatException("Post attached files surpass limit of 4 files.");}
         post.setCreator(acc);
         post.setLikes(new ArrayList<Like>());
         post.setDate(formatter.format(new Date()));
+        post.setParent(null);
         try {
             Post savedPost = repo.save(post);
             Log log = new Log(formatter.format(new Date()), "" + acc.getUsername() + " created a post.", acc);
+            logService.addRecentUpdate(log, acc.getRecentUpdates());
+            return savedPost;
+        } catch(ConstraintViolationException e) {
+            throw new DatabaseException(e.getMessage());
+        } catch(ParseException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+    }
+    
+    public Post insert(Long userId, Post post, Long parentId) {
+        Account acc = accService.findById(userId);
+        String[] words = post.getText().split(" ");
+        String[] attach = post.getAttach().split(";");
+        if(words.length > 500) {throw new InvalidFormatException("Post text surpass limit of 500 words.");}
+        if(attach.length > 4) {throw new InvalidFormatException("Post attached files surpass limit of 4 files.");}
+        post.setCreator(acc);
+        post.setLikes(new ArrayList<Like>());
+        post.setDate(formatter.format(new Date()));
+        post.setParent(repo.findById(parentId).orElseThrow(() -> new NotFoundException("Parent post not found.")));
+        try {
+            Post savedPost = repo.save(post);
+            Log log = new Log(formatter.format(new Date()), "" + acc.getUsername() + " replied a post.", acc);
             logService.addRecentUpdate(log, acc.getRecentUpdates());
             return savedPost;
         } catch(ConstraintViolationException e) {

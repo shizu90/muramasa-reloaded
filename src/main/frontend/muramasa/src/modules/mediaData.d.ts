@@ -67,8 +67,7 @@ export interface JikanAnime {
     studios: Array<JikanStudioObject>,
     news: Array<JikanNew> | null,
     characters: Array<JikanCharacterCard> | null,
-    staff: Array<JikanStaff> | null,
-    page: string
+    staff: Array<JikanStaff> | null
 }
 
 export interface JikanManga {

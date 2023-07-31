@@ -16,6 +16,7 @@ import SearchCharacter from "./pages/search/SearchCharacter"
 import { Toaster } from "react-hot-toast"
 import AuthProvider, { AuthContext } from "./context/AuthContext"
 import { useContext } from "react";
+import User from "./pages/User"
 
 function ProtectedRoutes() {
   const authContext = useContext(AuthContext);
@@ -41,6 +42,7 @@ function App() {
               <Route path="/anime" element={<Anime/>}></Route>
               <Route path="/manga" element={<Manga/>}></Route>
               <Route path="/character" element={<Character/>}></Route>
+              <Route path="/user" element={<User/>}></Route>
               <Route path="/search/anime" element={<SearchAnime/>}></Route>
               <Route path="/search/manga" element={<SearchManga/>}></Route>
               <Route path="/search/character" element={<SearchCharacter/>}></Route>

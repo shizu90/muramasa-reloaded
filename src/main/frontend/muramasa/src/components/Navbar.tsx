@@ -50,7 +50,7 @@ function Navbar() {
                     auth.isAuthenticated ? (
                     <>
                         <div className="mx-6 flex gap-4 max-sm:mx-0 items-center">
-                            <a href="#" className="hover:text-slate-50 focus:text-slate-50 items-center justify-center transition-colors flex gap-2">
+                            <a href={"/user?username=" + auth.authObject?.username} className="hover:text-slate-50 focus:text-slate-50 items-center justify-center transition-colors flex gap-2">
                                 {auth.authObject?.username}
                                 <img className="w-8 h-8 rounded-lg object-cover" src={auth.authObject?.userImg ? auth.authObject.userImg : "https://tm.ibxk.com.br/2022/07/15/15134137814281.jpg?ims=1200x675"}/>
                             </a>
