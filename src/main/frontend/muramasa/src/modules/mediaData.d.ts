@@ -1,3 +1,11 @@
+export interface ReviewData {
+    id: number | null,
+    text: string,
+    score: number,
+    code: number,
+    reviewedAt: string
+}
+
 export interface MediaData {
     id: number | null,
     code: number,
@@ -6,9 +14,10 @@ export interface MediaData {
     type: string,
     favorited: 0 | 1, 
     count: number,
-    cLength: number,
+    length: number,
     status: number,
-    score: number
+    score: number,
+    review: ReviewData | null
 }
 
 export interface JikanImageObject {
@@ -43,7 +52,7 @@ export interface JikanPersonObject {
     name: string
 }
 
-export interface JikanAnime {
+interface JikanMedia {
     mal_id: number,
     url: string,
     images: {jpg: JikanImageObject, webp: JikanImageObject},
@@ -52,47 +61,33 @@ export interface JikanAnime {
     title_japanese: string,
     type: string,
     source: string,
-    episodes: number,
     status: string,
-    aired: JikanAiredObject,
-    duration: string,
     score: number,
-    rank: number,
     popularity: number,
     favorites: number,
     synopsis: string,
-    season: string,
     year: number,
+    rank: number,
+    duration: string,
     genres: Array<JikanGenreObject>,
-    studios: Array<JikanStudioObject>,
-    news: Array<JikanNew> | null,
     characters: Array<JikanCharacterCard> | null,
+    news: Array<JikanNew> | null,
+}
+
+export interface JikanAnime extends JikanMedia{
+    source: string,
+    episodes: number,
+    aired: JikanAiredObject,
+    season: string,
+    studios: Array<JikanStudioObject>,
     staff: Array<JikanStaff> | null
 }
 
-export interface JikanManga {
-    mal_id: number,
-    url: string,
-    images: {jpg: JikanImageObject, webp: JikanImageObject},
-    title: string,
-    title_english: string,
-    title_japanese: string,
-    type: string,
+export interface JikanManga extends JikanMedia {
     chapters: number,
     volumes: number,
-    status: string,
     published: JikanAiredObject,
-    duration: string,
-    score: number,
-    rank: number,
-    popularity: number,
-    favorites: number,
-    synopsis: string,
-    year: number,
-    genres: Array<JikanGenreObject>,
     authors: Array<JikanPersonObject>,
-    news: Array<JikanNew> | null,
-    characters: Array<JikanCharacterCard> | null,
     page: string
 }
 

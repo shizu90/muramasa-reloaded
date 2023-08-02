@@ -7,17 +7,43 @@ import muramasa_api from "../api/muramasa/routes";
 import popupMessage from "../modules/toaster";
 import { MediaData, JikanAnime, JikanNew, JikanCharacterCard, JikanStaff, JikanGenreObject } from "../modules/mediaData";
 import TextEditor from "../components/TextEditor";
-import { EditorState, convertToRaw } from "draft-js";
+import { EditorState, RawDraftContentState, convertToRaw } from "draft-js";
 
-function saveMedia(data: MediaData, token: string, setMedia: Function) {
-    muramasa_api.media.auth(token).add(data)
-    .then((res) => {popupMessage.success("Anime saved successfully.");setMedia(res.data)})
+function checkReview(review: string) {
+    const editorStateObject: RawDraftContentState = JSON.parse(review);
+    if(editorStateObject.blocks.length === 1) {
+        return editorStateObject.blocks[0].text.length != 0;
+    }
+    return true;
+} 
+
+function saveMedia(data: MediaData, review: string, token: string, setMedia: Function, setReview: Function) {
+    const api = muramasa_api.media.auth(token);
+    api.add(data)
+    .then((res) => {
+        setMedia(res.data);
+        if(checkReview(review)) {
+            api.reviews().add(res.data.id, {id: null, text: review, score: res.data.score, code: res.data.code, reviewedAt: ""})
+            .then((res) => {popupMessage.success("Anime saved successfully.");setReview(res.data)})
+            .catch(() => popupMessage.error("Cannot save review."));
+        }else{
+            popupMessage.success("Anime saved successfully.");
+        }
+    })
     .catch(() => popupMessage.error("Cannot save that anime."));
 }
 
-function updateMedia(data: MediaData, token: string) {
-    muramasa_api.media.auth(token).update(data)
-    .then(() => popupMessage.success("Anime updated."))
+function updateMedia(data: MediaData, review: string, token: string) {
+    const api = muramasa_api.media.auth(token);
+    
+    api.update(data)
+    .then(() => {
+        if(checkReview(review) && data.review) {
+            api.reviews().update({...data.review, text: review})
+            .then(() => popupMessage.success("Anime updated."))
+            .catch(() => popupMessage.error("Cannot update review."));
+        }else popupMessage.success("Anime updated.");
+    })
     .catch(() => popupMessage.error("Cannot update anime."));
 }
 
@@ -33,7 +59,7 @@ function remove(data: MediaData, token: string) {
     .catch((err) => popupMessage.error(err.response.data.message));
 }
 
-const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type: 'anime', favorited: 0, count: 0, cLength: -1, status: 1, score: 0};
+const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type: 'anime', favorited: 0, count: 0, length: -1, status: 1, score: 0, review: null};
 
 function Media() {
     const auth = useAuth();
@@ -45,8 +71,14 @@ function Media() {
 
     useEffect(() => {
         if(auth.isAuthenticated && (media && typeof media != 'number')) {
-            muramasa_api.media.auth(auth.authObject?.token || '').get(media.mal_id, auth.authObject?.animeListId as number)
-            .then(res => setExistentMedia(res.data))
+            const api = muramasa_api.media.auth(auth.authObject?.token || '');
+            api.get(media.mal_id, auth.authObject?.animeListId as number)
+            .then(res => {
+                setExistentMedia(res.data);
+                if(res.data.review) {
+                    setReview(res.data.review.text);
+                }
+            })
             .catch(() => setExistentMedia(default_media));
         }
     }, [media]);
@@ -77,10 +109,9 @@ function Media() {
 
     useEffect(() => {
         if(media && existentMedia.code === 0) {
-            setExistentMedia({...existentMedia, 'cLength': media.episodes || 0, 'imgUrl': media.images.webp.large_image_url, 'code': media.mal_id, 'name': media.title});
+            setExistentMedia({...existentMedia, 'length': media.episodes || 0, 'imgUrl': media.images.webp.large_image_url, 'code': media.mal_id, 'name': media.title});
         }
     }, [existentMedia]);
-
     return (
         <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
             {
@@ -278,8 +309,8 @@ function Media() {
                                 className="bg-rose-500 px-4 py-2 rounded font-medium cursor-pointer hover:bg-rose-600 transition-all float-right"
                                 onClick={() => {
                                     !existentMedia.id ? 
-                                        saveMedia(existentMedia, auth.authObject?.token || '', setExistentMedia)
-                                    : updateMedia(existentMedia, auth.authObject?.token || '');
+                                        saveMedia(existentMedia, review, auth.authObject?.token || '', setExistentMedia, setReview)
+                                    : updateMedia(existentMedia, review, auth.authObject?.token || '');
                                     setShowModal(false)}}
                                 >Save</button>
                             </footer>
