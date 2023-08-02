@@ -29,9 +29,12 @@ public class CharacterService {
     
     public CharacterService() {}
    
-    public void favoriteCharacter(Character character, Long userId) {
-        Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
-        character.setFavoritedBy(acc);
+    public Character findByCodeAndAccount(Long code, Account favorited) {
+        return repo.findByCodeAndFavorited(code, favorited).orElseThrow(() -> new NotFoundException("Character not found."));
+    }
+    
+    public void favoriteCharacter(Character character, Account acc) {
+        character.setFavorited(acc);
         try {
             repo.save(character);
         }catch(ConstraintViolationException e) {
@@ -39,9 +42,8 @@ public class CharacterService {
         }
     }
     
-    public void unfavoriteCharacter(Long code, Long userId) {
-        Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
-        Character character = repo.findByCode(code).orElseThrow(() -> new NotFoundException("Character not favorited yet."));
+    public void unfavoriteCharacter(Long code, Account acc) {
+        Character character = repo.findByCodeAndFavorited(code, acc).orElseThrow(() -> new NotFoundException("Character not favorited yet."));
         repo.delete(character);
     }
 }

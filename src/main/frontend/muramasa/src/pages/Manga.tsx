@@ -6,43 +6,31 @@ import { JikanCharacterCard, JikanGenreObject, JikanManga, JikanNew, JikanPerson
 import muramasa_api from "../api/muramasa/routes";
 import popupMessage from "../modules/toaster";
 import useAuth from '../hooks/useAuth';
+import { saveMedia, updateMedia, remove, favorite } from '../modules/mediaModules';
+import { EditorState, convertToRaw } from 'draft-js';
+import TextEditor from '../components/TextEditor';
+import lz from "lz-string";
 
-function saveMedia(data: MediaData, token: string, setMedia: Function) {
-    muramasa_api.media.auth(token).add(data)
-    .then((res) => {popupMessage.success("Manga saved successfully.");setMedia(res.data)})
-    .catch((err) => popupMessage.error(err.response.data.message));
-}
-
-function updateMedia(data: MediaData, token: string) {
-    muramasa_api.media.auth(token).update(data)
-    .then(() => popupMessage.success("Manga updated."))
-    .catch(() => popupMessage.error("Cannot update manga."));
-}
-
-function favorite(data: MediaData, token: string) {
-    muramasa_api.media.auth(token).update(data)
-    .then(() => popupMessage.success(data.favorited === 0 ? "Unfavorited manga." : "Favorited manga."))
-    .catch((err) => popupMessage.error(err.response.data.message));
-}
-
-function remove(data: MediaData, token: string) {
-    muramasa_api.media.auth(token).delete(data)
-    .then(() => popupMessage.success("Removed manga from your list."))
-    .catch((err) => popupMessage.error(err.response.data.message));
-}
-
-const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type: 'manga', favorited: 0, count: 0, cLength: -1, status: 1, score: 0};
+const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type: 'manga', favorited: 0, count: 0, length: -1, status: 1, score: 0, review: null};
 
 function Manga() {
     const auth = useAuth();
     const [existentMedia, setExistentMedia] = useState<MediaData>(default_media);
     const [media, setMedia] = useState<JikanManga | null>(null);
+    const [page, setPage] = useState<string>('characters');
     const [showModal, setShowModal] = useState<boolean>(false);
-    
+    const [review, setReview] = useState<string>(JSON.stringify(convertToRaw(EditorState.createEmpty().getCurrentContent())));
+
     useEffect(() => {
         if(auth.isAuthenticated && (media && typeof media != 'number')) {
-            muramasa_api.media.auth(auth.authObject?.token || '').get(media.mal_id, auth.authObject?.mangaListId as number)
-            .then(res => setExistentMedia(res.data))
+            const api = muramasa_api.media.auth(auth.authObject?.token || '');
+            api.get(media.mal_id, auth.authObject?.mangaListId as number)
+            .then(res => {
+                setExistentMedia(res.data);
+                if(res.data.review) {
+                    setReview(lz.decompressFromUTF16(res.data.review.text));
+                }
+            })
             .catch(() => setExistentMedia(default_media));
         }
     }, [media]);
@@ -54,23 +42,24 @@ function Manga() {
             setTimeout(() => {
                 jikan_api.getById(id, "manga")
                 .then(res => {
-                    if(res.data.data) setMedia({...res.data.data, 'page': 'characters'})
+                    if(res.data.data) 
+                        setMedia({...res.data.data})
                     else popupMessage.error("Maga not found.");
                 })
                 .catch(() => popupMessage.error("Manga not found."));
             }, 500);
         }else
-        if(media.page == 'characters' && media.characters == null) {
+        if(page == 'characters' && media.characters == null) {
             jikan_api.getCharacters(id, "manga")
             .then(res => {res.data.data.sort((curr: any, next: any) => next.favorites-curr.favorites);setMedia({...media, 'characters': res.data.data})});
-        }else if(media.page == 'news' && media.news == null) {
+        }else if(page == 'news' && media.news == null) {
             jikan_api.getNews(id, "manga").then(res => {setMedia({...media, 'news': res.data.data})})
         }
-    }, [media]);
+    }, [media, page]);
     
     useEffect(() => {
         if(media && existentMedia.code === 0) {
-            setExistentMedia({...existentMedia, 'cLength': media.chapters || 0, 'imgUrl': media.images.webp.large_image_url, 'code': media.mal_id, 'name': media.title});
+            setExistentMedia({...existentMedia, 'length': media.chapters || 0, 'imgUrl': media.images.webp.large_image_url, 'code': media.mal_id, 'name': media.title});
         }
     }, [existentMedia]);
 
@@ -149,12 +138,12 @@ function Manga() {
                             <br/>
                             <br/>
                             <div className="flex gap-2">
-                                <span className={media.page == 'characters' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setMedia({...media, 'page': 'characters'})}>Characters</span>
-                                <span className={media.page == 'news' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setMedia({...media, 'page': 'news'})}>News</span>
+                                <span className={page == 'characters' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('characters')}>Characters</span>
+                                <span className={page == 'news' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('news')}>News</span>
                             </div>
                             <br/><br/>
                             <div className="flex flex-wrap gap-4 max-sm:h-96 max-sm:overflow-y-auto">
-                                {media.page == 'characters' ?
+                                {page == 'characters' ?
                                     media.characters ? media.characters.map((character: JikanCharacterCard) => (
                                         <a href={`/character?id=${character.character.mal_id}`} className="max-sm:w-full" key={character.character.mal_id}>
                                         <div className="flex flex-row cursor-pointer w-60 max-sm:w-full gap-2 max-xl:w-48 bg-darkocean rounded">
@@ -182,7 +171,7 @@ function Manga() {
                         <div className="fixed w-full min-h-screen bg-black bg-opacity-30 top-0 flex justify-center items-center transition-all animate-fade">
                             <div className="w-4/12 p-4 rounded bg-darkocean max-xl:w-full max-xl:m-2">
                                 <header className="flex justify-between items-center">
-                                    <h2 className="font-medium text-slate-50">{existentMedia.id ? "Update manga" : "Add manga"}</h2>
+                                    <h2 className="font-medium text-slate-50">{media.title}</h2>
                                     <span className="text-sm underline cursor-pointer" onClick={() => {setShowModal(false)}}>Close</span>
                                 </header>
                                 <main className="px-4 py-8">
@@ -236,6 +225,11 @@ function Manga() {
                                             <Heart outline={!existentMedia['favorited']}/>
                                         </button>
                                     </section>
+                                    <br/>
+                                    <section className="flex gap-2 flex-col">
+                                        <h2 className="font-medium text-sm">Write a review: </h2>
+                                        <TextEditor text={review} setText={setReview}/>
+                                    </section>
                                 </main>
                                 <footer className="flex justify-between max-xl:flex-col">
                                     {existentMedia.id ? <span 
@@ -251,8 +245,8 @@ function Manga() {
                                     className="bg-rose-500 px-4 py-2 rounded font-medium cursor-pointer hover:bg-rose-600 transition-all float-right"
                                     onClick={() => {
                                         !existentMedia.id ? 
-                                            saveMedia(existentMedia, auth.authObject?.token || '', setExistentMedia)
-                                        : updateMedia(existentMedia, auth.authObject?.token || '');
+                                            saveMedia(existentMedia, review, auth.authObject?.token || '', setExistentMedia, setReview)
+                                        : updateMedia(existentMedia, review, auth.authObject?.token || '');
                                         setShowModal(false)
                                     }}
                                     >Save</button>

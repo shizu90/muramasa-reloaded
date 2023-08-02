@@ -34,7 +34,7 @@ public class Character implements Serializable {
     //Relations
     @ManyToOne(targetEntity = Account.class)
     @JsonIgnore
-    private Account favoritedBy;
+    private Account favorited;
     
     public Character() {}
     public Character(Long id, Long code, String name, String img) {
@@ -76,12 +76,12 @@ public class Character implements Serializable {
         this.img = img;
     }
 
-    public Account getFavoritedBy() {
-        return favoritedBy;
+    public Account getFavorited() {
+        return favorited;
     }
 
-    public void setFavoritedBy(Account favoritedBy) {
-        this.favoritedBy = favoritedBy;
+    public void setFavorited(Account favorited) {
+        this.favorited = favorited;
     }
 
     @Override

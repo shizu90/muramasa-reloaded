@@ -6,6 +6,7 @@ package com.gabriel.muramasa.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.gabriel.muramasa.models.Character;
+import com.gabriel.muramasa.models.Account;
 import java.util.Optional;
 
 /**
@@ -13,5 +14,5 @@ import java.util.Optional;
  * @author giraf
  */
 public interface CharacterRepository extends JpaRepository<Character, Long>{
-    Optional<Character> findByCode(Long code);
+    Optional<Character> findByCodeAndFavorited(Long code, Account favorited);
 }

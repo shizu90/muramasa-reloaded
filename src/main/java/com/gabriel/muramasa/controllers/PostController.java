@@ -36,9 +36,10 @@ public class PostController {
         return ResponseEntity.ok().body(service.getPostById(postId));
     }
     
-    @GetMapping(value = "/following/{userId}")
-    public ResponseEntity<List<Post>> getFollowingPosts(@PathVariable Long userId) {
-        return ResponseEntity.ok().body(service.getFollowingPosts(userId));
+    @GetMapping(value = "/following")
+    public ResponseEntity<List<Post>> getFollowingPosts(Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        return ResponseEntity.ok().body(service.getFollowingPosts(acc.getId()));
     }
     
     @GetMapping(value = "/{userId}")

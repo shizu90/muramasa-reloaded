@@ -7,57 +7,9 @@ import muramasa_api from "../api/muramasa/routes";
 import popupMessage from "../modules/toaster";
 import { MediaData, JikanAnime, JikanNew, JikanCharacterCard, JikanStaff, JikanGenreObject } from "../modules/mediaData";
 import TextEditor from "../components/TextEditor";
-import { EditorState, RawDraftContentState, convertToRaw } from "draft-js";
-
-function checkReview(review: string) {
-    const editorStateObject: RawDraftContentState = JSON.parse(review);
-    if(editorStateObject.blocks.length === 1) {
-        return editorStateObject.blocks[0].text.length != 0;
-    }
-    return true;
-} 
-
-function saveMedia(data: MediaData, review: string, token: string, setMedia: Function, setReview: Function) {
-    const api = muramasa_api.media.auth(token);
-    api.add(data)
-    .then((res) => {
-        setMedia(res.data);
-        if(checkReview(review)) {
-            api.reviews().add(res.data.id, {id: null, text: review, score: res.data.score, code: res.data.code, reviewedAt: ""})
-            .then((res) => {popupMessage.success("Anime saved successfully.");setReview(res.data)})
-            .catch(() => popupMessage.error("Cannot save review."));
-        }else{
-            popupMessage.success("Anime saved successfully.");
-        }
-    })
-    .catch(() => popupMessage.error("Cannot save that anime."));
-}
-
-function updateMedia(data: MediaData, review: string, token: string) {
-    const api = muramasa_api.media.auth(token);
-    
-    api.update(data)
-    .then(() => {
-        if(checkReview(review) && data.review) {
-            api.reviews().update({...data.review, text: review})
-            .then(() => popupMessage.success("Anime updated."))
-            .catch(() => popupMessage.error("Cannot update review."));
-        }else popupMessage.success("Anime updated.");
-    })
-    .catch(() => popupMessage.error("Cannot update anime."));
-}
-
-function favorite(data: MediaData, token: string) {
-    muramasa_api.media.auth(token).update(data)
-    .then(() => popupMessage.success(data.favorited === 0 ? "Unfavorited anime." : "Favorited anime."))
-    .catch((err) => popupMessage.error(err.response.data.message));
-}
-
-function remove(data: MediaData, token: string) {
-    muramasa_api.media.auth(token).delete(data)
-    .then(() => popupMessage.success("Removed anime from your list."))
-    .catch((err) => popupMessage.error(err.response.data.message));
-}
+import { EditorState, convertToRaw } from "draft-js";
+import { saveMedia, updateMedia, remove, favorite } from "../modules/mediaModules";
+import lz from "lz-string";
 
 const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type: 'anime', favorited: 0, count: 0, length: -1, status: 1, score: 0, review: null};
 
@@ -76,7 +28,7 @@ function Media() {
             .then(res => {
                 setExistentMedia(res.data);
                 if(res.data.review) {
-                    setReview(res.data.review.text);
+                    setReview(lz.decompressFromUTF16(res.data.review.text));
                 }
             })
             .catch(() => setExistentMedia(default_media));

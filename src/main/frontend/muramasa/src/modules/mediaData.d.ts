@@ -87,8 +87,7 @@ export interface JikanManga extends JikanMedia {
     chapters: number,
     volumes: number,
     published: JikanAiredObject,
-    authors: Array<JikanPersonObject>,
-    page: string
+    authors: Array<JikanPersonObject>
 }
 
 export interface JikanNew {

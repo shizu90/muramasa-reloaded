@@ -67,7 +67,7 @@ public class Account implements Serializable, UserDetails {
     @OneToMany(targetEntity = Like.class, mappedBy = "likedBy")
     @JsonIgnore
     private List<Like> likes;
-    @OneToMany(targetEntity = Character.class, mappedBy = "favoritedBy")
+    @OneToMany(targetEntity = Character.class, mappedBy = "favorited")
     @JsonIgnore
     private List<Character> favoritedCharacters;
     @OneToMany(targetEntity = Review.class, mappedBy = "reviewer")
