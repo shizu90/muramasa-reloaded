@@ -143,13 +143,13 @@ export default {
                         },
                         delete: (reviewId: number): Response => {
                             return axios.delete(default_url + `reviews/${reviewId}`, config);
-                        },
-                        getMediaReviews: (mediaCode: number, offset: number): Response => {
-                            return axios.get(default_url + `reviews/media/${mediaCode}/${offset}`, config);
                         }
                     }
                 }
             }
+        },
+        getMediaReviews: (mediaCode: number, offset: number): Response => {
+            return axios.get(default_url + `reviews/media/${mediaCode}/${offset}`);
         }
     },
     recentUpdates: {
@@ -200,6 +200,9 @@ export default {
         auth: (token: string) => {
             const config: AxiosRequestConfig = {headers: {Authorization: `Bearer ${token}`}};
             return {
+                get: (code: number) => {
+                    return axios.get(default_url + `character/${code}`, config);
+                },
                 favorite: (characterData: CharacterData): Response => {
                     return axios.post(default_url + `character/favorite`, characterData, config);
                 },

@@ -1,9 +1,12 @@
+import { UserData } from "./userData"
+
 export interface ReviewData {
     id: number | null,
     text: string,
     score: number,
     code: number,
-    reviewedAt: string
+    reviewedAt: string,
+    reviewer: UserData
 }
 
 export interface MediaData {
@@ -49,7 +52,7 @@ export interface JikanPersonObject {
     mal_id: number,
     url: string,
     images: {jpg: JikanImageObject, webp: JikanImageObject},
-    name: string
+    name: string,
 }
 
 interface JikanMedia {
@@ -71,7 +74,7 @@ interface JikanMedia {
     duration: string,
     genres: Array<JikanGenreObject>,
     characters: Array<JikanCharacterCard> | null,
-    news: Array<JikanNew> | null,
+    news: Array<JikanNew> | null
 }
 
 export interface JikanAnime extends JikanMedia{
@@ -111,4 +114,27 @@ export interface JikanCharacterCard {
 export interface JikanStaff {
     person: JikanPersonObject,
     positions: Array<string>
+}
+
+export interface JikanVoiceObject {
+    person: JikanPersonObject,
+    language: string
+}
+
+export interface JikanMediaCard {
+    mal_id: number,
+    title: string,
+    images: JikanImageObject
+}
+
+export interface JikanCharacter {
+    mal_id: number,
+    images: {jpg: JikanImageObject, webp: JikanImageObject},
+    name: string,
+    name_kanji: string,
+    nicknames: Array<string>,
+    voices: Array<JikanVoiceObject>,
+    anime: Array<JikanMediaCard>,
+    manga: Array<JikanMediaCard>,
+    about: string
 }

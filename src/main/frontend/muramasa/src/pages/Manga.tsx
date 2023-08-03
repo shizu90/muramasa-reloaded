@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import jikan_api from "../api/jikan/routes";
 import Heart from '../components/icons/Heart';
 import Loading from '../components/icons/Loading';
-import { JikanCharacterCard, JikanGenreObject, JikanManga, JikanNew, JikanPersonObject, MediaData } from '../modules/mediaData';
+import { JikanCharacterCard, JikanGenreObject, JikanManga, JikanNew, JikanPersonObject, MediaData, ReviewData } from '../modules/mediaData';
 import muramasa_api from "../api/muramasa/routes";
 import popupMessage from "../modules/toaster";
 import useAuth from '../hooks/useAuth';
@@ -10,8 +10,17 @@ import { saveMedia, updateMedia, remove, favorite } from '../modules/mediaModule
 import { EditorState, convertToRaw } from 'draft-js';
 import TextEditor from '../components/TextEditor';
 import lz from "lz-string";
+import Review from '../components/Review';
+import { generatePages } from '../modules/pagination';
+import CharacterCard from '../components/CharacterCard';
+import NewsCard from '../components/NewsCard';
 
 const default_media: MediaData = {id: null, code: 0, name: '', imgUrl: '', type: 'manga', favorited: 0, count: 0, length: -1, status: 1, score: 0, review: null};
+
+interface Reviews {
+    reviews: Array<ReviewData>,
+    total: number
+}
 
 function Manga() {
     const auth = useAuth();
@@ -20,6 +29,8 @@ function Manga() {
     const [page, setPage] = useState<string>('characters');
     const [showModal, setShowModal] = useState<boolean>(false);
     const [review, setReview] = useState<string>(JSON.stringify(convertToRaw(EditorState.createEmpty().getCurrentContent())));
+    const [reviews, setReviews] = useState<Reviews>({reviews: [], total: 0});
+    const [reviewPage, setReviewPage] = useState<number>(0);
 
     useEffect(() => {
         if(auth.isAuthenticated && (media && typeof media != 'number')) {
@@ -54,6 +65,9 @@ function Manga() {
             .then(res => {res.data.data.sort((curr: any, next: any) => next.favorites-curr.favorites);setMedia({...media, 'characters': res.data.data})});
         }else if(page == 'news' && media.news == null) {
             jikan_api.getNews(id, "manga").then(res => {setMedia({...media, 'news': res.data.data})})
+        }else if(page == 'reviews') {
+            muramasa_api.media.getMediaReviews(media.mal_id, reviewPage)
+            .then(res => {setReviews({reviews: res.data.content, total: res.data.totalPages});});
         }
     }, [media, page]);
     
@@ -70,7 +84,7 @@ function Manga() {
                     <>
                     <div className="flex justify-around w-full max-sm:flex-col max-sm:w-10/12 max-xl:gap-4">
                         <div className="flex flex-col gap-4 max-sm:text-center">
-                            <img src={media.images.webp.large_image_url} className="rounded object-cover w-64 max-xl:w-full max-sm:w-full"/>
+                            <img src={media.images.webp.large_image_url} className="rounded object-cover w-64 max-sm:w-full"/>
                             <div className="bg-darkocean w-64 p-4 rounded text-sm max-sm:h-60 max-sm:overflow-y-auto">
                                 <span className="font-medium">Authors</span><br/>
                                 <span className="text-slate-400">{media.authors.map((author: JikanPersonObject, index: number) => index+1 == media.authors.length ? author.name : author.name + "; ")}</span>
@@ -140,30 +154,32 @@ function Manga() {
                             <div className="flex gap-2">
                                 <span className={page == 'characters' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('characters')}>Characters</span>
                                 <span className={page == 'news' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('news')}>News</span>
+                                <span className={page == 'reviews' ? "font-medium cursor-pointer transition-all" : "cursor-pointer text-slate-400 transition-all"} onClick={() => setPage('reviews')}>Reviews</span>
                             </div>
                             <br/><br/>
                             <div className="flex flex-wrap gap-4 max-sm:h-96 max-sm:overflow-y-auto">
                                 {page == 'characters' ?
-                                    media.characters ? media.characters.map((character: JikanCharacterCard) => (
-                                        <a href={`/character?id=${character.character.mal_id}`} className="max-sm:w-full" key={character.character.mal_id}>
-                                        <div className="flex flex-row cursor-pointer w-60 max-sm:w-full gap-2 max-xl:w-48 bg-darkocean rounded">
-                                            <img src={character.character.images.webp.image_url} className="w-16 rounded"/>
-                                            <div>
-                                                <h2 className="w-40 max-xl:w-28 text-ellipsis truncate font-medium pt-2 max-sm:text-sm">{character.character.name}</h2>
-                                                <span className="text-sm text-slate-400">{character.role}</span>
-                                            </div>
-                                        </div>
-                                        </a>
-                                    )) : null
-                                : media.news ?  media.news.map((newsItem: JikanNew) => (
-                                    <a href={newsItem.url} target="_blank">
-                                    <div className="flex flex-col bg-darkocean rounded w-60 max-sm:w-full max-xl:w-44 h-96">
-                                        <img src={newsItem.images.jpg.image_url} className="w-full h-40 object-cover rounded"/>
-                                        <span className="w-full text-center text-sm font-medium mt-2">{newsItem.title}</span><br/>
-                                        <p className="w-full text-center text-sm text-slate-400 p-2 text-ellipsis">{newsItem.excerpt}</p>
+                                media.characters ? media.characters.map((character: JikanCharacterCard) => (
+                                    <CharacterCard character={character}/>
+                                )) : null
+                                : page === 'news' ? media.news ?  media.news.map((news: JikanNew) => (
+                                    <NewsCard news={news}/>
+                                )) : <span>News not found.</span> : reviews.total > 0 ? ( 
+                                    <div className="flex flex-col w-full gap-4 justify-center items-center"> 
+                                        {reviews.reviews.map((review: ReviewData) => (
+                                            <Review review={review}/>
+                                        ))}
+                                        <div className="flex gap-1">
+                                            {generatePages(reviewPage, reviews.total).map((num: number) => (
+                                                <span
+                                                    onClick={() => setReviewPage(num-1)} 
+                                                    className={(num-1 === reviewPage ? "font-medium" : "") + " bg-darkocean text-sm px-2 py-1 cursor-pointer rounded-lg"}>
+                                                        {num}
+                                                </span>
+                                            ))}
+                                        </div>  
                                     </div>
-                                    </a>
-                                )) : <Loading/>}
+                                    ) : <span className="text-sm font-medium">Reviews not found.</span>}
                             </div>
                         </div>
                     </div>
@@ -228,7 +244,7 @@ function Manga() {
                                     <br/>
                                     <section className="flex gap-2 flex-col">
                                         <h2 className="font-medium text-sm">Write a review: </h2>
-                                        <TextEditor text={review} setText={setReview}/>
+                                        <TextEditor text={review} setText={setReview} maxLen={5000}/>
                                     </section>
                                 </main>
                                 <footer className="flex justify-between max-xl:flex-col">

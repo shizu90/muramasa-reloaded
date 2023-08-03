@@ -5,6 +5,7 @@ import capitallize from "../../modules/capitallize";
 import jikan_api from "../../api/jikan/routes";
 import Loading from "../../components/icons/Loading";
 import { redirect } from "../../modules/redirection";
+import MediaCard from "../../components/MediaCard";
 
 function createYearArray() {
     const arr = [];
@@ -23,6 +24,7 @@ let mounted = true;
 function SearchAnime() {
     const [content, setContent] = useState<any>(null);
     const [filters, setFilters] = useState<any>({'q': urlParams.get('q'), 'year': urlParams.get('year'), 'season': urlParams.get('season'), 'type': urlParams.get('type'), 'status': urlParams.get('status')});
+    
     useEffect(() => {
         
         if(content == null) {
@@ -103,20 +105,20 @@ function SearchAnime() {
             </div>
             <div className="w-full flex gap-4 justify-center items-center max-sm:flex-col">
                 <div className="max-sm:w-full">
-                    <h2 className="font-medium text-slate-50 mb-2">Search for...</h2>
+                    <span className="font-medium text-slate-50 mb-2">Search for...</span>
                     <input className="w-full bg-darkocean outline-none px-4 py-2 rounded caret-slate-500 text-slate-400 font-medium" onChange={(e) => setFilters({...filters, 'q': e.target.value})} value={filters['q'] || ''}/>
                 </div>
                 <div className="max-sm:w-full">
-                    <h2 className="font-medium text-slate-50 mb-2">Filters</h2>
+                    <span className="font-medium text-slate-50 mb-2">Filters</span>
                     <div className="flex gap-2 flex-wrap justify-center items-center">
                         <div className="group">
                             <input 
                             type="text" className="px-4 py-2 outline-none rounded bg-darkocean text-slate-500 font-medium w-32 max-sm:w-20 cursor-pointer" 
                             placeholder="Year" readOnly value={capitallize(filters['year'] || 'Any')}/>
                             <div className="bg-darkocean shadow-lg shadow-slate-90 absolute hidden group-hover:flex flex-col gap-2 h-52 overflow-y-auto w-32 max-sm:w-20 max-sm:px-2 max-sm:text-sm text-slate-400 font-medium px-4 py-2 border-t-[6px] border-midnight rounded">
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'year': 'any'})}>Any</h2>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'year': 'any'})}>Any</span>
                                 {yearArr.map((year: number) => (
-                                    <h2 className="hover:text-slate-50 cursor-pointer transition-all" key={year} onClick={() => setFilters({...filters, 'year': `${year}`})}>{year}</h2>
+                                    <span className="hover:text-slate-50 cursor-pointer transition-all" key={year} onClick={() => setFilters({...filters, 'year': `${year}`})}>{year}</span>
                                 ))}
                             </div>
                         </div>
@@ -125,11 +127,11 @@ function SearchAnime() {
                             type="text" className="px-4 py-2 outline-none rounded bg-darkocean text-slate-500 font-medium w-32 max-sm:w-20 cursor-pointer" 
                             placeholder="Season" readOnly value={capitallize(filters['season'] || 'Any')}/>
                             <div className="bg-darkocean shadow-lg shadow-slate-90 absolute hidden group-hover:flex flex-col gap-2 w-32 max-sm:w-20 max-sm:px-2 max-sm:text-sm text-slate-400 font-medium px-4 py-2 border-t-[6px] border-midnight rounded">
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'season': 'any'})}>Any</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'season': 'winter'})}>Winter</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'season': 'spring'})}>Spring</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'season': 'summer'})}>Summer</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'season': 'fall'})}>Fall</h2>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'season': 'any'})}>Any</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'season': 'winter'})}>Winter</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'season': 'spring'})}>Spring</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'season': 'summer'})}>Summer</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'season': 'fall'})}>Fall</span>
                             </div>
                         </div>
                         <div className="group">
@@ -137,10 +139,10 @@ function SearchAnime() {
                             type="text" className="px-4 py-2 outline-none rounded bg-darkocean text-slate-500 font-medium w-32 max-sm:w-20 cursor-pointer" 
                             placeholder="Status" readOnly value={capitallize(filters['status'] || 'Any')}/>
                             <div className="bg-darkocean shadow-lg shadow-slate-90 absolute hidden group-hover:flex flex-col gap-2 w-32 max-sm:w-20 max-sm:px-2 max-sm:text-sm text-slate-400 font-medium px-4 py-2 border-t-[6px] border-midnight rounded">
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'status': 'any'})}>Any</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'status': 'airing'})}>Airing</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'status': 'complete'})}>Complete</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'status': 'upcoming'})}>Upcoming</h2>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'status': 'any'})}>Any</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'status': 'airing'})}>Airing</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'status': 'complete'})}>Complete</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'status': 'upcoming'})}>Upcoming</span>
                             </div>
                         </div>
                         <div className="group">
@@ -148,13 +150,13 @@ function SearchAnime() {
                             type="text" className="px-4 py-2 outline-none rounded bg-darkocean text-slate-500 font-medium w-32 max-sm:w-20 cursor-pointer" 
                             placeholder="Status" readOnly value={capitallize(filters['type'] || 'Any')}/>
                             <div className="bg-darkocean shadow-lg shadow-slate-90 absolute hidden group-hover:flex flex-col gap-2 w-32 max-sm:w-20 max-sm:px-2 max-sm:text-sm text-slate-400 font-medium px-4 py-2 border-t-[6px] border-midnight rounded">
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'any'})}>Any</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'tv'})}>Tv</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'movie'})}>Movie</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'ova'})}>Ova</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'special'})}>Special</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'ona'})}>Ona</h2>
-                                <h2 className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'music'})}>Music</h2>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'any'})}>Any</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'tv'})}>Tv</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'movie'})}>Movie</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'ova'})}>Ova</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'special'})}>Special</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'ona'})}>Ona</span>
+                                <span className="hover:text-slate-50 cursor-pointer transition-all" onClick={() => setFilters({...filters, 'type': 'music'})}>Music</span>
                             </div>
                         </div>
                     </div>
@@ -164,13 +166,8 @@ function SearchAnime() {
                 {
                     content ? 
                         content.data.length > 0 ? content.data.map((anime: any) => (
-                            <a href={`/anime?id=${anime.mal_id}`} key={anime.mal_id}>
-                                <div className="flex flex-col gap-1 w-40 h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-24">
-                                    <img src={anime.images.jpg.image_url} className="w-full h-56 max-sm:h-36 object-cover cursor-pointer rounded"/>
-                                    <h2 className="truncate text-ellipsis text-sm font-medium">{anime.title}</h2>
-                                </div>
-                            </a>
-                        )) : <h2>Found anything {':('}</h2>: <Loading/>
+                            <MediaCard type={"anime"} media={anime}/>
+                        )) : <span>Found anything {':('}</span>: <Loading/>
                 }
             </div>
             <div className="text-white text-sm max-sm:text-[12px] font-medium flex gap-2 ">

@@ -1,32 +1,16 @@
 import { useState, useEffect } from "react";
 import { EditorState, Editor, RichUtils, convertToRaw, convertFromRaw } from "draft-js";
+import Dropdown from "./Dropdown";
 
 interface TextEditorProps {
     text: string,
-    setText: Function
+    setText: Function,
+    maxLen: number
 }
 
 const customStyleMap = {
     STRIKE: {
         textDecoration: "line-through"
-    },
-    HEADER_20: {
-        fontSize: "20px"
-    },
-    HEADER_24: {
-        fontSize: "24px"
-    },
-    HEADER_28: {
-        fontSize: "28px"
-    },
-    HEADER_32: {
-        fontSize: "32px"
-    },
-    PARAGRAPH_12: {
-        fontSize: "12px"
-    },
-    PARAGRAPH_16: {
-        fontSize: "16px"
     }
 }
 
@@ -37,6 +21,66 @@ function TextEditor(props: TextEditorProps) {
     useEffect(() => {
         props.setText(JSON.stringify(convertToRaw(editorState.getCurrentContent())))
     }, [editorState])
+
+    const getLength = () => {
+        const currentSelection = editorState.getSelection();
+        const isCollapsed = currentSelection.isCollapsed();
+
+        let length = 0;
+
+        if (!isCollapsed) {
+        const currentContent = editorState.getCurrentContent();
+        const startKey = currentSelection.getStartKey();
+        const endKey = currentSelection.getEndKey();
+        const startBlock = currentContent.getBlockForKey(startKey);
+        const isStartAndEndBlockAreTheSame = startKey === endKey;
+        const startBlockTextLength = startBlock.getLength();
+        const startSelectedTextLength = startBlockTextLength - currentSelection.getStartOffset();
+        const endSelectedTextLength = currentSelection.getEndOffset();
+        const keyAfterEnd = currentContent.getKeyAfter(endKey);
+
+        if (isStartAndEndBlockAreTheSame) {
+            length += currentSelection.getEndOffset() - currentSelection.getStartOffset();
+        } else {
+            let currentKey = startKey;
+
+            while (currentKey && currentKey !== keyAfterEnd) {
+            if (currentKey === startKey) {
+                length += startSelectedTextLength + 1;
+            } else if (currentKey === endKey) {
+                length += endSelectedTextLength;
+            } else {
+                length += currentContent.getBlockForKey(currentKey).getLength() + 1;
+            }
+
+            currentKey = currentContent.getKeyAfter(currentKey);
+            };
+        }
+        }
+
+        return length;
+    }
+
+    const handleBeforeInput = () => {
+        const currentContent = editorState.getCurrentContent();
+        const currentContentLength = currentContent.getPlainText('').length;
+        const selectedTextLength = getLength();
+
+        if(currentContentLength - selectedTextLength > props.maxLen - 1) {
+            return 'handled';
+        }
+    }
+
+    const handlePastedInput = (pastedText: string) => {
+        const currentContent = editorState.getCurrentContent();
+        const currentContentLength = currentContent.getPlainText('').length;
+        const selectedTextLength = getLength();
+
+        if(currentContentLength + pastedText.length - selectedTextLength > props.maxLen) {
+            return 'handled';
+        }
+    }
+
 
     const handleKeyCommand = (command: Draft.DraftModel.Constants.DraftEditorCommand, editorState: EditorState) => {
         const newState = RichUtils.handleKeyCommand(editorState, command);
@@ -63,10 +107,29 @@ function TextEditor(props: TextEditorProps) {
     }
 
     const setFont = (fontSize: number) => {
-        let type = `HEADER_${fontSize}`;
-        if(fontSize < 20) type = `PARAGRAPH_${fontSize}`;
         setFontSize(fontSize);
-        setEditorState(RichUtils.toggleInlineStyle(editorState, type));
+        switch(fontSize) {
+            case 12:
+                setEditorState(RichUtils.toggleBlockType(editorState, "header-six"));
+                break;
+            case 16:
+                setEditorState(RichUtils.toggleBlockType(editorState, "header-five"));
+                break;
+            case 20:
+                setEditorState(RichUtils.toggleBlockType(editorState, "header-four"));
+                break;
+            case 24:
+                setEditorState(RichUtils.toggleBlockType(editorState, "header-three"));
+                break;
+            case 28:
+                setEditorState(RichUtils.toggleBlockType(editorState, "header-two"));
+                break;
+            case 32:
+                setEditorState(RichUtils.toggleBlockType(editorState, "header-one"));
+                break;
+            default:
+                break;
+        }
     }
 
     return (
@@ -76,21 +139,15 @@ function TextEditor(props: TextEditorProps) {
                 <button onClick={() => setItalic()} className="italic p-1">I</button>
                 <button onClick={() => setUnderline()} className="underline p-1">U</button>
                 <button onClick={() => setStrike()} className="line-through p-1">S</button>
-                <div className="group">
-                    <input 
-                    type="text" className="w-9 p-2 outline-none rounded bg-midnight cursor-pointer" 
-                    placeholder="Year" readOnly value={fontSize + ""}/>
-                    <div className="bg-darkocean shadow-lg shadow-slate-90 absolute hidden group-hover:flex flex-col gap-2 overflow-y-auto p-2 border-t-[6px] border-midnight rounded">
-                        {[12, 16, 20, 24, 28, 32].map((font: number) => (
-                            <h2 className="hover:text-slate-50 cursor-pointer transition-all" key={font} onClick={() => setFont(font)}>{font}</h2>
-                        ))}
-                    </div>
-                </div>
+                <Dropdown options={[12, 16, 20, 24, 28, 32]} control={{controlState: fontSize, setControlState: setFont}} placeholder="Font"/>
             </header>
             <Editor 
-            editorState={editorState} 
-            onChange={setEditorState} 
-            handleKeyCommand={handleKeyCommand} customStyleMap={customStyleMap}/>
+                editorState={editorState} 
+                onChange={setEditorState} 
+                customStyleMap={customStyleMap} 
+                handleBeforeInput={handleBeforeInput}
+                handlePastedText={handlePastedInput}
+            />
         </div>
     )
 }

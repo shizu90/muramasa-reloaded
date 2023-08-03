@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/draftjs-to-html": "^0.8.1",
     "axios": "^1.4.0",
     "draft-js": "^0.11.7",
+    "draftjs-to-html": "^0.9.1",
+    "html-to-react": "^1.6.0",
     "jsonwebtoken": "^9.0.1",
     "lz-string": "^1.5.0",
     "react": "^18.2.0",

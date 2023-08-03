@@ -34,7 +34,7 @@ function SearchCharacter() {
         <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
             <div className="w-full flex gap-4 justify-center items-center max-sm:flex-col">
                 <div className="max-sm:w-full w-4/12">
-                    <h2 className="font-medium text-slate-50 mb-2">Search for...</h2>
+                    <span className="font-medium text-slate-50 mb-2">Search for...</span>
                     <input className="w-full bg-darkocean outline-none px-4 py-2 rounded caret-slate-500 text-slate-400 font-medium" value={query} onChange={(e) => setQuery(e.target.value)}/>
                 </div>
             </div>
@@ -45,10 +45,10 @@ function SearchCharacter() {
                             <a href={`/character?id=${character.mal_id}`} key={character.mal_id}>
                                 <div className="flex flex-col gap-1 w-40 h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-24">
                                     <img src={character.images.jpg.image_url} className="w-full h-56 max-sm:h-36 object-cover cursor-pointer rounded"/>
-                                    <h2 className="truncate text-ellipsis text-sm font-medium">{character.name}</h2>
+                                    <span className="truncate text-ellipsis text-sm font-medium">{character.name}</span>
                                 </div>
                             </a>
-                        )) : <h2>Found anything {':('}</h2>: <Loading/>
+                        )) : <span>Found anything {':('}</span>: <Loading/>
                 }
             </div>
             <div className="text-white text-sm max-sm:text-[12px] font-medium flex gap-2 ">
