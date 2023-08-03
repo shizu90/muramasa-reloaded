@@ -47,6 +47,10 @@ public class Configurations {
                 .permitAll()
                 .requestMatchers(HttpMethod.GET, "/posts/**")
                 .permitAll()
+                .requestMatchers(HttpMethod.GET, "/character/**")
+                .permitAll()
+                .requestMatchers(HttpMethod.GET, "/reviews/**")
+                .permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .build();

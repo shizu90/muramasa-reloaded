@@ -5,6 +5,7 @@
 package com.gabriel.muramasa.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,11 +37,11 @@ public class Review implements Serializable {
     private Long code;
     private String reviewedAt;
     
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"email", "password", "likes", "animeList", "mangaList", "followers", "following", "posts", "bannerImgUrl", "resume"})
     private Account reviewer;
-    @JsonIgnore
+    @JsonIgnoreProperties({"review", "status", "length", "imgUrl", "count"})
     @OneToOne
     @JoinColumn(name = "media_id")
     private Media media;

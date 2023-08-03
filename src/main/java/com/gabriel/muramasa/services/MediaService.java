@@ -4,6 +4,7 @@
  */
 package com.gabriel.muramasa.services;
 
+import com.gabriel.muramasa.handlers.exceptions.AlreadyExistsException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -18,6 +19,7 @@ import com.gabriel.muramasa.repositories.AccountRepository;
 import com.gabriel.muramasa.repositories.MediaListRepository;
 import com.gabriel.muramasa.repositories.ReviewRepository;
 import java.text.ParseException;
+import java.util.Optional;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,6 +75,12 @@ public class MediaService {
             if(media.getType().equals("anime")) {
                 media.setList(acc.getAnimeList());
             }else media.setList(acc.getMangaList());
+            
+            Optional<Media> md = repo.findByCodeAndList(media.getCode(), media.getList());
+            if(md.isPresent()) {
+                throw new AlreadyExistsException("Media already added.");
+            }
+            
             String message = acc.getUsername() + " added " + media.getName() + " to his " + media.getType() + " list.";
             Log update = new Log(formatter.format(new Date()), message, acc);
 

@@ -4,6 +4,7 @@
  */
 package com.gabriel.muramasa.services;
 
+import com.gabriel.muramasa.handlers.exceptions.AlreadyExistsException;
 import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
 import com.gabriel.muramasa.handlers.exceptions.UnauthorizedException;
@@ -11,6 +12,7 @@ import com.gabriel.muramasa.repositories.CharacterRepository;
 import com.gabriel.muramasa.models.Character;
 import com.gabriel.muramasa.models.Account;
 import com.gabriel.muramasa.repositories.AccountRepository;
+import java.util.Optional;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,10 @@ public class CharacterService {
     
     public void favoriteCharacter(Character character, Account acc) {
         character.setFavorited(acc);
+        Optional<Character> chr = repo.findByCodeAndFavorited(character.getCode(), acc);
+        if(chr.isPresent()) {
+            throw new AlreadyExistsException("Character already favorited.");
+        }
         try {
             repo.save(character);
         }catch(ConstraintViolationException e) {
