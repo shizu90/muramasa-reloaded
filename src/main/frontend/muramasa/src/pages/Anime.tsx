@@ -5,7 +5,7 @@ import Heart from "../components/icons/Heart";
 import useAuth from "../hooks/useAuth";
 import muramasa_api from "../api/muramasa/routes";
 import popupMessage from "../modules/toaster";
-import { MediaData, JikanAnime, JikanNew, JikanCharacterCard, JikanStaff, JikanGenreObject, ReviewData } from "../modules/mediaData";
+import { MediaData, JikanAnime, JikanNew, JikanCharacterCard, JikanStaff, JikanGenreObject, ReviewData, JikanVoiceObject } from "../modules/mediaData";
 import TextEditor from "../components/TextEditor";
 import { EditorState, convertToRaw } from "draft-js";
 import { saveMedia, updateMedia, remove, favorite } from "../modules/mediaModules";
@@ -40,7 +40,7 @@ function Media() {
             .then(res => {
                 setExistentMedia(res.data);
                 if(res.data.review) {
-                    setReview(lz.decompressFromUTF16(res.data.review.text));
+                    setReview(lz.decompressFromBase64(res.data.review.text));
                 }
             })
             .catch(() => setExistentMedia(default_media));
@@ -145,10 +145,10 @@ function Media() {
                                             />
                                         </button>
                                     </div>
-                                    :
+                                    : auth.isAuthenticated ?
                                     <div className="flex gap-2 h-9 justify-center max-sm:mt-4">
                                         <button className="bg-rose-500 px-4 rounded hover:bg-rose-600 transition-all font-medium" onClick={() => setShowModal(true)}>Add to list</button>
-                                    </div>
+                                    </div> : null
                                 }
                             </div>
                             <br/>
@@ -166,17 +166,17 @@ function Media() {
                             <div className="flex flex-wrap gap-4 max-sm:h-96 max-sm:w-full max-sm:overflow-y-auto">
                                 {page == 'characters' ?
                                 media.characters ? media.characters.map((character: JikanCharacterCard) => (
-                                    <CharacterCard character={character}/>
+                                    <CharacterCard character={character} key={character.character.mal_id}/>
                                 )) : <Loading/>
                                 : page == 'news' ? media.news ? media.news.map((news: JikanNew) => (
-                                    <NewsCard news={news}/>
+                                    <NewsCard news={news} key={news.mal_id}/>
                                 )) : <Loading/> : 
                                 page == 'staff' ? media.staff ? media.staff.map((person: JikanStaff) => (
-                                    <StaffCard person={person}/>
+                                    <StaffCard person={person} key={person.person.mal_id}/>
                                 )) : <span>News not found.</span>: reviews.total > 0 ? ( 
                                 <div className="flex flex-col w-full gap-4 justify-center items-center"> 
                                     {reviews.reviews.map((review: ReviewData) => (
-                                        <Review review={review}/>
+                                        <Review review={review} key={review.id}/>
                                     ))}
                                     <div className="flex gap-1">
                                         {generatePages(reviewPage, reviews.total).map((num: number) => (
@@ -264,6 +264,7 @@ function Media() {
                                         remove(existentMedia, auth.authObject?.token || '');
                                         setExistentMedia(default_media);
                                         setShowModal(false);
+                                        setReview(JSON.stringify(convertToRaw(EditorState.createEmpty().getCurrentContent())));
                                     }}>
                                     Remove anime
                                 </span> : <span></span>}

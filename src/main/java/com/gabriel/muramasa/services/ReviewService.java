@@ -72,9 +72,7 @@ public class ReviewService {
         if(!review.getText().equals(r.getText())) {
             r.setText(review.getText());
         }
-        if(!review.getScore().equals(r.getScore())) {
-            r.setScore(review.getScore());
-        }
+        
         try {
             repo.save(r);
         }catch(ConstraintViolationException e) {

@@ -25,13 +25,13 @@ interface MediaData {
     favorited: 0 | 1, 
     count: number,
     length: number,
-    status: number
+    status: number,
+    score: number
 }
 
 interface ReviewData {
     id: number | null,
     text: string,
-    score: number,
     code: number,
     reviewedAt: string
 }
@@ -128,6 +128,7 @@ export default {
                     return axios.post(default_url + `media`, data, config);
                 },
                 update: (data: MediaData): Response => {
+                    console.log(data);
                     return axios.put(default_url + `media/${data.code}`, data, config);
                 },
                 delete: (data: MediaData): Response => {
@@ -139,6 +140,7 @@ export default {
                             return axios.post(default_url + `reviews/${mediaId}`, data, config);
                         },
                         update: (data: ReviewData): Response => {
+                            console.log(data)
                             return axios.put(default_url + `reviews`, data, config);
                         },
                         delete: (reviewId: number): Response => {

@@ -3,7 +3,7 @@ import { UserData } from "./userData"
 export interface ReviewData {
     id: number | null,
     text: string,
-    score: number,
+    media: MediaData,
     code: number,
     reviewedAt: string,
     reviewer: UserData

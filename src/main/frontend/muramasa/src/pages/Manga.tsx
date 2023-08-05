@@ -39,7 +39,7 @@ function Manga() {
             .then(res => {
                 setExistentMedia(res.data);
                 if(res.data.review) {
-                    setReview(lz.decompressFromUTF16(res.data.review.text));
+                    setReview(lz.decompressFromBase64(res.data.review.text));
                 }
             })
             .catch(() => setExistentMedia(default_media));
@@ -140,10 +140,10 @@ function Manga() {
                                             />
                                         </button>
                                     </div>
-                                    :
+                                    : auth.isAuthenticated ? 
                                     <div className="flex gap-2 h-9 justify-center max-sm:mt-4">
                                         <button className="bg-rose-500 px-4 rounded hover:bg-rose-600 transition-all font-medium" onClick={() => setShowModal(true)}>Add to list</button>
-                                    </div>
+                                    </div> : null
                                 }
                             </div>
                             <br/>
@@ -185,9 +185,9 @@ function Manga() {
                     </div>
                     { showModal && 
                         <div className="fixed w-full min-h-screen bg-black bg-opacity-30 top-0 flex justify-center items-center transition-all animate-fade">
-                            <div className="w-4/12 p-4 rounded bg-darkocean max-xl:w-full max-xl:m-2">
+                            <div className="w-4/12 p-4 rounded bg-darkocean max-xl:w-full max-xl:m-2 max-h-[620px] overflow-y-auto">
                                 <header className="flex justify-between items-center">
-                                    <h2 className="font-medium text-slate-50">{media.title}</h2>
+                                    <span className="text-md font-medium text-slate-50">{media.title}</span>
                                     <span className="text-sm underline cursor-pointer" onClick={() => {setShowModal(false)}}>Close</span>
                                 </header>
                                 <main className="px-4 py-8">

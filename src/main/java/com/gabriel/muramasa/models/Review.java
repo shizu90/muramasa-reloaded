@@ -33,24 +33,22 @@ public class Review implements Serializable {
     private Long id;
     @Column(name = "text", length = 24128)
     private String text;
-    private Double score;
     private Long code;
     private String reviewedAt;
     
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"email", "password", "likes", "animeList", "mangaList", "followers", "following", "posts", "bannerImgUrl", "resume"})
+    @JsonIgnoreProperties({"email", "password", "likes", "animeList", "mangaList", "followers", "following", "posts", "bannerImgUrl", "resume", "authorities"})
     private Account reviewer;
-    @JsonIgnoreProperties({"review", "status", "length", "imgUrl", "count"})
+    @JsonIgnoreProperties({"review"})
     @OneToOne
     @JoinColumn(name = "media_id")
     private Media media;
     
     public Review() {}
-    public Review(Long id, String text, Double score, String reviewedAt, Account reviewer, Media media) {
+    public Review(Long id, String text, String reviewedAt, Account reviewer, Media media) {
         this.id = id;
         this.text = text;
-        this.score = score;
         this.reviewedAt = reviewedAt;
         this.reviewer = reviewer;
         this.media = media;
@@ -71,14 +69,6 @@ public class Review implements Serializable {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public Double getScore() {
-        return score;
-    }
-
-    public void setScore(Double score) {
-        this.score = score;
     }
 
     public String getReviewedAt() {

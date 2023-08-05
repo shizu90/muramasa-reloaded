@@ -18,8 +18,12 @@ export function saveMedia(data: MediaData, review: string, token: string, setMed
     .then((res) => {
         setMedia(res.data);
         if(checkReview(review)) {
-            api.reviews().add(res.data.id, {id: null, text: lz.compressToUTF16(review), score: res.data.score, code: res.data.code, reviewedAt: ""})
-            .then((res) => {popupMessage.success("Media saved successfully.");setReview(lz.decompressFromUTF16(res.data.text))})
+            api.reviews().add(res.data.id, {id: null, text: lz.compressToBase64(review), code: res.data.code, reviewedAt: ""})
+            .then((review_res) => {
+                popupMessage.success("Media saved successfully.");
+                setReview(lz.decompressFromBase64(review_res.data.text));
+                setMedia({...res.data, review: review_res.data});
+            })
             .catch(() => popupMessage.error("Cannot save review."));
         }else{
             popupMessage.success("Media saved successfully.");
@@ -30,20 +34,31 @@ export function saveMedia(data: MediaData, review: string, token: string, setMed
 
 export function updateMedia(data: MediaData, review: string, token: string): void {
     const api = muramasa_api.media.auth(token);
-    
-    api.update(data)
+    api.update({id: data.id, code: data.code, score: data.score, imgUrl: data.imgUrl, status: data.status, count: data.count, length: data.length, favorited: data.favorited, name: data.name, type: data.type})
     .then(() => {
-        if(checkReview(review) && data.review) {
-            api.reviews().update({...data.review, text: lz.compressToUTF16(review)})
-            .then(() => popupMessage.success("Media updated."))
-            .catch(() => popupMessage.error("Cannot update review."));
-        }else popupMessage.success("Media updated.");
+        if(data.review) {
+            if(!checkReview(review)) {
+                api.reviews().delete(data.review.id || 0)
+                .then(() => popupMessage.success("Media updated."))
+                .catch(() => popupMessage.error("Cannot delete review."));
+            }else {
+                api.reviews().update({id: data.review.id, reviewedAt: data.review.reviewedAt, code: data.review.code, text: lz.compressToBase64(review)})
+                .then(() => popupMessage.success("Media updated."))
+                .catch(() => popupMessage.error("Cannot update review."));
+            }
+        }else {
+            if(checkReview(review)) {
+                api.reviews().add(data.id || 0, {id: null, text: lz.compressToBase64(review), code: data.code, reviewedAt: ""})
+                .then(() => popupMessage.success("Media updated."))
+                .catch(() => popupMessage.error("Cannot update review."));
+            }
+        }
     })
     .catch(() => popupMessage.error("Cannot update media."));
 }
 
 export function favorite(data: MediaData, token: string): void {
-    muramasa_api.media.auth(token).update(data)
+    muramasa_api.media.auth(token).update({id: data.id, code: data.code, score: data.score, imgUrl: data.imgUrl, status: data.status, count: data.count, length: data.length, favorited: data.favorited, name: data.name, type: data.type})
     .then(() => popupMessage.success(data.favorited === 0 ? "Unfavorited media." : "Favorited media."))
     .catch((err) => popupMessage.error(err.response.data.message));
 }
