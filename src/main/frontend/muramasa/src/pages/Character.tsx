@@ -50,7 +50,7 @@ function Character() {
     }, [character]);
 
     return (
-        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
+        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12 py-32">
             {
                 character ? typeof character != "number" ? (
                         <div className="flex justify-around w-full max-sm:flex-col max-sm:w-10/12 max-sm:text-center max-xl:gap-4">

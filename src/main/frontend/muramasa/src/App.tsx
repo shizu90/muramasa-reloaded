@@ -30,7 +30,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Navbar/>
-          <section className="min-h-screen bg-[#0B1622] py-[12rem] px-2 flex flex-col items-center">
+          <section className="min-h-screen bg-[#0B1622] flex flex-col items-center">
             <Routes>
               <Route element={<ProtectedRoutes/>}>
                 <Route path="/" element={<Home/>}/>

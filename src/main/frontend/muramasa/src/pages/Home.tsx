@@ -26,7 +26,7 @@ function Home() {
     }, [recentDatas])
 
     return (
-        <main className="w-8/12 max-sm:w-full max-md:w-10/12 max-lg:w-11/12 justify-between flex flex-row max-sm:flex-col max-md:flex-col gap-12 text-slate-50">
+        <main className="w-8/12 max-sm:w-full max-md:w-10/12 max-lg:w-11/12 justify-between flex flex-row max-sm:flex-col max-md:flex-col gap-12 text-slate-50 py-32">
             <section>
                 <h2 className="text-slate-50 font-medium text-lg mb-2">Your progress</h2>
                 <div className="flex flex-col gap-8">
@@ -67,11 +67,7 @@ function Home() {
                 </div>
                 <h2 className="text-slate-50 font-bold text-lg mb-4 mt-4">Updates from friends</h2>
                 <ul className="flex flex-col gap-8">
-                    <li><Log/></li>
-                    <li><Log/></li>
-                    <li><Log/></li>
-                    <li><Log/></li>
-                    <li><Log/></li>
+
                 </ul>
            </section>
            <section className="w-6/12 max-sm:w-full max-md:w-full max-lg:w-7/12">

@@ -40,7 +40,7 @@ function SignUp() {
     }
 
     return (
-        <main className="w-full flex justify-center">
+        <main className="w-full flex justify-center py-32">
             <form className="flex flex-col gap-4 bg-darkocean p-8 justify-center max-sm:w-full w-[480px] items-center text-slate-50" onSubmit={(e) => {submit(e, formData)}}>
                 <h1 className="text-xl font-medium">Register</h1>
                 <FormInput 

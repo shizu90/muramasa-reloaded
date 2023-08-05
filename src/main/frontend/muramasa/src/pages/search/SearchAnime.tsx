@@ -97,7 +97,7 @@ function SearchAnime() {
     }, [filters]);
 
     return (
-        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
+        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12 py-32">
             <div className="flex gap-2 w-full text-sm font-medium justify-center flex-wrap">
                 <a href={`/search/anime?search=top`} className="px-4 py-2 max-sm:p-2 max-sm:w-full bg-darkocean rounded text-center">Top animes</a>
                 <a href={`/search/anime?search=current`} className="px-4 py-2 max-sm:p-2 max-sm:w-full bg-darkocean rounded text-center">Current season</a>

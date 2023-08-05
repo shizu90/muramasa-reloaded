@@ -3,7 +3,10 @@ export interface PostData {
 }
 
 export interface LogData {
-
+    id: number,
+    date: string,
+    message: string,
+    userImg: string
 }
 
 export interface UserData {

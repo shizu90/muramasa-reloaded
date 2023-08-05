@@ -31,7 +31,7 @@ function SearchCharacter() {
     }, [query]);
 
     return (
-        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
+        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12 py-32">
             <div className="w-full flex gap-4 justify-center items-center max-sm:flex-col">
                 <div className="max-sm:w-full w-4/12">
                     <span className="font-medium text-slate-50 mb-2">Search for...</span>

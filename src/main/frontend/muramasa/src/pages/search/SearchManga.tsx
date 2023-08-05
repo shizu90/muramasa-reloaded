@@ -4,6 +4,7 @@ import { redirect } from "../../modules/redirection";
 import jikan_api from "../../api/jikan/routes";
 import Loading from "../../components/icons/Loading";
 import { generatePages, redirectToPage } from "../../modules/pagination";
+import MediaCard from "../../components/MediaCard";
 
 let mounted = true;
 const urlParams = new URLSearchParams(window.location.search);
@@ -57,7 +58,7 @@ function SearchManga() {
 
 
     return (
-        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
+        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12 py-32">
             <div className="flex gap-2 w-full text-sm font-medium justify-center items-center">
                 <a href="/search/manga?search=top" className="px-4 py-2 max-sm:p-2 bg-darkocean rounded text-center">Top mangas</a>
             </div>
@@ -104,12 +105,7 @@ function SearchManga() {
                 {
                     content ? 
                         content.data.length > 0 ? content.data.map((manga: any) => (
-                            <a href={`/manga?id=${manga.mal_id}`} key={manga.mal_id}>
-                                <div className="flex flex-col gap-1 w-40 h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-24">
-                                    <img src={manga.images.jpg.image_url} className="w-full h-56 max-sm:h-36 object-cover cursor-pointer rounded"/>
-                                    <span className="truncate text-ellipsis text-sm font-medium">{manga.title}</span>
-                                </div>
-                            </a>
+                            <MediaCard type="manga" media={manga}/>
                         )) : <span>Found anything {':('}</span>: <Loading/>
                 }
             </div>

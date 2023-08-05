@@ -45,7 +45,7 @@ function Login() {
         }
     }
     return (
-        <main className="w-full flex justify-center">
+        <main className="w-full flex justify-center py-32">
             <form className="flex flex-col gap-4 bg-darkocean max-sm:w-full w-[480px] p-8 justify-center items-center text-slate-50" onSubmit={(e) => submit(e, formData)}>
                 <h1 className="text-xl font-medium">Login</h1>
                 <FormInput

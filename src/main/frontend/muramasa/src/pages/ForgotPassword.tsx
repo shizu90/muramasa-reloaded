@@ -2,7 +2,7 @@ import Input from "../components/Input";
 
 function ForgotPassword() {
     return (
-        <main className="w-full flex justify-center items-center">
+        <main className="w-full flex justify-center items-center py-32">
             <form className="mt-[6rem] flex flex-col gap-4 bg-[#151F2E] p-8 justify-center items-center text-slate-50">
                 <h1 className="text-xl font-bold">Reset password</h1>
                 <div className="flex flex-col gap-2">

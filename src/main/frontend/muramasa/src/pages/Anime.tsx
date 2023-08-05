@@ -5,7 +5,7 @@ import Heart from "../components/icons/Heart";
 import useAuth from "../hooks/useAuth";
 import muramasa_api from "../api/muramasa/routes";
 import popupMessage from "../modules/toaster";
-import { MediaData, JikanAnime, JikanNew, JikanCharacterCard, JikanStaff, JikanGenreObject, ReviewData, JikanVoiceObject } from "../modules/mediaData";
+import { MediaData, JikanAnime, JikanNew, JikanCharacterCard, JikanStaff, JikanGenreObject, ReviewData } from "../modules/mediaData";
 import TextEditor from "../components/TextEditor";
 import { EditorState, convertToRaw } from "draft-js";
 import { saveMedia, updateMedia, remove, favorite } from "../modules/mediaModules";
@@ -80,7 +80,7 @@ function Media() {
         }
     }, [existentMedia]);
     return (
-        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
+        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12 py-32">
             {
                 media ? (
                     <>
@@ -172,7 +172,7 @@ function Media() {
                                     <NewsCard news={news} key={news.mal_id}/>
                                 )) : <Loading/> : 
                                 page == 'staff' ? media.staff ? media.staff.map((person: JikanStaff) => (
-                                    <StaffCard person={person} key={person.person.mal_id}/>
+                                    <StaffCard person={person as any} key={person.person.mal_id}/>
                                 )) : <span>News not found.</span>: reviews.total > 0 ? ( 
                                 <div className="flex flex-col w-full gap-4 justify-center items-center"> 
                                     {reviews.reviews.map((review: ReviewData) => (

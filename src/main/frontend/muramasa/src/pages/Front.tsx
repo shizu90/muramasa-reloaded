@@ -35,7 +35,7 @@ function Front() {
     return (
         <>
         <div className="absolute w-full h-[32rem] top-20 bg-wallpaper z-0 bg-no-repeat bg-cover"></div>
-        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12">
+        <main className="max-sm:w-full max-lg:w-full items-center justify-center flex flex-col gap-8 text-slate-50 z-10 2xl:w-8/12 py-32">
             <section className="w-full h-[22rem] max-sm:h-auto flex flex-col justify-center items-center">
                 <div className="flex flex-row max-sm:flex-col gap-4 text-center text-slate-300">
                     <div className="flex justify-center items-center gap-4 bg-midnight p-6 py-8 rounded-xl w-8/12 max-sm:w-full">
