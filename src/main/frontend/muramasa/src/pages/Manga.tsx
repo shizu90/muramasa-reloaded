@@ -164,7 +164,7 @@ function Manga() {
                                 )) : null
                                 : page === 'news' ? media.news ?  media.news.map((news: JikanNew) => (
                                     <NewsCard news={news}/>
-                                )) : <span>News not found.</span> : reviews.total > 0 ? ( 
+                                )) : <Loading/> : reviews.total > 0 ? ( 
                                     <div className="flex flex-col w-full gap-4 justify-center items-center"> 
                                         {reviews.reviews.map((review: ReviewData) => (
                                             <Review review={review}/>

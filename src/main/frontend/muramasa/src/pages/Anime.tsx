@@ -173,7 +173,7 @@ function Media() {
                                 )) : <Loading/> : 
                                 page == 'staff' ? media.staff ? media.staff.map((person: JikanStaff) => (
                                     <StaffCard person={person as any} key={person.person.mal_id}/>
-                                )) : <span>News not found.</span>: reviews.total > 0 ? ( 
+                                )) : <span className="text-sm font-medium">News not found.</span>: reviews.total > 0 ? ( 
                                 <div className="flex flex-col w-full gap-4 justify-center items-center"> 
                                     {reviews.reviews.map((review: ReviewData) => (
                                         <Review review={review} key={review.id}/>
@@ -188,7 +188,7 @@ function Media() {
                                         ))}
                                     </div>  
                                 </div>
-                                ) : <span>Reviews not found.</span>
+                                ) : <span className="text-sm font-medium">Reviews not found.</span>
                                 }
                             </div>
                         </div>
