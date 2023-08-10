@@ -24,7 +24,9 @@ import com.gabriel.muramasa.models.Post;
 import com.gabriel.muramasa.models.Character;
 import com.gabriel.muramasa.models.Review;
 import com.gabriel.muramasa.repositories.MediaListRepository;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +43,8 @@ public class AccountService {
     private AccountRepository repo;
     @Autowired
     private MediaListRepository mediaListRepo;
+    
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     
     public AccountService() {}
     
@@ -69,10 +73,10 @@ public class AccountService {
 
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         
-        
+            
             Account acc = new Account(
                     null, credentials.getUsername(), credentials.getEmail(), encoder.encode(credentials.getPassword()), 
-                    "", "", "", null, null, new ArrayList<Follower>(), new ArrayList<Follower>(), 
+                    "", "", "", formatter.format(new Date()), null, null, new ArrayList<Follower>(), new ArrayList<Follower>(), 
                     new ArrayList<Log>(), new ArrayList<Post>(), new ArrayList<Like>(), new ArrayList<Character>(), new ArrayList<Review>()
             );
             acc = repo.save(acc);

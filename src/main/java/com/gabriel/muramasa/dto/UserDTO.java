@@ -22,6 +22,7 @@ public class UserDTO {
     private Long id;
     private String username;
     private String resume;
+    private String createdAt;
     private String imgUrl;
     private String bannerImgUrl;
     private Integer animeListCount;
@@ -38,13 +39,14 @@ public class UserDTO {
     
     public UserDTO() {}
     public UserDTO(
-            Long id, String username, String resume, String imgUrl, String bannerImgUrl, 
+            Long id, String username, String resume, String createdAt, String imgUrl, String bannerImgUrl, 
             MediaList animeList, MediaList mangaList, List<Follower> followers, 
             List<Follower> following, List<Log> recentUpdates, List<Post> posts, 
             List<Character> favoriteCharacters, List<Media> favoriteAnimes, List<Media> favoriteMangas) {
         this.id = id;
         this.username = username;
         this.resume = resume;
+        this.createdAt = createdAt;
         this.imgUrl = imgUrl;
         this.bannerImgUrl = bannerImgUrl;
         this.animeListCount = animeList.getItems().size();
@@ -62,6 +64,7 @@ public class UserDTO {
         this.id = acc.getId();
         this.username = acc.getUsername();
         this.resume = acc.getResume();
+        this.createdAt = acc.getCreatedAt();
         this.imgUrl = acc.getImgUrl();
         this.bannerImgUrl = acc.getBannerImgUrl();
         this.animeListCount = acc.getAnimeList().getItems().size();
@@ -99,6 +102,14 @@ public class UserDTO {
 
     public void setResume(String resume) {
         this.resume = resume;
+    }
+    
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getImgUrl() {

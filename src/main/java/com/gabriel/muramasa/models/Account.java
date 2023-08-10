@@ -44,6 +44,7 @@ public class Account implements Serializable, UserDetails {
     private String imgUrl;
     private String bannerImgUrl;
     private String resume;
+    private String createdAt;
     
     //Relations
     @OneToOne(cascade = CascadeType.REMOVE)
@@ -78,7 +79,7 @@ public class Account implements Serializable, UserDetails {
     public Account(
             Long id, String username, String email, 
             String password, String imgUrl, String bannerImgUrl, 
-            String resume, MediaList animeList, MediaList mangaList,
+            String resume, String createdAt, MediaList animeList, MediaList mangaList,
             List<Follower> followers, List<Follower> following, List<Log> recentUpdates, 
             List<Post> posts, List<Like> likes, List<Character> favoritedCharacters, List<Review> reviews) 
     
@@ -90,6 +91,7 @@ public class Account implements Serializable, UserDetails {
         this.imgUrl = imgUrl;
         this.bannerImgUrl = bannerImgUrl;
         this.resume = resume;
+        this.createdAt = createdAt;
         this.animeList = animeList;
         this.mangaList = mangaList;
         this.followers = followers;
@@ -157,6 +159,14 @@ public class Account implements Serializable, UserDetails {
     
     public void setResume(String resume) {
         this.resume = resume;
+    }
+    
+    public String getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
     
     public MediaList getAnimeList() {

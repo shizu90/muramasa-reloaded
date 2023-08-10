@@ -63,7 +63,7 @@ function User() {
         .then(res => {
             if(auth && auth.authObject) {
                 muramasa_api.user.auth(auth.authObject.token).followers().followingCurrentUser(res.data.id)
-                .then((res_follower) => {setAmIFollowing(res_follower.data);setUser(res.data);})
+                .then((res_follower) => {setAmIFollowing(res_follower.data);setUser(res.data);console.log(res.data)})
                 .catch(() => popupMessage.error("Some error occurred."));
             }else setUser(res.data);
         })
@@ -77,6 +77,11 @@ function User() {
                 .then((res) => {
                     setListData({data: res.data.content, totalPages: res.data.totalPages});
                 });
+            }else if(page === 'mangaList') {
+                muramasa_api.medialist.getitems(list.status === 0 ? 1 : list.status, user.mangaListId, list.page, 16)
+                .then((res) => {
+                    setListData({data: res.data.content, totalPages: res.data.totalPages});
+                });
             }
         }
     }, [page, list]);
@@ -85,7 +90,7 @@ function User() {
         <main className="w-full flex justify-center items-center flex-col gap-8 text-slate-50 z-10 top-20 py-20 max-xl:px-1">
             {user ? (
                 <>
-                    <header className="w-full relative h-auto">
+                    <header className="w-full relative h-auto mb-6">
                         <img className="w-full z-0 absolute h-80 object-cover" src={"https://images3.alphacoders.com/131/1318226.png"}/>
                         <div className="w-full absolute h-80 bg-gradient-to-t from-midnight to-transparent to-60%"></div>
                         <div className="w-full h-80"></div>
@@ -112,14 +117,14 @@ function User() {
                             </h5>
                             {
                                 auth.authObject && auth.authObject.username != username && 
-                                <div className="">
+                                <div className="ml-44">
                                     {!amIFollowing ? <button 
                                         className="bg-rose-500 px-4 py-2 rounded font-medium cursor-pointer text-sm" 
                                         onClick={() => followUser(user.id || 0, auth.authObject?.token || "", setAmIFollowing)}>
                                             Follow
                                     </button> : 
                                     <button 
-                                        className="bg-rose-500 px-4 py-2 rounded font-medium cursor-pointer text-sm"
+                                        className="bg-transparent border-rose-500 border px-4 py-2 rounded font-medium cursor-pointer text-sm"
                                         onClick={() => unfollowUser(user.id || 0, auth.authObject?.token || "", setAmIFollowing)}>
                                             Unfollow
                                     </button>}
@@ -129,9 +134,26 @@ function User() {
                     </header>
                     {page === 'home' ? <main className="w-8/12 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center justify-between">
                         <div className="w-5/12 max-xl:w-full">
+                            <div>
+                                <h5 className="font-medium">Overview</h5>
+                                <div className="p-4 text-sm bg-darkocean rounded mt-4 flex gap-4 flex-wrap justify-center">
+                                    <div>
+                                        <h6 className="font-medium mb-2">Total animes</h6>
+                                        <span className="bg-midnight px-6 py-1 rounded">{user.animeListCount}</span>
+                                    </div>
+                                    <div>
+                                        <h6 className="font-medium mb-2">Total mangas</h6>
+                                        <span className="bg-midnight px-6 py-1 rounded">{user.mangaListCount}</span>
+                                    </div>
+                                    <div>
+                                        <h6 className="font-medium mb-2">Joined date</h6>
+                                        <span className="bg-midnight px-6 py-1 rounded">{user.createdAt.split(" ")[0]}</span>
+                                    </div>
+                                </div>
+                            </div>
                             {user.resume.length == 0 && <div className="my-4">
                                 <h5 className="font-medium">Biography</h5>
-                                <div className="px-4 text-sm bg-darkocean rounded py-4 mt-4">
+                                <div className="p-4 text-sm bg-darkocean rounded mt-4">
                                     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
                                 </div>
                             </div>}
@@ -185,7 +207,7 @@ function User() {
                         </div>
                     </main> : page === 'animeList' ? 
                     <main className="w-8/12 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center gap-12">
-                        <div className="flex flex-col gap-2 mt-4 text-sm w-2/12 max-xl:w-full">
+                        <div className="flex flex-col gap-2 mt-4 text-sm w-6/12 max-xl:w-full">
                             <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 1})}>Watching</span>
                             <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 2})}>Completed</span>
                             <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 3})}>Plans to watch</span>
@@ -194,12 +216,13 @@ function User() {
                         </div>
                         <div className="flex flex-col gap-4">
                             <h4 className="font-medium">{getStatus(list.status)[0]}</h4>
-                            <div className="flex flex-wrap gap-4">
+                            <div className="flex flex-wrap gap-4 w-full max-xl:w-full">
                                 {listData.data.length > 0 ? listData.data.map((item: MediaData) => (
                                     <a href={`/anime?id=${item.code}`} key={item.id}>
                                         <div className="flex flex-col gap-1 w-40 h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-24">
                                             <img src={item.imgUrl} className="w-full h-56 max-sm:h-36 object-cover cursor-pointer rounded"/>
                                             <span className="truncate text-ellipsis text-sm font-medium">{item.name}</span>
+                                            <span className="text-slate-500 text-sm">Scored {item.score} of 10</span>
                                         </div>
                                     </a>
                                 )) : <span className="text-slate-500 text-sm ">{user.username} haven't added nothing here.</span>}
@@ -215,13 +238,40 @@ function User() {
                         </div>
                     </main>
                     : page === 'mangaList' ? 
-                    <main className="w-8/12 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center justify-between">
-                        <div className="flex flex-col gap-2 mt-4 text-sm w-2/12">
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all">Reading</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all">Completed</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all">Plans to read</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all">Dropped</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all">On hold</span>
+                    <main className="w-8/12 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center gap-12">
+                        <div className="flex flex-col gap-2 mt-4 text-sm w-6/12 max-xl:w-full">
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 1})}>Reading</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 2})}>Completed</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 3})}>Plans to read</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 4})}>Dropped</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 5})}>On hold</span>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                            <h4 className="font-medium">{getStatus(list.status)[1] || getStatus(list.status)[0]}</h4>
+                            <div className="flex flex-wrap gap-4 w-6/12 max-xl:w-full">
+                                {listData.data.length > 0 ? listData.data.map((item: MediaData) => (
+                                    <a href={`/manga?id=${item.code}`} key={item.id}>
+                                        <div className="flex flex-col gap-1 w-40 h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-24">
+                                            <img src={item.imgUrl} className="w-full h-56 max-sm:h-36 object-cover cursor-pointer rounded"/>
+                                            <span className="truncate text-ellipsis text-sm font-medium">{item.name}</span>
+                                            <div className="flex flex-col w-full justify-between text-sm">
+                                                <span className="text-slate-500 text-sm">Scored {item.score} of 10</span>
+                                                {item.review ? (
+                                                    <span className="text-slate-500 underline hover:text-slate-500">Check Review</span>
+                                                ) : null}
+                                            </div>
+                                        </div>
+                                    </a>
+                                )) : <span className="text-slate-500 text-sm ">{user.username} haven't added nothing here.</span>}
+                            </div>
+                            <div className="flex gap-1">
+                                {generatePages(list.page+1, listData.totalPages).map((pageNumber: number) => (
+                                    <span 
+                                        key={pageNumber} 
+                                        className={((list.page+1) === pageNumber ? "text-rose-500" : "text-slate-50") + " text-sm px-2 py-1 rounded bg-darkocean cursor-pointer"} 
+                                        onClick={() => setList({...list, page: pageNumber-1})}>{pageNumber}</span>
+                                ))}
+                            </div>
                         </div>
                     </main>
                     : page === 'followers' ?

@@ -13,6 +13,7 @@ export interface UserData {
     id: number,
     username: string,
     resume: string,
+    createdAt: string,
     animeListId: number,
     mangaListId: number,
     imgUrl: string,
