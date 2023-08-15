@@ -44,7 +44,7 @@ public class Post implements Serializable, Comparable<Post> {
     //Relations
     @ManyToOne
     @JoinColumn(name = "user_Id")
-    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList", "posts", "authorities", "accountNonExpired", "credentialsNonExpired", "accountNonLocked"})
+    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList", "posts", "authorities", "accountNonExpired", "credentialsNonExpired", "accountNonLocked", "recentUpdates", "reviews", "likes", "favoriteCharacters"})
     private Account creator;
     @OneToMany(targetEntity = Like.class, mappedBy = "post")
     @JsonIgnore

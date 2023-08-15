@@ -102,9 +102,9 @@ public class MediaService {
         if(!media.getCount().equals(md.getCount())) {
             md.setCount(media.getCount());
             if(type.equals("anime")) {
-                log.setMessage(acc.getUsername() + " watched " + media.getCount() + "/" + md.getLength() + " episodes of " + md.getName() + ".");
+                log.setMessage(acc.getUsername() + " watched " + media.getCount() + " of " + md.getLength() + " episodes from " + md.getName() + ".");
             }else
-                log.setMessage(acc.getUsername() + " read " + media.getCount() + "/" + md.getLength() + " chapters of " + md.getName() + ".");
+                log.setMessage(acc.getUsername() + " read " + media.getCount() + " of " + md.getLength() + " chapters from " + md.getName() + ".");
         }
         if(!media.getStatus().equals(md.getStatus())) {
             md.setStatus(md.getCount().equals(md.getLength()) ? 2 : media.getStatus());

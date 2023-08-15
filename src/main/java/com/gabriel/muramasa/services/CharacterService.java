@@ -7,11 +7,13 @@ package com.gabriel.muramasa.services;
 import com.gabriel.muramasa.handlers.exceptions.AlreadyExistsException;
 import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
-import com.gabriel.muramasa.handlers.exceptions.UnauthorizedException;
 import com.gabriel.muramasa.repositories.CharacterRepository;
 import com.gabriel.muramasa.models.Character;
 import com.gabriel.muramasa.models.Account;
-import com.gabriel.muramasa.repositories.AccountRepository;
+import com.gabriel.muramasa.models.Log;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,9 @@ public class CharacterService {
     @Autowired
     private CharacterRepository repo;
     @Autowired
-    private AccountRepository accRepo;
+    private LogService logService;
+    
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     
     public CharacterService() {}
    
@@ -41,9 +45,13 @@ public class CharacterService {
         if(chr.isPresent()) {
             throw new AlreadyExistsException("Character already favorited.");
         }
+        Log log = new Log(formatter.format(new Date()), acc.getUsername() + " favorited " + character.getName() + ".", acc);
         try {
             repo.save(character);
+            logService.addRecentUpdate(log, acc.getRecentUpdates());
         }catch(ConstraintViolationException e) {
+            throw new DatabaseException(e.getMessage());
+        }catch(ParseException e) {
             throw new DatabaseException(e.getMessage());
         }
     }

@@ -6,7 +6,8 @@ export interface LogData {
     id: number,
     date: string,
     message: string,
-    userImg: string
+    userImg: string,
+    user: UserData
 }
 
 export interface UserData {

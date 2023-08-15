@@ -6,6 +6,7 @@ package com.gabriel.muramasa.models;
 
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Objects;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,11 +31,10 @@ public class Log implements Serializable {
     private Long id;
     private String date;
     private String message;
-    private String userImg;
     
     //Relations
     @ManyToOne
-    @JsonIgnore
+    @JsonIgnoreProperties({"followers", "following", "email", "password", "mangaList", "animeList", "posts", "authorities", "accountNonExpired", "credentialsNonExpired", "accountNonLocked", "recentUpdates", "reviews", "likes", "favoriteCharacters"})
     @JoinColumn(name = "user_id")
     private Account account;
     
@@ -43,13 +43,11 @@ public class Log implements Serializable {
         this.date = date;
         this.message = message;
         this.account = acc;
-        this.userImg = acc.getImgUrl();
     }
     public Log(Long id, String date, String message, Account acc) {
         this.id = id;
         this.date = date;
         this.message = message;
-        this.userImg = acc.getImgUrl();
         this.account = acc;
     }
 
@@ -75,14 +73,6 @@ public class Log implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getUserImg() {
-        return userImg;
-    }
-
-    public void setUserImg(String userImg) {
-        this.userImg = userImg;
     }
 
     public Account getAccount() {
