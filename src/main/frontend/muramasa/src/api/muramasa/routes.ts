@@ -91,11 +91,11 @@ export default {
         },
         follower: () => {
             return {
-                getFollowers: (userId: number): Response => {
-                    return axios.get(default_url + `follower/followers/${userId}`);
+                getFollowers: (userId: number, offset: number, size = 16): Response => {
+                    return axios.get(default_url + `follower/followers/${userId}/${offset}/${size}`);
                 },
-                getFollowing: (userId: number): Response => {
-                    return axios.get(default_url + `follower/following/${userId}`);
+                getFollowing: (userId: number, offset: number, size = 16): Response => {
+                    return axios.get(default_url + `follower/following/${userId}/${offset}/${size}`);
                 }
             }
         },

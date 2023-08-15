@@ -10,13 +10,15 @@ import com.gabriel.muramasa.models.Follower;
 import com.gabriel.muramasa.models.Account;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  *
  * @author gabriell9090
  */
 public interface FollowerRepository extends JpaRepository<Follower, Long>{
-    List<Follower> findByFrom(Account acc);
-    List<Follower> findByTo(Account acc);
+    Page<Follower> findByFrom(Account acc, Pageable pageable);
+    Page<Follower> findByTo(Account acc, Pageable pageable);
     Optional<Follower> findBySearchParameter(String searchParameter);
 }

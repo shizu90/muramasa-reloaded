@@ -37,14 +37,22 @@ function unfollowUser(toId: number, token: string, setAmIFollowing: Function) {
     .catch(() => popupMessage.error("Cannot unfollow user."));
 }
 
-interface List {
-    type: "anime" | "manga",
+interface ControlData {
+    listControl: {type: "anime" | "manga",
     page: number,
-    status: number
+    status: number},
+    followControl: {
+        page: number
+    }
 }
 
 interface ListData {
     data: Array<MediaData>
+    totalPages: number
+}
+
+interface FollowData {
+    data: Array<any>,
     totalPages: number
 }
 
@@ -53,8 +61,9 @@ function User() {
     const [user, setUser] = useState<UserData | null>(null);
     const [amIFollowing, setAmIFollowing] = useState<boolean>(false);
     const [page, setPage] = useState<string>('home');
-    const [list, setList] = useState<List>({type: "anime", page: 0, status: 1});
+    const [controlData, setControlData] = useState<ControlData>({listControl: {type: "anime", page: 0, status: 1}, followControl: {page: 0}});
     const [listData, setListData] = useState<ListData>({data: [], totalPages: 0});
+    const [followData, setFollowData] = useState<FollowData>({data: [], totalPages: 0});
     const url: URLSearchParams = new URLSearchParams(window.location.search);
     const username: string = url.get("username") as unknown as string;
     
@@ -73,25 +82,31 @@ function User() {
     useEffect(() => {
         if(user) {
             if(page === 'animeList') {
-                muramasa_api.medialist.getitems(list.status === 0 ? 1 : list.status, user.animeListId, list.page, 16)
+                muramasa_api.medialist.getitems(controlData.listControl.status === 0 ? 1 : controlData.listControl.status, user.animeListId, controlData.listControl.page, 16)
                 .then((res) => {
                     setListData({data: res.data.content, totalPages: res.data.totalPages});
                 });
             }else if(page === 'mangaList') {
-                muramasa_api.medialist.getitems(list.status === 0 ? 1 : list.status, user.mangaListId, list.page, 16)
+                muramasa_api.medialist.getitems(controlData.listControl.status === 0 ? 1 : controlData.listControl.status, user.mangaListId, controlData.listControl.page, 16)
                 .then((res) => {
                     setListData({data: res.data.content, totalPages: res.data.totalPages});
                 });
+            }else if(page === 'following') {
+                muramasa_api.user.follower().getFollowing(user.id, 0)
+                .then((res) => {setFollowData({data: res.data.content, totalPages: res.data.totalPages});console.log(res.data)});
+            }else if(page === 'followers') {
+                muramasa_api.user.follower().getFollowers(user.id, 0)
+                .then((res) => {setFollowData({data: res.data.content, totalPages: res.data.totalPages});console.log(res.data)});
             }
         }
-    }, [page, list]);
+    }, [page, controlData]);
     
     return (
         <main className="w-full flex justify-center items-center flex-col gap-8 text-slate-50 z-10 top-20 py-20 max-xl:px-1">
             {user ? (
                 <>
                     <header className="w-full relative h-auto mb-6">
-                        <img className="w-full z-0 absolute h-80 object-cover" src={"https://images3.alphacoders.com/131/1318226.png"}/>
+                        <img className="w-full z-0 absolute h-80 object-cover" src={"https://cdna.artstation.com/p/assets/images/images/040/665/994/large/andrew-maleski-ghostly-gate.jpg?1629536251"}/>
                         <div className="w-full absolute h-80 bg-gradient-to-t from-midnight to-transparent to-60%"></div>
                         <div className="w-full h-80"></div>
                         <div className="w-full bg-darkocean h-14 px-80 max-xl:px-40 flex items-center max-xl:justify-center z-10">
@@ -132,7 +147,7 @@ function User() {
                             }
                         </div>
                     </header>
-                    {page === 'home' ? <main className="w-8/12 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center justify-between">
+                    {page === 'home' ? <main className="w-full px-80 max-xl:px-0 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center gap-12">
                         <div className="w-5/12 max-xl:w-full">
                             <div>
                                 <h5 className="font-medium">Overview</h5>
@@ -206,16 +221,16 @@ function User() {
                             }
                         </div>
                     </main> : page === 'animeList' ? 
-                    <main className="w-8/12 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center gap-12">
-                        <div className="flex flex-col gap-2 mt-4 text-sm w-6/12 max-xl:w-full">
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 1})}>Watching</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 2})}>Completed</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 3})}>Plans to watch</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 4})}>Dropped</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 5})}>On hold</span>
+                    <main className="w-full px-80 max-xl:px-0 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center gap-12">
+                        <div className="flex flex-col gap-2 mt-4 text-sm w-3/12 max-xl:w-full">
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, status: 1}})}>Watching</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, status: 2}})}>Completed</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, status: 3}})}>Plans to watch</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, status: 4}})}>Dropped</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, status: 5}})}>On hold</span>
                         </div>
                         <div className="flex flex-col gap-4">
-                            <h4 className="font-medium">{getStatus(list.status)[0]}</h4>
+                            <h4 className="font-medium">{getStatus(controlData.listControl.status)[0]}</h4>
                             <div className="flex flex-wrap gap-4 w-full max-xl:w-full">
                                 {listData.data.length > 0 ? listData.data.map((item: MediaData) => (
                                     <a href={`/anime?id=${item.code}`} key={item.id}>
@@ -228,27 +243,27 @@ function User() {
                                 )) : <span className="text-slate-500 text-sm ">{user.username} haven't added nothing here.</span>}
                             </div>
                             <div className="flex gap-1">
-                                {generatePages(list.page+1, listData.totalPages).map((pageNumber: number) => (
+                                {generatePages(controlData.listControl.page+1, listData.totalPages).map((pageNumber: number) => (
                                     <span 
                                         key={pageNumber} 
-                                        className={((list.page+1) === pageNumber ? "text-rose-500" : "text-slate-50") + " text-sm px-2 py-1 rounded bg-darkocean cursor-pointer"} 
-                                        onClick={() => setList({...list, page: pageNumber-1})}>{pageNumber}</span>
+                                        className={((controlData.listControl.page+1) === pageNumber ? "text-rose-500" : "text-slate-50") + " text-sm px-2 py-1 rounded bg-darkocean cursor-pointer"} 
+                                        onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, page: pageNumber-1}})}>{pageNumber}</span>
                                 ))}
                             </div>
                         </div>
                     </main>
                     : page === 'mangaList' ? 
-                    <main className="w-8/12 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center gap-12">
-                        <div className="flex flex-col gap-2 mt-4 text-sm w-6/12 max-xl:w-full">
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 1})}>Reading</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 2})}>Completed</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 3})}>Plans to read</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 4})}>Dropped</span>
-                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setList({...list, status: 5})}>On hold</span>
+                    <main className="w-full px-80 max-xl:px-0 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center gap-12">
+                        <div className="flex flex-col gap-2 mt-4 text-sm w-3/12 max-xl:w-full">
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, status: 1}})}>Reading</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, status: 2}})}>Completed</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, status: 3}})}>Plans to read</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, status: 4}})}>Dropped</span>
+                            <span className="bg-darkocean px-4 py-2 rounded cursor-pointer hover:bg-slate-800 transition-all" onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, status: 5}})}>On hold</span>
                         </div>
                         <div className="flex flex-col gap-4">
-                            <h4 className="font-medium">{getStatus(list.status)[1] || getStatus(list.status)[0]}</h4>
-                            <div className="flex flex-wrap gap-4 w-6/12 max-xl:w-full">
+                            <h4 className="font-medium">{getStatus(controlData.listControl.status)[1] || getStatus(controlData.listControl.status)[0]}</h4>
+                            <div className="flex flex-wrap gap-4 w-full max-xl:w-full">
                                 {listData.data.length > 0 ? listData.data.map((item: MediaData) => (
                                     <a href={`/manga?id=${item.code}`} key={item.id}>
                                         <div className="flex flex-col gap-1 w-40 h-full text-slate-300 hover:text-rose-500 transition-all max-sm:w-24">
@@ -262,25 +277,67 @@ function User() {
                                             </div>
                                         </div>
                                     </a>
-                                )) : <span className="text-slate-500 text-sm ">{user.username} haven't added nothing here.</span>}
+                                )) : <span className="text-slate-500 text-sm">{user.username} haven't added nothing here.</span>}
                             </div>
                             <div className="flex gap-1">
-                                {generatePages(list.page+1, listData.totalPages).map((pageNumber: number) => (
+                                {generatePages(controlData.listControl.page+1, listData.totalPages).map((pageNumber: number) => (
                                     <span 
                                         key={pageNumber} 
-                                        className={((list.page+1) === pageNumber ? "text-rose-500" : "text-slate-50") + " text-sm px-2 py-1 rounded bg-darkocean cursor-pointer"} 
-                                        onClick={() => setList({...list, page: pageNumber-1})}>{pageNumber}</span>
+                                        className={((controlData.listControl.page+1) === pageNumber ? "text-rose-500" : "text-slate-50") + " text-sm px-2 py-1 rounded bg-darkocean cursor-pointer"} 
+                                        onClick={() => setControlData({...controlData, listControl: {...controlData.listControl, page: pageNumber-1}})}>{pageNumber}</span>
                                 ))}
                             </div>
                         </div>
                     </main>
                     : page === 'followers' ?
-                    <main>
+                    <main className="w-full px-80 max-xl:px-0 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center gap-12">
+                        <div className="flex flex-col gap-4">
+                            <h5 className="font-medium">Users following {user.username}</h5>
+                            <div className="flex flex-wrap gap-4 w-full max-xl:w-full">
+                                {
+                                    followData.data.length > 0 ? followData.data.map((follow: any) => (
+                                        <a href={`/user?username=${follow.from.username}`}>
+                                        <div className="bg-darkocean p-4 flex rounded-lg gap-2 hover:bg-slate-800 transition-all">
+                                            <img
+                                                className="rounded-lg w-12 object-cover" 
+                                                src={follow.from.imgUrl.length > 0 ? follow.from.imgUrl.length : "https://i.pinimg.com/236x/d0/05/0d/d0050d5c9f600d1cb362404d576aa199.jpg"}/>
 
+                                            <div className="w-60">
+                                                <h5 className="font-medium">{follow.from.username}</h5>
+                                                <p className="text-sm text-slate-300 break-all truncate text-ellipsis w-full">{follow.to.resume.length > 0 ? follow.to.resume.length : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}</p>
+                                            </div>
+                                        </div>
+                                        </a>
+                                    )) :
+                                    <h5 className="text-slate-500 italic">{user.username} don't have any followers.</h5>
+                                } 
+                            </div>
+                        </div>
                     </main>
                     : page === 'following' ? 
-                    <main>
+                    <main className="w-full px-80 max-xl:px-0 mt-10 flex max-xl:flex-col max-xl:w-full max-xl:justify-center max-xl:items-center gap-12">
+                        <div className="flex flex-col gap-4">
+                            <h5 className="font-medium">Users followed by {user.username}</h5>
+                            <div className="flex flex-wrap gap-4 w-full max-xl:w-full">
+                                {
+                                    followData.data.length > 0 ? followData.data.map((follow: any) => (
+                                        <a href={`/user?username=${follow.to.username}`} className="w-80">
+                                        <div className="bg-darkocean p-4 flex rounded-lg gap-2 hover:bg-slate-800 transition-all w-full">
+                                            <img
+                                                className="rounded-lg w-12 object-cover" 
+                                                src={follow.to.imgUrl.length > 0 ? follow.to.imgUrl.length : "https://i.pinimg.com/236x/d0/05/0d/d0050d5c9f600d1cb362404d576aa199.jpg"}/>
 
+                                            <div className="w-60">
+                                                <h5 className="font-medium">{follow.to.username}</h5>
+                                                <p className="text-sm text-slate-300 break-all truncate text-ellipsis w-full">{follow.to.resume.length > 0 ? follow.to.resume.length : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}</p>
+                                            </div>
+                                        </div>
+                                        </a>
+                                    )):
+                                    <h5 className="text-slate-500 italic">{user.username} not following anyone.</h5>
+                                }
+                            </div>
+                        </div>
                     </main>
                     : null
                 }

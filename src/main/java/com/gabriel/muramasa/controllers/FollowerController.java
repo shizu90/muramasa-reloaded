@@ -9,6 +9,7 @@ import com.gabriel.muramasa.services.FollowService;
 import com.gabriel.muramasa.models.Follower;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -35,14 +36,24 @@ public class FollowerController {
         return ResponseEntity.ok().body(service.currentFollowing(acc.getId(), toId));
     }
     
-    @GetMapping(value = "/following/{userId}")
-    public ResponseEntity<List<Follower>> getFollowing(@PathVariable Long userId) {
-        return ResponseEntity.ok().body(service.getFollowing(userId));
+    @GetMapping(value = "/following/{userId}/{offset}")
+    public ResponseEntity<Page<Follower>> getFollowing(@PathVariable Long userId, @PathVariable Integer offset) {
+        return ResponseEntity.ok().body(service.getFollowing(userId, offset));
     }
     
-    @GetMapping(value = "/followers/{userId}")
-    public ResponseEntity<List<Follower>> getFollowers(@PathVariable Long userId) {
-        return ResponseEntity.ok().body(service.getFollowers(userId));
+    @GetMapping(value = "/following/{userId}/{offset}/{size}")
+    public ResponseEntity<Page<Follower>> getFollowing(@PathVariable Long userId, @PathVariable Integer offset, @PathVariable Integer size) {
+        return ResponseEntity.ok().body(service.getFollowing(userId, offset, size));
+    }
+    
+    @GetMapping(value = "/followers/{userId}/{offset}")
+    public ResponseEntity<Page<Follower>> getFollowers(@PathVariable Long userId, @PathVariable Integer offset) {
+        return ResponseEntity.ok().body(service.getFollowers(userId, offset));
+    }
+    
+    @GetMapping(value = "/followers/{userId}/{offset}/{size}")
+    public ResponseEntity<Page<Follower>> getFollowers(@PathVariable Long userId, @PathVariable Integer offset, @PathVariable Integer size) {
+        return ResponseEntity.ok().body(service.getFollowers(userId, offset, size));
     }
     
     @PostMapping(value = "/follow/{toId}")

@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -41,15 +43,26 @@ public class FollowService {
         }else return false;
     }
     
-    public List<Follower> getFollowing(Long userId) {
+    public Page<Follower> getFollowing(Long userId, Integer offset, Integer size) {
         Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
-        return acc.getFollowing();
+        return repo.findByFrom(acc, PageRequest.of(offset, size));
     }
     
-    public List<Follower> getFollowers(Long userId) {
+    public Page<Follower> getFollowing(Long userId, Integer offset) {
+        Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
+        return repo.findByFrom(acc, PageRequest.of(offset, 16));
+    }
+    
+    public Page<Follower> getFollowers(Long userId, Integer offset, Integer size) {
         
         Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
-        return acc.getFollowers();
+        return repo.findByTo(acc, PageRequest.of(offset, size));
+    }
+    
+    public Page<Follower> getFollowers(Long userId, Integer offset) {
+        
+        Account acc = accRepo.findById(userId).orElseThrow(() -> new NotFoundException("User not found."));
+        return repo.findByTo(acc, PageRequest.of(offset, 16));
     }
     
     public Follower follow(Long fromId, Long toId) {
