@@ -4,15 +4,12 @@
  */
 package com.gabriel.muramasa.services;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.gabriel.muramasa.handlers.exceptions.DatabaseException;
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
-import com.gabriel.muramasa.handlers.exceptions.UnauthorizedException;
 import com.gabriel.muramasa.repositories.AccountRepository;
 import com.gabriel.muramasa.repositories.FollowerRepository;
 import com.gabriel.muramasa.models.Follower;
 import com.gabriel.muramasa.models.Account;
-import java.util.List;
 import java.util.Optional;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;

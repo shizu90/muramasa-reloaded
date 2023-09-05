@@ -3,8 +3,9 @@ import capitallize from "../../modules/capitallize";
 import { redirect } from "../../modules/redirection";
 import jikan_api from "../../api/jikan/routes";
 import Loading from "../../components/icons/Loading";
-import { generatePages, redirectToPage } from "../../modules/pagination";
+import { redirectToPage } from "../../modules/pagination";
 import MediaCard from "../../components/MediaCard";
+import Pagination from "../../components/Pagination";
 
 let mounted = true;
 const urlParams = new URLSearchParams(window.location.search);
@@ -105,36 +106,16 @@ function SearchManga() {
                 {
                     content ? 
                         content.data.length > 0 ? content.data.map((manga: any) => (
-                            <MediaCard type="manga" media={manga}/>
+                            <MediaCard type="manga" media={manga} key={manga.mal_id}/>
                         )) : <span>Found anything {':('}</span>: <Loading/>
                 }
             </div>
-            <div className="text-white text-sm max-sm:text-[12px] font-medium flex gap-2 ">
-
-                {content && (
-                    <>
-                        <span className="bg-darkocean px-2 py-1 rounded cursor-pointer text-center hover:text-rose-500 transition-all" onClick={() => redirectToPage(urlParams, 1)}>
-                            {'<<'}
-                        </span>
-                        {generatePages(currentPage || 1, content.pagination.last_visible_page).map((page: number) => (
-                            page != currentPage ? 
-                                <span className="bg-darkocean px-2 py-1 rounded cursor-pointer text-center hover:text-rose-500 transition-all" 
-                                    onClick={() => redirectToPage(urlParams, page)} key={page}>
-                                        {page}
-                                </span> 
-                                :
-                                <span className="bg-midnight px-2 py-1 rounded text-center hover:text-rose-500 transition-all" key={page}>
-                                    {page}
-                                </span>
-                        ))}
-                        <span className="bg-darkocean px-2 py-1 rounded cursor-pointer text-center hover:text-rose-500 transition-all" 
-                            onClick={() => redirectToPage(urlParams, content.pagination.last_visible_page)}>
-                                {'>>'}
-                        </span>
-                    </>
-                )
-                }
-            </div>
+            {content &&
+                <Pagination 
+                    totalPages={content.pagination.last_visible_page} 
+                    currentPage={currentPage || 1} 
+                    onChange={(page: number) => {redirectToPage(urlParams, page);}}
+            />}
         </main>
     )
 }

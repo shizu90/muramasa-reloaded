@@ -22,7 +22,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.hibernate.exception.ConstraintViolationException;
-
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 /**
  *
  * @author giraf
@@ -46,23 +47,32 @@ public class PostService {
         return post;
     }
     
-    public List<Post> getFollowingPosts(Long userId) {
+    public Page<Post> getFollowingPosts(Long userId, Integer page, Integer limit) {
         Account acc = accService.findById(userId);
-        List<Post> followingPosts = new ArrayList<Post>();
-        for(Follower following : acc.getFollowing()) {
-            Account user = following.getTo();
-            followingPosts.addAll(user.getPosts());
-        }
-        Collections.sort(followingPosts);
-        
-        return followingPosts;
+        return repo.findByFollowing(acc, PageRequest.of(page, limit));
     }
     
-    public List<Post> getUserPosts(Long userId) {
+    public Page<Post> getFollowingPosts(Long userId, Integer page) {
         Account acc = accService.findById(userId);
-        List<Post> posts = acc.getPosts();
-        Collections.sort(posts);
-        return posts;
+        return repo.findByFollowing(acc, PageRequest.of(page, 16));
+    }
+    
+    public Page<Post> getRecentPosts(Integer page, Integer limit) {
+        return repo.findAll(PageRequest.of(page, limit));
+    }
+    
+    public Page<Post> getRecentPosts(Integer page) {
+        return repo.findAll(PageRequest.of(page, 16));
+    }
+    
+    public Page<Post> getUserPosts(Long userId, Integer page, Integer limit) {
+        Account acc = accService.findById(userId);
+        return repo.findByCreator(acc, PageRequest.of(page, limit));
+    }
+    
+    public Page<Post> getUserPosts(Long userId, Integer page) {
+        Account acc = accService.findById(userId);
+        return repo.findByCreator(acc, PageRequest.of(page, 16));
     }
     
     public Post insert(Long userId, Post post) {

@@ -40,9 +40,9 @@ public class AccountController {
                 new UserDTO(acc));
     }
     
-    @GetMapping(value = "/{username}/{offset}")
-    public ResponseEntity<Page<UserDTO>> getUsers(@PathVariable String username, @PathVariable Integer offset) {
-        Page<Account> accountPage = service.search(username, offset);
+    @GetMapping(value = "/{username}/{offset}/{limit}")
+    public ResponseEntity<Page<UserDTO>> getUsers(@PathVariable String username, @PathVariable Integer offset, @PathVariable Integer limit) {
+        Page<Account> accountPage = service.search(username, offset, limit);
         Page<UserDTO> userPage = accountPage.map(new Function<Account, UserDTO>() {
             @Override
             public UserDTO apply(Account acc) {

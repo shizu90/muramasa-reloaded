@@ -102,8 +102,8 @@ export default {
         get: (username: string): Response => {
             return axios.get(default_url + `users/user/${username}`);
         },
-        search: (username: string, offset: number): Response => {
-            return axios.get(default_url + `users/${username}/${offset}`);
+        search: (username: string, offset: number, limit = 6): Response => {
+            return axios.get(default_url + `users/${username}/${offset}/${limit}`);
         },
         login: (data: LoginData): Response => {
             return axios.post(default_url + 'login', data);

@@ -48,8 +48,8 @@ public class AccountService {
     
     public AccountService() {}
     
-    public Page<Account> search(String username, Integer offset) {
-        return repo.findByUsername(username, PageRequest.of(offset, 8));
+    public Page<Account> search(String username, Integer offset, Integer limit) {
+        return repo.findByUsername(username, PageRequest.of(offset, limit));
     }
     
     public Account findById(Long id) {

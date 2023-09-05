@@ -7,7 +7,7 @@ export interface LogData {
     date: string,
     message: string,
     userImg: string,
-    user: UserData
+    account: UserData
 }
 
 export interface UserData {

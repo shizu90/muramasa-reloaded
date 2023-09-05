@@ -37,6 +37,7 @@ public class CharacterController {
     @PostMapping(value = "/favorite")
     public ResponseEntity<String> favoriteCharacter(@RequestBody Character character, Authentication auth) {
         var acc = (Account) auth.getPrincipal();
+        System.out.println(acc.getUsername());
         service.favoriteCharacter(character, acc);
         return ResponseEntity.ok().body("Successfully favorited character.");
     }

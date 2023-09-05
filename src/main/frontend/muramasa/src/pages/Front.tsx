@@ -64,13 +64,13 @@ function Front() {
                 <section className="w-full flex flex-col gap-4 justify-center">
                     <div className="w-full flex items-center justify-between text-xl max-sm:text-sm">
                         <span className="font-medium">Current season</span>
-                        <a href="/search/anime?search=current" className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 transform hover:translate-x-2 focus:translate-x-2 focus:bg-rose-500 rounded transition-all" tabIndex={0}>View more</a>
+                        <a href="/search/anime?search=current" className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 transform lg:hover:translate-x-2 lg:focus:translate-x-2 focus:bg-rose-500 rounded transition-all" tabIndex={0}>View more</a>
                     </div>
                     <div className="flex gap-4 justify-center flex-shrink flex-wrap">
                         {
                             items.length > 0 ? items.slice(0, 6).map(anime => (
                                 <a href={`/anime?id=${anime.mal_id}`} key={anime.mal_id}>
-                                <div className="h-[16rem] w-[11rem] max-sm:h-[9rem] max-sm:w-[6rem] max-lg:h-[9rem] max-lg:w-[6rem] relative">
+                                <div className="h-[16rem] w-[11rem] max-sm:h-[8rem] max-sm:w-[5rem] max-lg:h-[9rem] max-lg:w-[6rem] relative">
                                     <img className="h-full w-full rounded cursor-pointer" src={anime.images.jpg.image_url} draggable={false}/>
                                     <div tabIndex={0} className="h-full w-full text-slate-50 bg-slate-900 rounded absolute left-0 top-0 bg-opacity-50 flex flex-col justify-center items-center text-center opacity-0 hover:opacity-100 focus:opacity-100 cursor-pointer transition-opacity">
                                         <span className="font-medium text-ellipsis whitespace-nowrap overflow-hidden w-10/12 max-sm:text-sm">{anime.title}</span>
@@ -79,7 +79,7 @@ function Front() {
                                 </div>
                                 </a>
                             )) : Array(6).fill(0).map((_, idx) => (
-                            <div className="h-[16rem] w-[11rem] max-sm:h-[9rem] max-sm:w-[6rem] max-lg:h-[9rem] max-lg:w-[6rem] animate-pulse bg-slate-800 rounded" key={idx+5}>
+                            <div className="h-[16rem] w-[11rem] max-sm:h-[8rem] max-sm:w-[5rem] max-lg:h-[9rem] max-lg:w-[6rem] animate-pulse bg-slate-800 rounded" key={idx+5}>
                             </div>))
                         }
                     </div>
@@ -88,13 +88,13 @@ function Front() {
                 <section className="w-full flex flex-col gap-4 justify-center">
                     <div className="w-full flex items-center justify-between text-xl max-sm:text-sm">
                         <span className="font-medium">Upcoming season</span>
-                        <a href="/search/anime?search=upcoming" className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 focus:translate-x-2 focus:bg-rose-500 transform hover:translate-x-2 rounded transition-all" tabIndex={0}>View more</a>
+                        <a href="/search/anime?search=upcoming" className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 lg:focus:translate-x-2 focus:bg-rose-500 transform lg:hover:translate-x-2 rounded transition-all" tabIndex={0}>View more</a>
                     </div>
                     <div className="flex gap-4 justify-center flex-shrink flex-wrap">
                         {
                             items.length > 12 ? items.slice(6, 12).map(anime => (
                                 <a href={`/anime?id=${anime.mal_id}`} key={anime.mal_id}>
-                                <div className="h-[16rem] w-[11rem] max-sm:h-[9rem] max-sm:w-[6rem] max-lg:h-[9rem] max-lg:w-[6rem] relative">
+                                <div className="h-[16rem] w-[11rem] max-sm:h-[8rem] max-sm:w-[5rem] max-lg:h-[9rem] max-lg:w-[6rem] relative">
                                     <img className="h-full w-full rounded cursor-pointer" src={anime.images.jpg.image_url} draggable={false}/>
                                     <div tabIndex={0} className="h-full w-full text-slate-50 bg-slate-900 rounded absolute left-0 top-0 bg-opacity-50 flex flex-col justify-center items-center text-center opacity-0 hover:opacity-100 focus:opacity-100 cursor-pointer transition-opacity">
                                         <span className="font-medium text-ellipsis whitespace-nowrap overflow-hidden w-10/12 max-sm:text-sm">{anime.title}</span>
@@ -103,7 +103,7 @@ function Front() {
                                 </div>
                                 </a>
                             )) : Array(6).fill(0).map((_, idx) => (
-                            <div className="h-[16rem] w-[11rem] max-sm:h-[9rem] max-sm:w-[6rem] max-lg:h-[9rem] max-lg:w-[6rem] animate-pulse bg-slate-800 rounded" key={idx+10}>
+                            <div className="h-[16rem] w-[11rem] max-sm:h-[8rem] max-sm:w-[5rem] max-lg:h-[9rem] max-lg:w-[6rem] animate-pulse bg-slate-800 rounded" key={idx+10}>
                             </div>))
                         }
                     </div>
@@ -112,14 +112,14 @@ function Front() {
                 <section className="w-full flex flex-col gap-4 justify-center">
                     <div className="w-full flex items-center justify-between text-xl max-sm:text-sm">
                         <span className="font-medium">Top anime</span>
-                        <a href="/search/anime?search=top" className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 focus:translate-x-2 focus:bg-rose-500 transform hover:translate-x-2 rounded transition-all" tabIndex={0}>View more</a>
+                        <a href="/search/anime?search=top" className="cursor-pointer text-sm p-2 bg-transparent hover:bg-rose-500 lg:focus:translate-x-2 focus:bg-rose-500 transform lg:hover:translate-x-2 rounded transition-all" tabIndex={0}>View more</a>
                     </div>
                     <div className="flex gap-4 justify-center flex-shrink flex-wrap">
                         {
                             items.length === 18
                             ? items.slice(12).map(anime => (
                                 <a href={`/anime?id=${anime.mal_id}`} key={anime.mal_id}>
-                                <div className="h-[16rem] w-[11rem] max-sm:h-[9rem] max-sm:w-[6rem] max-lg:h-[9rem] max-lg:w-[6rem] relative">
+                                <div className="h-[16rem] w-[11rem] max-sm:h-[8rem] max-sm:w-[5rem] max-lg:h-[9rem] max-lg:w-[6rem] relative">
                                     <img className="h-full w-full rounded cursor-pointer" src={anime.images.jpg.image_url} draggable={false}/>
                                     <div tabIndex={0} className="h-full w-full text-slate-50 bg-slate-900 rounded absolute left-0 top-0 bg-opacity-50 flex flex-col justify-center items-center text-center opacity-0 hover:opacity-100 focus:opacity-100 cursor-pointer transition-opacity">
                                         <span className="font-medium text-ellipsis whitespace-nowrap overflow-hidden w-10/12 max-sm:text-sm">{anime.title}</span>
@@ -128,7 +128,7 @@ function Front() {
                                 </div>
                                 </a>
                             )) : Array(6).fill(0).map((_, idx) => (
-                            <div className="h-[16rem] w-[11rem] max-sm:h-[9rem] max-sm:w-[6rem] max-lg:h-[9rem] max-lg:w-[6rem] animate-pulse bg-slate-800 rounded" key={idx+20}>
+                            <div className="h-[16rem] w-[11rem] max-sm:h-[8rem] max-sm:w-[5rem] max-lg:h-[9rem] max-lg:w-[6rem] animate-pulse bg-slate-800 rounded" key={idx+20}>
                             </div>))
                         }
                     </div>

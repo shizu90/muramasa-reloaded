@@ -7,6 +7,7 @@ import useAuth from '../hooks/useAuth';
 import { MediaData } from '../modules/mediaData';
 import { LogData } from '../modules/userData';
 import Log from '../components/Log';
+import AddButton from '../components/AddButton';
 
 interface ProgressMedias {
     anime: Array<MediaData>,
@@ -72,7 +73,7 @@ function Home() {
                     <div className="flex flex-col gap-8">
                         <div className="flex justify-between">
                             <h2 className="text-slate-300 font-bold text-sm">Anime</h2>
-                            <span className="text-sm text-slate-500 cursor-pointer hover:underline transition-all">View all</span>
+                            <a href={`/user?username=${auth.authObject?.username}&page=animeList&status=1`} className="text-sm text-slate-500 cursor-pointer hover:underline transition-all">View all</a>
                         </div>
                         {progressMedias.anime.length > 0 ? <div className="grid grid-cols-4 gap-5 max-sm:grid-cols-3 max-md:grid-cols-5 max-lg:grid-cols-3">
                             {
@@ -88,14 +89,14 @@ function Home() {
                             }
                         </div> : 
                             <div className="w-full text-center py-12">
-                                <h6>Try watching some animes <a href="/search/anime?search=current" className="text-rose-500 underline">here</a></h6>
+                                <AddButton text="Watch some animes" redirectTo="/search/anime?search=current"/>
                             </div>
                         }
                     </div>
                     <div className="flex flex-col gap-8">
                         <div className="flex justify-between">
                             <h2 className="text-slate-300 font-bold text-sm">Manga</h2>
-                            <a href={`/user?username=${auth.authObject?.username}`} className="text-sm text-slate-500 cursor-pointer hover:underline transition-all">View all</a>
+                            <a href={`/user?username=${auth.authObject?.username}&page=mangaList&status=1`} className="text-sm text-slate-500 cursor-pointer hover:underline transition-all">View all</a>
                         </div>
                         {progressMedias.manga.length > 0 ? <div className="grid grid-cols-4 gap-5 max-sm:grid-cols-3 max-md:grid-cols-5 max-lg:grid-cols-3">
                             {
@@ -111,7 +112,7 @@ function Home() {
                             }
                         </div> : 
                             <div className="w-full text-center py-12">
-                                <h6>Try watching some animes <a href="/search/anime?search=current" className="text-rose-500 underline">here</a></h6>
+                                <AddButton text="Read some mangas" redirectTo="/search/manga?search=top"/>
                             </div>}
                     </div>
                 </div>

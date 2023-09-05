@@ -10,6 +10,7 @@ import com.gabriel.muramasa.services.PostService;
 import com.gabriel.muramasa.models.Post;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,15 +37,20 @@ public class PostController {
         return ResponseEntity.ok().body(service.getPostById(postId));
     }
     
-    @GetMapping(value = "/following")
-    public ResponseEntity<List<Post>> getFollowingPosts(Authentication auth) {
-        var acc = (Account) auth.getPrincipal();
-        return ResponseEntity.ok().body(service.getFollowingPosts(acc.getId()));
+    @GetMapping(value = "/recent/{page}")
+    public ResponseEntity<Page<Post>> getRecentPosts(@PathVariable Integer page) {
+        return ResponseEntity.ok().body(service.getRecentPosts(page));
     }
     
-    @GetMapping(value = "/{userId}")
-    public ResponseEntity<List<Post>> getUserPosts(@PathVariable Long userId) {
-        return ResponseEntity.ok().body(service.getUserPosts(userId));
+    @GetMapping(value = "/following/{page}")
+    public ResponseEntity<Page<Post>> getFollowingPosts(@PathVariable Integer page, Authentication auth) {
+        var acc = (Account) auth.getPrincipal();
+        return ResponseEntity.ok().body(service.getFollowingPosts(acc.getId(), page));
+    }
+    
+    @GetMapping(value = "/{userId}/{page}")
+    public ResponseEntity<Page<Post>> getUserPosts(@PathVariable Long userId, @PathVariable Integer page) {
+        return ResponseEntity.ok().body(service.getUserPosts(userId, page));
     }
     
     @PostMapping

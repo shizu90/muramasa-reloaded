@@ -7,6 +7,7 @@ import useAuth from "../hooks/useAuth";
 import popupMessage from "../modules/toaster";
 import { MediaData } from "../modules/mediaData";
 import { generatePages } from "../modules/pagination";
+import UserCard from "../components/UserCard";
 
 function getStatus(status: number) {
     switch(status) {
@@ -58,21 +59,23 @@ interface FollowData {
 
 function User() {
     const auth = useAuth();
-    const [user, setUser] = useState<UserData | null>(null);
-    const [amIFollowing, setAmIFollowing] = useState<boolean>(false);
-    const [page, setPage] = useState<string>('home');
-    const [controlData, setControlData] = useState<ControlData>({listControl: {type: "anime", page: 0, status: 1}, followControl: {page: 0}});
-    const [listData, setListData] = useState<ListData>({data: [], totalPages: 0});
-    const [followData, setFollowData] = useState<FollowData>({data: [], totalPages: 0});
     const url: URLSearchParams = new URLSearchParams(window.location.search);
     const username: string = url.get("username") as unknown as string;
+    const pageParam: string = url.get("page") as unknown as string;
+    const statusParam: string = url.get("status") as unknown as string;
+    const [user, setUser] = useState<UserData | null>(null);
+    const [amIFollowing, setAmIFollowing] = useState<boolean>(false);
+    const [page, setPage] = useState<string>(pageParam ? pageParam : "home");
+    const [controlData, setControlData] = useState<ControlData>({listControl: {type: "anime", page: 0, status: statusParam ? parseInt(statusParam) : 1}, followControl: {page: 0}});
+    const [listData, setListData] = useState<ListData>({data: [], totalPages: 0});
+    const [followData, setFollowData] = useState<FollowData>({data: [], totalPages: 0});
     
     useEffect(() => {
         muramasa_api.user.get(username)
         .then(res => {
             if(auth && auth.authObject) {
                 muramasa_api.user.auth(auth.authObject.token).followers().followingCurrentUser(res.data.id)
-                .then((res_follower) => {setAmIFollowing(res_follower.data);setUser(res.data);console.log(res.data)})
+                .then((res_follower) => {setAmIFollowing(res_follower.data);setUser(res.data)})
                 .catch(() => popupMessage.error("Some error occurred."));
             }else setUser(res.data);
         })
@@ -109,11 +112,11 @@ function User() {
                         <img className="w-full z-0 absolute h-80 object-cover" src={"https://cdna.artstation.com/p/assets/images/images/040/665/994/large/andrew-maleski-ghostly-gate.jpg?1629536251"}/>
                         <div className="w-full absolute h-80 bg-gradient-to-t from-midnight to-transparent to-60%"></div>
                         <div className="w-full h-80"></div>
-                        <div className="w-full bg-darkocean h-14 px-80 max-xl:px-40 flex items-center max-xl:justify-center z-10">
+                        <div className="w-full bg-darkocean h-14 px-80 max-xl:px-0 flex items-center max-xl:justify-center z-10">
                             <img 
                                 src={user.imgUrl.length > 0 ? user.imgUrl : "https://i.pinimg.com/236x/d0/05/0d/d0050d5c9f600d1cb362404d576aa199.jpg"}
                                 className="w-40 h-60 object-cover rounded absolute top-[-20] shadow-lg shadow-midnight"/>
-                            <div className="flex gap-4 ml-60 max-xl:ml-0 max-xl:absolute max-xl:bottom-[-60px] max-xl:w-full max-xl:gap-2 max-xl:flex-wrap max-xl:justify-center max-xl:bg-darkocean p-2 rounded">
+                            <div className="flex gap-4 ml-60 max-xl:ml-0 max-xl:absolute max-xl:bottom-[-60px] max-xl:w-full max-xl:gap-2 max-xl:flex-wrap max-xl:justify-center p-2 max-xl:bg-darkocean rounded">
                                 <span onClick={() => setPage('home')} className="cursor-pointer hover:text-rose-500 text-slate-50 transition-all text-sm max-xl:text-[12px] font-medium">Home</span>
                                 <span onClick={() => setPage('animeList')} className="cursor-pointer hover:text-rose-500 text-slate-50 transition-all text-sm max-xl:text-[12px] font-medium">Anime list</span>
                                 <span onClick={() => setPage('mangaList')} className="cursor-pointer hover:text-rose-500 text-slate-50 transition-all text-sm max-xl:text-[12px] font-medium">Manga list</span>
@@ -296,18 +299,7 @@ function User() {
                             <div className="flex flex-wrap gap-4 w-full max-xl:w-full">
                                 {
                                     followData.data.length > 0 ? followData.data.map((follow: any) => (
-                                        <a href={`/user?username=${follow.from.username}`}>
-                                        <div className="bg-darkocean p-4 flex rounded-lg gap-2 hover:bg-slate-800 transition-all">
-                                            <img
-                                                className="rounded-lg w-12 object-cover" 
-                                                src={follow.from.imgUrl.length > 0 ? follow.from.imgUrl.length : "https://i.pinimg.com/236x/d0/05/0d/d0050d5c9f600d1cb362404d576aa199.jpg"}/>
-
-                                            <div className="w-60">
-                                                <h5 className="font-medium">{follow.from.username}</h5>
-                                                <p className="text-sm text-slate-300 break-all truncate text-ellipsis w-full">{follow.to.resume.length > 0 ? follow.to.resume.length : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}</p>
-                                            </div>
-                                        </div>
-                                        </a>
+                                        <UserCard user={follow.from}/>
                                     )) :
                                     <h5 className="text-slate-500 italic">{user.username} don't have any followers.</h5>
                                 } 
@@ -321,18 +313,7 @@ function User() {
                             <div className="flex flex-wrap gap-4 w-full max-xl:w-full">
                                 {
                                     followData.data.length > 0 ? followData.data.map((follow: any) => (
-                                        <a href={`/user?username=${follow.to.username}`} className="w-80">
-                                        <div className="bg-darkocean p-4 flex rounded-lg gap-2 hover:bg-slate-800 transition-all w-full">
-                                            <img
-                                                className="rounded-lg w-12 object-cover" 
-                                                src={follow.to.imgUrl.length > 0 ? follow.to.imgUrl.length : "https://i.pinimg.com/236x/d0/05/0d/d0050d5c9f600d1cb362404d576aa199.jpg"}/>
-
-                                            <div className="w-60">
-                                                <h5 className="font-medium">{follow.to.username}</h5>
-                                                <p className="text-sm text-slate-300 break-all truncate text-ellipsis w-full">{follow.to.resume.length > 0 ? follow.to.resume.length : "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}</p>
-                                            </div>
-                                        </div>
-                                        </a>
+                                        <UserCard user={follow.to}/>
                                     )):
                                     <h5 className="text-slate-500 italic">{user.username} not following anyone.</h5>
                                 }
