@@ -16,7 +16,7 @@ Simple web application with Spring Boot as backend and ReactJS as frontend. An a
 * Users that are following you can see your logs;
 * Post/forum system (not finished);
 
-##Todo
+## Todo
 * Finish post/forum system;
 * Optimize code;
 * Containerize the application;
