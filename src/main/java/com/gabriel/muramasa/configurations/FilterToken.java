@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.gabriel.muramasa.configurations;
 
 import com.gabriel.muramasa.handlers.exceptions.NotFoundException;
@@ -18,11 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-/**
- *
- * @author giraf
- */
 
 @Component
 public class FilterToken extends OncePerRequestFilter {

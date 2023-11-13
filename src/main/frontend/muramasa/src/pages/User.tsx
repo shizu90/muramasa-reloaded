@@ -8,6 +8,7 @@ import popupMessage from "../modules/toaster";
 import { MediaData } from "../modules/mediaData";
 import { generatePages } from "../modules/pagination";
 import UserCard from "../components/UserCard";
+import Settings from "../components/icons/Settings";
 
 function getStatus(status: number) {
     switch(status) {
@@ -134,7 +135,7 @@ function User() {
                                 <span className="font-medium"> {user.followingCount}</span> following
                             </h5>
                             {
-                                auth.authObject && auth.authObject.username != username && 
+                                auth.authObject && auth.authObject.username != username ? 
                                 <div className="ml-44">
                                     {!amIFollowing ? <button 
                                         className="bg-rose-500 px-4 py-2 rounded font-medium cursor-pointer text-sm" 
@@ -146,6 +147,11 @@ function User() {
                                         onClick={() => unfollowUser(user.id || 0, auth.authObject?.token || "", setAmIFollowing)}>
                                             Unfollow
                                     </button>}
+                                </div>
+                                :
+                                <div className="flex font-medium text-sm gap-2 justify-center items-center hover:bg-darkocean p-2 cursor-pointer rounded">
+                                    <Settings/>
+                                    Customize profile
                                 </div>
                             }
                         </div>
