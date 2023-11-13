@@ -24,36 +24,19 @@ Simple web application with Spring Boot as backend and ReactJS as frontend. An a
 * Finish profile customization;
 
 ## Pictures
-<<<<<<< HEAD
+### Home page
 ![HomePage](./HomePage.png)
-
+### User profile page
 ![UserProfile](./ProfilePage.png)
-
+### View media page
 ![MediaPage](./AnimePage.png)
-
+### Add media modal
 ![AddMediaModal](./AddAnime2.png)
-
+### Search characters
 ![CharacterSearch](./SearchCharacter.png)
-
+### Search mangas
 ![MangaSearch](./SearchManga.png)
-
+### Search animes
 ![AnimeSearch](./SearchAnime.png)
-
+### View character page
 ![CharacterPage](./CharacterPage.png)
-=======
-![HomePage](https://imgur.com/WGSkii2)
-
-![UserProfile](https://imgur.com/a/fXlTOHq)
-
-![MediaPage](https://imgur.com/a/JIvE3fQ)
-
-![AddMediaModal](https://imgur.com/a/pwx3Gkx)
-
-![CharacterSearch](https://imgur.com/hpehy6V)
-
-![MangaSearch](https://imgur.com/SlGSYxV)
-
-![AnimeSearch](https://imgur.com/EoJkxUa)
-
-![CharacterPage](https://imgur.com/NEtvLkJ)
->>>>>>> 43f3aac9885b7b44b211bd493ba3fe8560bcfadd
